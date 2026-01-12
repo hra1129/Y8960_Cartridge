@@ -1,6 +1,6 @@
 //
-//	ssg.v
-//	SSG (YM2149. AY-3-8910 Compatible Processor)
+//	ssg_core.v
+//	SSG core (YM2149. AY-3-8910 Compatible Processor)
 //
 //	Copyright (C) 2024 Takayuki Hara
 //
@@ -55,7 +55,9 @@
 //
 //-----------------------------------------------------------------------------
 
-module ssg (
+module ssg_core #( 
+	parameter		core_number = 1'b0
+) (
 	input			clk,
 	input			reset_n,
 	input			enable,
@@ -74,7 +76,8 @@ module ssg (
 	input			cmt_read,			//	PortA bit7: CMT Read Signal
 	output			kana_led,			//	PortB bit7: KANA LED  0: ON, 1: OFF
 
-	output	[11:0]	sound_out
+	output	[11:0]	sound_out,			//	10bit/ch * 3ch = 12bit
+	input	[1:0]	mode				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
 );
 	reg		[7:0]	ff_wdata;
 	reg		[7:0]	ff_rdata;
@@ -84,7 +87,7 @@ module ssg (
 	reg		[7:0]	ff_port_b;
 
 	reg		[4:0]	ff_ssg_state;
-	reg		[3:0]	ff_ssg_register_ptr;
+	reg		[4:0]	ff_ssg_register_ptr;
 
 	reg		[11:0]	ff_ssg_ch_a_counter;
 	reg		[11:0]	ff_ssg_ch_b_counter;
@@ -197,7 +200,7 @@ module ssg (
 		if( !reset_n ) begin
 			ff_port_b <= 8'd0;
 		end
-		else if( w_wr && address == 2'd1 && ff_ssg_register_ptr == 4'd15 ) begin
+		else if( w_wr && address == 2'd1 && ff_ssg_register_ptr == (5'd15 + ff_ssg_register_ptr) ) begin
 			ff_port_b <= ff_wdata;
 		end
 		else begin
@@ -232,7 +235,10 @@ module ssg (
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_rdata <= 8'd0;
+			ff_rdata <= 8'hFF;
+		end
+		else if( mode[core_number] == 1'b0 ) begin
+			ff_rdata <= 8'hFF;
 		end
 		else if( !enable ) begin
 			//	hold
@@ -240,23 +246,23 @@ module ssg (
 		else if( w_rd ) begin
 			if( address == 2'd2 ) begin
 				case( ff_ssg_register_ptr )
-				4'd0:		ff_rdata <= ff_ssg_ch_a_frequency[7:0];
-				4'd1:		ff_rdata <= { 4'd0, ff_ssg_ch_a_frequency[11:8] };
-				4'd2:		ff_rdata <= ff_ssg_ch_b_frequency[7:0];
-				4'd3:		ff_rdata <= { 4'd0, ff_ssg_ch_b_frequency[11:8] };
-				4'd4:		ff_rdata <= ff_ssg_ch_c_frequency[7:0];
-				4'd5:		ff_rdata <= { 4'd0, ff_ssg_ch_c_frequency[11:8] };
-				4'd6:		ff_rdata <= { 3'd0, ff_ssg_noise_frequency };
-				4'd7:		ff_rdata <= { 2'd2, ff_ssg_ch_select };
-				4'd8:		ff_rdata <= { 3'd0, ff_ssg_ch_a_volume };
-				4'd9:		ff_rdata <= { 3'd0, ff_ssg_ch_b_volume };
-				4'd10:		ff_rdata <= { 3'd0, ff_ssg_ch_c_volume };
-				4'd11:		ff_rdata <= ff_ssg_envelope_frequency[7:0];
-				4'd12:		ff_rdata <= ff_ssg_envelope_frequency[15:8];
-				4'd13:		ff_rdata <= { 4'd0, ff_continue, ff_attack, ff_alternate, ff_hold };
-				4'd14:		ff_rdata <= ff_port_a;
-				4'd15:		ff_rdata <= ff_port_b;
-				default:	ff_rdata <= 8'hFF;
+				{ core_number, 4'd0  }:		ff_rdata <= ff_ssg_ch_a_frequency[7:0];
+				{ core_number, 4'd1  }:		ff_rdata <= { 4'd0, ff_ssg_ch_a_frequency[11:8] };
+				{ core_number, 4'd2  }:		ff_rdata <= ff_ssg_ch_b_frequency[7:0];
+				{ core_number, 4'd3  }:		ff_rdata <= { 4'd0, ff_ssg_ch_b_frequency[11:8] };
+				{ core_number, 4'd4  }:		ff_rdata <= ff_ssg_ch_c_frequency[7:0];
+				{ core_number, 4'd5  }:		ff_rdata <= { 4'd0, ff_ssg_ch_c_frequency[11:8] };
+				{ core_number, 4'd6  }:		ff_rdata <= { 3'd0, ff_ssg_noise_frequency };
+				{ core_number, 4'd7  }:		ff_rdata <= { 2'd2, ff_ssg_ch_select };
+				{ core_number, 4'd8  }:		ff_rdata <= { 3'd0, ff_ssg_ch_a_volume };
+				{ core_number, 4'd9  }:		ff_rdata <= { 3'd0, ff_ssg_ch_b_volume };
+				{ core_number, 4'd10 }:		ff_rdata <= { 3'd0, ff_ssg_ch_c_volume };
+				{ core_number, 4'd11 }:		ff_rdata <= ff_ssg_envelope_frequency[7:0];
+				{ core_number, 4'd12 }:		ff_rdata <= ff_ssg_envelope_frequency[15:8];
+				{ core_number, 4'd13 }:		ff_rdata <= { 4'd0, ff_continue, ff_attack, ff_alternate, ff_hold };
+				{ core_number, 4'd14 }:		ff_rdata <= ff_port_a;
+				{ core_number, 4'd15 }:		ff_rdata <= ff_port_b;
+				default:					ff_rdata <= 8'hFF;
 				endcase
 			end
 			else begin
@@ -264,7 +270,7 @@ module ssg (
 			end
 		end
 		else begin
-			ff_rdata <= 1'b0;
+			ff_rdata <= 8'hFF;
 		end
 	end
 
@@ -273,7 +279,7 @@ module ssg (
 	//--------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_ssg_register_ptr			<= 4'd0;
+			ff_ssg_register_ptr			<= 5'd0;
 			ff_ssg_ch_a_frequency		<= 12'hFFF;
 			ff_ssg_ch_b_frequency		<= 12'hFFF;
 			ff_ssg_ch_c_frequency		<= 12'hFFF;
@@ -290,24 +296,29 @@ module ssg (
 			ff_ssg_envelope_req			<= 1'b0;
 		end
 		else if( w_wr && address == 2'd0 ) begin
-			ff_ssg_register_ptr <= ff_wdata[3:0];
+			if( mode[core_number] && !mode[~core_number] ) begin
+				ff_ssg_register_ptr <= { core_number, ff_wdata[3:0] };
+			end
+			else if( mode == 2'd3 ) begin
+				ff_ssg_register_ptr <= ff_wdata[4:0];
+			end
 		end
 		else if( w_wr && address == 2'd1 ) begin
 			case( ff_ssg_register_ptr )
-			4'd0:		ff_ssg_ch_a_frequency[7:0]		<= ff_wdata;
-			4'd1:		ff_ssg_ch_a_frequency[11:8]		<= ff_wdata[3:0];
-			4'd2:		ff_ssg_ch_b_frequency[7:0]		<= ff_wdata;
-			4'd3:		ff_ssg_ch_b_frequency[11:8]		<= ff_wdata[3:0];
-			4'd4:		ff_ssg_ch_c_frequency[7:0]		<= ff_wdata;
-			4'd5:		ff_ssg_ch_c_frequency[11:8]		<= ff_wdata[3:0];
-			4'd6:		ff_ssg_noise_frequency			<= ff_wdata[4:0];
-			4'd7:		ff_ssg_ch_select				<= ff_wdata[5:0];
-			4'd8:		ff_ssg_ch_a_volume				<= ff_wdata[4:0];
-			4'd9:		ff_ssg_ch_b_volume				<= ff_wdata[4:0];
-			4'd10:		ff_ssg_ch_c_volume				<= ff_wdata[4:0];
-			4'd11:		ff_ssg_envelope_frequency[7:0]	<= ff_wdata;
-			4'd12:		ff_ssg_envelope_frequency[15:8]	<= ff_wdata;
-			4'd13:
+			{ core_core_number, 4'd0  }:		ff_ssg_ch_a_frequency[7:0]		<= ff_wdata;
+			{ core_core_number, 4'd1  }:		ff_ssg_ch_a_frequency[11:8]		<= ff_wdata[3:0];
+			{ core_core_number, 4'd2  }:		ff_ssg_ch_b_frequency[7:0]		<= ff_wdata;
+			{ core_core_number, 4'd3  }:		ff_ssg_ch_b_frequency[11:8]		<= ff_wdata[3:0];
+			{ core_core_number, 4'd4  }:		ff_ssg_ch_c_frequency[7:0]		<= ff_wdata;
+			{ core_core_number, 4'd5  }:		ff_ssg_ch_c_frequency[11:8]		<= ff_wdata[3:0];
+			{ core_core_number, 4'd6  }:		ff_ssg_noise_frequency			<= ff_wdata[4:0];
+			{ core_core_number, 4'd7  }:		ff_ssg_ch_select				<= ff_wdata[5:0];
+			{ core_core_number, 4'd8  }:		ff_ssg_ch_a_volume				<= ff_wdata[4:0];
+			{ core_core_number, 4'd9  }:		ff_ssg_ch_b_volume				<= ff_wdata[4:0];
+			{ core_core_number, 4'd10 }:		ff_ssg_ch_c_volume				<= ff_wdata[4:0];
+			{ core_core_number, 4'd11 }:		ff_ssg_envelope_frequency[7:0]	<= ff_wdata;
+			{ core_core_number, 4'd12 }:		ff_ssg_envelope_frequency[15:8]	<= ff_wdata;
+			{ core_core_number, 4'd13 }:
 				begin
 					ff_hold							<= ff_wdata[0];
 					ff_alternate					<= ff_wdata[1];
@@ -617,6 +628,9 @@ module ssg (
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
+			ff_sound_out	 <= 12'd0;
+		end
+		else if( mode[core_number] == 1'd0 ) begin
 			ff_sound_out	 <= 12'd0;
 		end
 		else if( enable ) begin
