@@ -81,10 +81,6 @@ module dual_ssg #(
 	input	[1:0]	mode,				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
 	input			stereo				//	0: mono, 1: stereo
 );
-	wire	[11:0]	w_sound_out0;
-	wire	[11:0]	w_sound_out1;
-	reg		[12:0]	ff_sound_out_l;
-	reg		[12:0]	ff_sound_out_r;
 	wire	[7:0]	w_rdata0;
 	wire			w_rdata_en0;
 	wire	[7:0]	w_rdata1;
@@ -108,7 +104,7 @@ module dual_ssg #(
 		.keyboard_type	( keyboard_type		),
 		.cmt_read		( cmt_read			),
 		.kana_led		( kana_led			),
-		.sound_out		( w_sound_out0		),
+		.sound_out		( sound_out_l		),
 		.mode			( mode				)
 	);
 
@@ -130,29 +126,10 @@ module dual_ssg #(
 		.keyboard_type	( 1'b0				),
 		.cmt_read		( 1'b0				),
 		.kana_led		( 					),
-		.sound_out		( w_sound_out1		),
+		.sound_out		( sound_out_r		),
 		.mode			( mode				)
 	);
 
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_sound_out_l <= 13'd0;
-			ff_sound_out_r <= 13'd0;
-		end
-		else if( stereo ) begin
-			//	stereo
-			ff_sound_out_l <= { w_sound_out0, 1'b0 };
-			ff_sound_out_r <= { w_sound_out1, 1'b0 };
-		end
-		else begin
-			//	mono
-			ff_sound_out_l <= { 1'b0, w_sound_out0 } + { 1'b0, w_sound_out1 };
-			ff_sound_out_r <= { 1'b0, w_sound_out0 } + { 1'b0, w_sound_out1 };
-		end
-	end
-
-	assign sound_out_l	= ff_sound_out_l;
-	assign sound_out_r	= ff_sound_out_r;
 	assign rdata		= w_rdata0 & w_rdata1;
 	assign rdata_en		= w_rdata_en0 | w_rdata_en1;
 endmodule
