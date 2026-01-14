@@ -1,6 +1,6 @@
 //
-//	dual_ssg.v
-//	DualSSG (YM2149. AY-3-8910 Compatible Processor)
+//	msx_timer.v
+//	MSX-TIMER
 //
 //	Copyright (C) 2026 Takayuki Hara
 //
@@ -55,81 +55,19 @@
 //
 //-----------------------------------------------------------------------------
 
-module dual_ssg #( 
-	parameter		core_number = 1'b0
-) (
+module msx_timer (
 	input			clk,
 	input			reset_n,
-	input			enable,
-	input			iorq_n,
-	input			wr_n,
-	input			rd_n,
-	input	[1:0]	address,
-	input	[7:0]	wdata,
-	output	[7:0]	rdata,
-	output			rdata_en,
-
-	inout	[5:0]	ssg_ioa,
-	output	[2:0]	ssg_iob,
-
-	input			keyboard_type,		//	PortA bit6: Keyboard type  0: 50‰¹”z—ñ, 1: JIS”z—ñ 
-	input			cmt_read,			//	PortA bit7: CMT Read Signal
-	output			kana_led,			//	PortB bit7: KANA LED  0: ON, 1: OFF
-
-	output	[12:0]	sound_out_l,		//	10bit/ch * 6ch = 13bit
-	output	[12:0]	sound_out_r,		//	10bit/ch * 6ch = 13bit
-	input	[1:0]	mode,				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
-	input			stereo				//	0: mono, 1: stereo
+	input			bus_ioreq,
+	input	[7:0]	bus_address,
+	input			bus_write,
+	input			bus_valid,
+	output			bus_ready,
+	input	[7:0]	bus_wdata,
+	output	[7:0]	bus_rdata,
+	output			bus_rdata_en,
+	output			intr_n
 );
-	wire	[7:0]	w_rdata0;
-	wire			w_rdata_en0;
-	wire	[7:0]	w_rdata1;
-	wire			w_rdata_en1;
 
-	ssg_core #( 
-		.core_number	( 1'b0				)
-	) ssg_core0 (
-		.clk			( clk				),
-		.reset_n		( reset_n			),
-		.enable			( enable			),
-		.iorq_n			( iorq_n			),
-		.wr_n			( wr_n				),
-		.rd_n			( rd_n				),
-		.address		( address			),
-		.wdata			( wdata				),
-		.rdata			( w_rdata0			),
-		.rdata_en		( w_rdata_en0		),
-		.ssg_ioa		( ssg_ioa			),
-		.ssg_iob		( ssg_iob			),
-		.keyboard_type	( keyboard_type		),
-		.cmt_read		( cmt_read			),
-		.kana_led		( kana_led			),
-		.sound_out		( sound_out_l		),
-		.mode			( mode				)
-	);
 
-	ssg_core #( 
-		.core_number	( 1'b1				)
-	) ssg_core1 (
-		.clk			( clk				),
-		.reset_n		( reset_n			),
-		.enable			( enable			),
-		.iorq_n			( iorq_n			),
-		.wr_n			( wr_n				),
-		.rd_n			( rd_n				),
-		.address		( address			),
-		.wdata			( wdata				),
-		.rdata			( w_rdata1			),
-		.rdata_en		( w_rdata_en1		),
-		.ssg_ioa		( 6'dz				),
-		.ssg_iob		( 					),
-		.keyboard_type	( 1'b0				),
-		.cmt_read		( 1'b0				),
-		.kana_led		( 					),
-		.sound_out		( sound_out_r		),
-		.mode			( mode				)
-	);
-
-	assign rdata		= w_rdata0 & w_rdata1;
-	assign rdata_en		= w_rdata_en0 | w_rdata_en1;
 endmodule

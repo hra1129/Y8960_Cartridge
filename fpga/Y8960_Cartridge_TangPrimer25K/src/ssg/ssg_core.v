@@ -2,7 +2,7 @@
 //	ssg_core.v
 //	SSG core (YM2149. AY-3-8910 Compatible Processor)
 //
-//	Copyright (C) 2024 Takayuki Hara
+//	Copyright (C) 2024-2026 Takayuki Hara
 //
 //	本ソフトウェアおよび本ソフトウェアに基づいて作成された派生物は、以下の条件を
 //	満たす場合に限り、再頒布および使用が許可されます。
