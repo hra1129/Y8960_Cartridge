@@ -64,6 +64,7 @@ module msx_timer_core (
 	input	[7:0]	bus_wdata,
 	output	[7:0]	bus_rdata,
 	input			intr_clear,
+	output	[7:0]	counter,
 	output			intr_flag,
 	output			intr
 );
@@ -169,6 +170,7 @@ module msx_timer_core (
 	                          (ff_reso == 3'd5) ? {       2'b11, ff_counter[14:0] }: 
 	                          (ff_reso == 3'd6) ? {        1'b1, ff_counter[15:0] }: ff_counter[16:0];
 	assign w_count_end		= ((ff_count == w_count) && (w_count_low == 17'b1_1111_1111_1111_1111)) ? 1'b1 : 1'b0;
+	assign counter			= w_count[7:0];
 
 	// --------------------------------------------------------------------
 	//	Interrupt

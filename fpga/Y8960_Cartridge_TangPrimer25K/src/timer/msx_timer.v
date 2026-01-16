@@ -68,6 +68,160 @@ module msx_timer (
 	output			bus_rdata_en,
 	output			intr_n
 );
+	localparam		c_register_index	= 8'dB0;
+	localparam		c_register_value	= 8'dB1;
+	localparam		c_interrupt_flag	= 8'dB2;
+	localparam		c_counter_read		= 8'dB3;
+	reg		[7:0]	ff_register_index;
+	reg		[7:0]	ff_register_value;
+	reg		[3:0]	ff_interrupt_clear;
+	reg		[2:0]	ff_counter_select;
+	reg				ff_intr_n;
+	reg				ff_rdata;
+	reg				ff_rdata_en;
+	wire			w_intr0;
+	wire			w_intr1;
+	wire			w_intr2;
+	wire			w_intr3;
+	wire			w_intr_flag0;
+	wire			w_intr_flag1;
+	wire			w_intr_flag2;
+	wire			w_intr_flag3;
 
+	// ---------------------------------------------------------
+	//	I/O Ports
+	// ---------------------------------------------------------
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_register_index	<= 8'd0;
+			ff_register_value	<= 8'd0;
+			ff_counter_select	<= 3'd0;
+		end
+		else if( bus_valid ) begin
+			if( bus_write ) begin
+				//	write access
+				case( bus_address )
+					c_register_index: begin
+						ff_register_inex	<= bus_wdata;
+					end
+					c_register_value: begin
+						ff_register_value	<= bus_wdata;
+					end
+					c_counter_read: begin
+						if( bus_wdata[7:2] == 6'd0 ) begin
+							ff_counter_select	<= { 1'b0, bus_wdata[1:0] };
+						end
+						else begin
+							ff_counter_select	<= { 1'b1, 2'd0 };
+						end
+					end
+					default: begin
+						//	hold
+					end
+				endcase
+			end
+			else begin
+				//	read access
+				case( bus_address )
+					c_register_index: begin
+						ff_rdata			<= ff_register_inex;
+					end
+					c_register_value: begin
+						ff_register_value	<= bus_wdata;
+					end
+					c_counter_read: begin
+						if( bus_wdata[7:2] == 6'd0 ) begin
+							ff_counter_select	<= { 1'b0, bus_wdata[1:0] };
+						end
+						else begin
+							ff_counter_select	<= { 1'b1, 2'd0 };
+						end
+					end
+					default: begin
+						//	hold
+					end
+				endcase
+			end
+		end
+	end
 
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_interrupt_clear <= 4'd0;
+		end
+		else if( bus_valid && bus_write && (bus_address == c_interrupt_flag) ) begin
+			ff_interrupt_clear <= bus_wdata[3:0];
+		end
+		else begin
+			ff_interrupt_clear <= 4'd0;
+		end
+	end
+
+	// ---------------------------------------------------------
+	//	Timer cores
+	// ---------------------------------------------------------
+	msx_timer_core u_msx_timer_core0 (
+		.clk			( clk			),
+		.reset_n		( reset_n		),
+		.bus_address	( bus_address	),
+		.bus_write		( bus_write		),
+		.bus_valid		( bus_valid		),
+		.bus_wdata		( bus_wdata		),
+		.bus_rdata		( bus_rdata		),
+		.intr_clear		( intr_clear	),
+		.counter		( counter		),
+		.intr_flag		( w_intr_flag0	),
+		.intr			( w_intr0		)
+	);
+
+	msx_timer_core u_msx_timer_core0 (
+		.clk			( clk			),
+		.reset_n		( reset_n		),
+		.bus_address	( bus_address	),
+		.bus_write		( bus_write		),
+		.bus_valid		( bus_valid		),
+		.bus_wdata		( bus_wdata		),
+		.bus_rdata		( bus_rdata		),
+		.intr_clear		( intr_clear	),
+		.counter		( counter		),
+		.intr_flag		( w_intr_flag1	),
+		.intr			( w_intr1		)
+	);
+
+	msx_timer_core u_msx_timer_core0 (
+		.clk			( clk			),
+		.reset_n		( reset_n		),
+		.bus_address	( bus_address	),
+		.bus_write		( bus_write		),
+		.bus_valid		( bus_valid		),
+		.bus_wdata		( bus_wdata		),
+		.bus_rdata		( bus_rdata		),
+		.intr_clear		( intr_clear	),
+		.counter		( counter		),
+		.intr_flag		( w_intr_flag2	),
+		.intr			( w_intr2		)
+	);
+
+	msx_timer_core u_msx_timer_core0 (
+		.clk			( clk			),
+		.reset_n		( reset_n		),
+		.bus_address	( bus_address	),
+		.bus_write		( bus_write		),
+		.bus_valid		( bus_valid		),
+		.bus_wdata		( bus_wdata		),
+		.bus_rdata		( bus_rdata		),
+		.intr_clear		( intr_clear	),
+		.counter		( counter		),
+		.intr_flag		( w_intr_flag3	),
+		.intr			( w_intr3		)
+	);
+
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_intr_n <= 1'b1;
+		end
+		else begin
+			ff_intr_n <= ~(w_intr0 | w_intr1 | w_intr2 | w_intr3);
+		end
+	end
 endmodule
