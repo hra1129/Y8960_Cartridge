@@ -63,6 +63,7 @@ module msx_timer_core (
 	input			bus_valid,
 	input	[7:0]	bus_wdata,
 	output	[7:0]	bus_rdata,
+	output			bus_rdata_en,
 	input			intr_clear,
 	output	[7:0]	counter,
 	output			intr_flag,
@@ -74,23 +75,27 @@ module msx_timer_core (
 
 	reg		[31:0]	ff_counter;
 	reg		[2:0]	ff_reso;
-	reg		[8:0]	ff_count;
+	reg		[7:0]	ff_count;
 	reg				ff_repeat;
 	reg				ff_intr_enable;
 	reg				ff_count_enable;
 	reg				ff_count_end;
 	wire	[13:0]	w_count_high;
 	wire			w_count_overflow;
-	wire	[8:0]	w_count;
+	wire	[7:0]	w_count;
 	wire	[16:0]	w_count_low;
 	wire			w_count_end;
 
 	// --------------------------------------------------------------------
 	//	Registers
 	// --------------------------------------------------------------------
-	always ( posedge clk ) begin
+	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_counter;
+			ff_repeat		<= 1'b0;
+			ff_reso			<= 3'd0;
+			ff_intr_enable	<= 1'b0;
+			ff_count		<= 8'd0;
+			ff_count_enable	<= 1'b0;
 		end
 		else if( bus_valid && bus_write ) begin
 			//	register write
@@ -100,12 +105,7 @@ module msx_timer_core (
 				ff_intr_enable	<= bus_wdata[7];
 			end
 			else if( bus_address == c_count_register ) begin
-				if( bus_wdata == 8'd0 ) begin
-					ff_count	<= 9'd256;
-				end
-				else begin
-					ff_count	<= { 1'b0, bus_wdata };
-				end
+				ff_count	<= bus_wdata;
 			end
 			else if( bus_address == c_control_register ) begin
 				ff_count_enable	<= bus_wdata[0];
@@ -119,6 +119,7 @@ module msx_timer_core (
 	assign bus_rdata	= (bus_address == c_mode_register		) ? { ff_intr_enable, ff_reso, 3'd0, ff_repeat } :
 	                      (bus_address == c_count_register		) ? ff_count :
 	                      (bus_address == c_control_register	) ? { 7'd0, ff_count_enable } : 8'd0;
+	assign bus_rdata_en	= bus_valid & ~bus_write;
 
 	// --------------------------------------------------------------------
 	//	Counter
@@ -169,7 +170,7 @@ module msx_timer_core (
 	                          (ff_reso == 3'd4) ? {      3'b111, ff_counter[13:0] }: 
 	                          (ff_reso == 3'd5) ? {       2'b11, ff_counter[14:0] }: 
 	                          (ff_reso == 3'd6) ? {        1'b1, ff_counter[15:0] }: ff_counter[16:0];
-	assign w_count_end		= ((ff_count == w_count) && (w_count_low == 17'b1_1111_1111_1111_1111)) ? 1'b1 : 1'b0;
+	assign w_count_end		= (({1'b0, ff_count} >= w_count) && (w_count_low == 17'b1_1111_1111_1111_1111)) ? 1'b1 : 1'b0;
 	assign counter			= w_count[7:0];
 
 	// --------------------------------------------------------------------
