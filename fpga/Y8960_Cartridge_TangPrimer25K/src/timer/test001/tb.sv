@@ -25,9 +25,9 @@
 // -----------------------------------------------------------------------------
 
 module tb ();
-	localparam	clk_base	= 1_000_000_000/42.95454;	//	ps
+	localparam	clk_base	= 1_000_000_000/85.90908;	//	ps
 	int				test_no;
-	int				i;
+	int				i, j;
 	reg				clk;
 	reg				reset_n;
 	reg				bus_ioreq;
@@ -39,6 +39,7 @@ module tb ();
 	wire	[7:0]	bus_rdata;
 	wire			bus_rdata_en;
 	wire			intr_n;
+	reg		[32:0]	ff_counter = 0;
 
 	// --------------------------------------------------------------------
 	//	DUT
@@ -62,6 +63,10 @@ module tb ();
 	// --------------------------------------------------------------------
 	always #(clk_base/2) begin
 		clk <= ~clk;
+	end
+
+	always @( posedge clk ) begin
+		ff_counter <= ff_counter + 1;
 	end
 
 	// --------------------------------------------------------------------
@@ -159,7 +164,12 @@ module tb ();
 	);
 		logic	[7:0]	data;
 		logic			time_out;
-	
+		logic	[32:0]	start_time;
+		logic	[32:0]	end_time;
+		logic	[32:0]	count_time;
+		logic	[32:0]	low_limit;
+		logic	[32:0]	high_limit;
+
 		$display( "******************************************************" );
 		$display( "* Core%1d                                              *", core_number );
 		$display( "******************************************************" );
@@ -402,6 +412,75 @@ module tb ();
 		assert( data[core_number] == 1'b0 );
 		//	要因クリア後に割り込に信号もクリアされていることを確認
 		assert( intr_n == 1'b1 );
+
+		// ---------------------------------------------------------
+		//	ワンショットのカウンター動作による reso振り
+		// ---------------------------------------------------------
+		test_no=8;
+		if( core_number == 0 ) begin
+			j = 7;
+		end
+		else begin
+			j = 4;
+		end
+		for( i = 0; i < j; i++ ) begin
+			$display( "Reso = %1d (test_no=8)", i );
+			//	MODE
+			write_io( 8'hB0, { 4'd0, core_number, 2'd0 }, time_out );
+			assert( time_out == 1'b0 );
+			//	[IE][RESO][RESO][RESO][RSV][RSV][RSV][MODE]
+			write_io( 8'hB1, i << 4, time_out );
+			assert( time_out == 1'b0 );
+			//	COUNT
+			write_io( 8'hB0, { 4'd0, core_number, 2'd1 }, time_out );
+			assert( time_out == 1'b0 );
+			write_io( 8'hB1, 8'd5, time_out );
+			assert( time_out == 1'b0 );
+			//	CONTROL
+			write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
+			assert( time_out == 1'b0 );
+			write_io( 8'hB1, 8'd3, time_out );
+			assert( time_out == 1'b0 );
+			start_time = ff_counter;
+			forever begin
+				read_io( 8'hB2, data, time_out );
+				assert( time_out == 1'b0 );
+				assert( data[7:4] == 4'd0 );
+				if( data[core_number] ) begin
+					break;
+				end
+			end
+			//	IE=0 なので割り込みはあがらない
+			assert( intr_n == 1'b1 );
+			end_time = ff_counter;
+			//	カウント値が停止していることを確認
+			write_io( 8'hB3, { 6'd0, core_number }, time_out );
+			assert( time_out == 1'b0 );
+			read_io( 8'hB3, data, time_out );
+			assert( time_out == 1'b0 );
+			assert( data == 8'd5 );
+			//	タイマー停止
+			write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
+			assert( time_out == 1'b0 );
+			write_io( 8'hB1, 8'd2, time_out );
+			assert( time_out == 1'b0 );
+			//	要因クリア
+			write_io( 8'hB2, 1 << core_number, time_out );
+			assert( time_out == 1'b0 );
+			//	要因クリアされていることを確認
+			read_io( 8'hB2, data, time_out );
+			assert( time_out == 1'b0 );
+			assert( data[core_number] == 1'b0 );
+			//	要因クリア後にも割り込みはあがらない
+			assert( intr_n == 1'b1 );
+			//	経過時間を確認
+			count_time	= end_time - start_time;
+			low_limit	= (5 << (i * 2 + 10));
+			high_limit	= (6 << (i * 2 + 10)) + 10;
+			$display( "  count time: %d (%d, %d)", count_time, low_limit, high_limit );
+			assert( count_time >= low_limit );
+			assert( count_time <= high_limit );
+		end
 	endtask
 
 	// --------------------------------------------------------------------
