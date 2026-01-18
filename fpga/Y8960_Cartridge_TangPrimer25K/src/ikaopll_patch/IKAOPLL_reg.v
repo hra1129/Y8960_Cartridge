@@ -161,7 +161,6 @@ reg             dc_reg, dm_reg;
 reg     [2:0]   fb_reg;
 reg     [3:0]   test_reg;
 reg     [5:0]   rhythm_reg;
-reg     [1:0]   altpatch_en_reg;
 
 assign  o_TEST = test_reg;
 assign  o_RHYTHM_EN = rhythm_reg[5];
@@ -198,7 +197,7 @@ begin
             else if(d1reg_addr == 8'h6) {sl_reg[0], rr_reg[0]} <= dbus_inlatch;
             else if(d1reg_addr == 8'h7) {sl_reg[1], rr_reg[1]} <= dbus_inlatch;
             else if(d1reg_addr == 8'hE) rhythm_reg <= dbus_inlatch[5:0];
-            else if(d1reg_addr == 8'hF) {altpatch_en_reg, test_reg} <= dbus_inlatch[5:0];
+            else if(d1reg_addr == 8'hF) test_reg <= dbus_inlatch[3:0];
         end
     end end
 end
@@ -210,8 +209,8 @@ end
 ////
 
 //latch D9REG address
-reg     [5:0]   d9reg_addr;
-always @(posedge emuclk) if(!phi1ncen_n) if(addrreg_wrrq && dbus_inlatch[7:6] == 2'b00) d9reg_addr <= dbus_inlatch[5:0];
+reg     [6:0]   d9reg_addr;
+always @(posedge emuclk) if(!phi1ncen_n) if(addrreg_wrrq && dbus_inlatch[7] == 1'b0) d9reg_addr <= dbus_inlatch[6:0];
 
 //D9REG enable
 reg             d9reg_en;
@@ -249,13 +248,14 @@ end
 wire            d9reg_addr_match = ~d9reg_addrcntr[4] & (d9reg_addrcntr[3:0] == d9reg_addr[3:0]) & trace_d9reg_addrcntr;
 
 //D9REG enable signals
-wire            reg10_18_en = ((d9reg_addr[5:4] == 2'b01) & d9reg_addr_match) | ~i_RST_n;
-wire            reg20_28_en = ((d9reg_addr[5:4] == 2'b10) & d9reg_addr_match) | ~i_RST_n;
-wire            reg30_38_en = ((d9reg_addr[5:4] == 2'b11) & d9reg_addr_match) | ~i_RST_n;
-
+wire            reg10_18_en = ((d9reg_addr[6:4] == 3'b001) & d9reg_addr_match) | ~i_RST_n;
+wire            reg20_28_en = ((d9reg_addr[6:4] == 3'b010) & d9reg_addr_match) | ~i_RST_n;
+wire            reg30_38_en = ((d9reg_addr[6:4] == 3'b011) & d9reg_addr_match) | ~i_RST_n;
+wire            reg40_48_en = ((d9reg_addr[6:4] == 3'b100) & d9reg_addr_match) | ~i_RST_n;
 //D9REG
 wire            kon_reg;
 wire    [3:0]   vol_reg, inst_reg;
+wire    [1:0]   bank_reg;
 
 IKAOPLL_d9reg #(8) u_fnum_lsbs (.i_EMUCLK(emuclk), .i_phi1_NCEN_n(phi1ncen_n), 
                                 .i_EN(reg10_18_en), .i_TAPSEL({i_CYCLE_D4_ZZ, i_CYCLE_D3_ZZ}), .i_D(i_RST_n ? d9reg_data : 8'd0), .o_Q(o_FNUM[7:0]));
@@ -278,6 +278,8 @@ IKAOPLL_d9reg #(4) u_vol       (.i_EMUCLK(emuclk), .i_phi1_NCEN_n(phi1ncen_n),
 IKAOPLL_d9reg #(4) u_inst      (.i_EMUCLK(emuclk), .i_phi1_NCEN_n(phi1ncen_n), 
                                 .i_EN(reg30_38_en), .i_TAPSEL({i_CYCLE_D4_ZZ, i_CYCLE_D3_ZZ}), .i_D(i_RST_n ? d9reg_data[7:4] : 4'd0), .o_Q(inst_reg));
 
+IKAOPLL_d9reg #(2) u_bank      (.i_EMUCLK(emuclk), .i_phi1_NCEN_n(phi1ncen_n), 
+                                .i_EN(reg40_48_en), .i_TAPSEL({i_CYCLE_D4_ZZ, i_CYCLE_D3_ZZ}), .i_D(i_RST_n ? d9reg_data[1:0] : 2'd0), .o_Q(bank_reg));
 
 
 ///////////////////////////////////////////////////////////
@@ -312,10 +314,7 @@ IKAOPLL_instrom #(INSTROM_STYLE) u_instrom (
     //chip clock
     .i_EMUCLK                   (emuclk                     ),
     .i_phi1_PCEN_n              (phi1pcen_n                 ),
-
-    //1 = use the optional VRC7 enable register, 0 = use value from off-chip
-    .i_ALTPATCH_EN              (ALTPATCH_CONFIG_MODE ? altpatch_en_reg : { i_ALTPATCH_EN, i_ALTPATCH_EN } ),
-
+    .i_INST_BANK                (bank_reg                   ),
     .i_INST_ADDR                (inst_reg                   ),
     .i_BD0_SEL(perc_proc_d), .i_HH_SEL(perc_proc[0]), .i_TT_SEL(perc_proc[1]), .i_BD1_SEL(perc_proc[2]), .i_SD_SEL(perc_proc[3]), .i_TC_SEL(perc_proc[4]), 
     .i_MnC_SEL(i_MnC_SEL),
@@ -566,7 +565,7 @@ module IKAOPLL_instrom #(parameter INSTROM_STYLE = 0) (
     input   wire            i_EMUCLK,
     input   wire            i_phi1_PCEN_n, //positive!
 
-    input   wire    [1:0]   i_ALTPATCH_EN,
+    input   wire    [1:0]   i_INST_BANK,
     input   wire    [3:0]   i_INST_ADDR,
     input   wire            i_BD0_SEL, i_HH_SEL, i_TT_SEL, i_BD1_SEL, i_SD_SEL, i_TC_SEL,
     input   wire            i_MnC_SEL, //1=MOD 0=CAR
@@ -591,17 +590,17 @@ reg     [6:0]   mem_addr;
 always @(*) begin
     if(percussion_sel) begin
         case({i_BD0_SEL, i_HH_SEL, i_TT_SEL, i_BD1_SEL, i_SD_SEL, i_TC_SEL})
-            6'b100000: mem_addr = {i_ALTPATCH_EN, 1'b1, 4'h0};
-            6'b010000: mem_addr = {i_ALTPATCH_EN, 1'b1, 4'h1};
-            6'b001000: mem_addr = {i_ALTPATCH_EN, 1'b1, 4'h2};
-            6'b000100: mem_addr = {i_ALTPATCH_EN, 1'b1, 4'h3};
-            6'b000010: mem_addr = {i_ALTPATCH_EN, 1'b1, 4'h4};
-            6'b000001: mem_addr = {i_ALTPATCH_EN, 1'b1, 4'h5};
-            default:   mem_addr = {i_ALTPATCH_EN, 1'b1, 4'hF};
+            6'b100000: mem_addr = {i_INST_BANK, 1'b1, 4'h0};
+            6'b010000: mem_addr = {i_INST_BANK, 1'b1, 4'h1};
+            6'b001000: mem_addr = {i_INST_BANK, 1'b1, 4'h2};
+            6'b000100: mem_addr = {i_INST_BANK, 1'b1, 4'h3};
+            6'b000010: mem_addr = {i_INST_BANK, 1'b1, 4'h4};
+            6'b000001: mem_addr = {i_INST_BANK, 1'b1, 4'h5};
+            default:   mem_addr = {i_INST_BANK, 1'b1, 4'hF};
         endcase
     end
     else begin
-        mem_addr = {i_ALTPATCH_EN, 1'b0, i_INST_ADDR};
+        mem_addr = {i_INST_BANK, 1'b0, i_INST_ADDR};
     end
 end
 
