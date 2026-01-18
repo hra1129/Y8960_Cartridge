@@ -208,7 +208,7 @@ module msx_timer_core (
 		else if( intr_clear ) begin
 			ff_count_end	<= 1'b0;
 		end
-		else if( w_count_end ) begin
+		else if( ff_count_enable && w_count_end ) begin
 			ff_count_end	<= 1'b1;
 		end
 	end
