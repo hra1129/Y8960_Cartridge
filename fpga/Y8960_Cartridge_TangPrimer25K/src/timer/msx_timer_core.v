@@ -82,8 +82,8 @@ module msx_timer_core (
 	reg				ff_count_end;
 	wire	[13:0]	w_count_high;
 	wire			w_count_overflow;
-	wire	[7:0]	w_count;
-	wire	[16:0]	w_count_low;
+	wire	[8:0]	w_count;
+	wire	[23:0]	w_count_low;
 	wire			w_count_end;
 
 	// --------------------------------------------------------------------
@@ -95,7 +95,6 @@ module msx_timer_core (
 			ff_reso			<= 3'd0;
 			ff_intr_enable	<= 1'b0;
 			ff_count		<= 8'd0;
-			ff_count_enable	<= 1'b0;
 		end
 		else if( bus_valid && bus_write ) begin
 			//	register write
@@ -105,14 +104,29 @@ module msx_timer_core (
 				ff_intr_enable	<= bus_wdata[7];
 			end
 			else if( bus_address == c_count_register ) begin
-				ff_count	<= bus_wdata;
+				ff_count		<= bus_wdata;
 			end
-			else if( bus_address == c_control_register ) begin
+			else begin
+				//	hold
+			end
+		end
+	end
+
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_count_enable	<= 1'b0;
+		end
+		else if( bus_valid && bus_write ) begin
+			//	register write
+			if( bus_address == c_control_register ) begin
 				ff_count_enable	<= bus_wdata[0];
 			end
 			else begin
 				//	hold
 			end
+		end
+		else if( !ff_repeat && w_count_end ) begin
+			ff_count_enable	<= 1'b0;
 		end
 	end
 
@@ -147,6 +161,17 @@ module msx_timer_core (
 		end
 	end
 
+	// =========================================================================================================================================
+	//	[31][30][29][28][27][26][25][24][23][22][21][20][19][18][17][16][15][14][13][12][11][10][09][08][07][06][05][04][03][02][01][00]
+	//	<--- high ---------------------------------------------><-- count ---------------------><-- low -------------------------------> reso=0
+	//	<--- high -------------------------------------><-- count ---------------------><-- low ---------------------------------------> reso=1
+	//	<--- high -----------------------------><-- count ---------------------><-- low -----------------------------------------------> reso=2
+	//	<--- high ---------------------><-- count ---------------------><-- low -------------------------------------------------------> reso=3
+	//	<--- high -------------><-- count ---------------------><-- low ---------------------------------------------------------------> reso=4
+	//	<--- high -----><-- count ---------------------><-- low -----------------------------------------------------------------------> reso=5
+	//	<------><-- count ---------------------><-- low -------------------------------------------------------------------------------> reso=6
+	//	<-- count ---------------------><-- low ---------------------------------------------------------------------------------------> reso=7
+	// =========================================================================================================================================
 	assign w_count_high     = (ff_reso == 3'd0) ? ff_counter[31:18] :
 	                          (ff_reso == 3'd1) ? { 2'd0, ff_counter[31:20] } :
 	                          (ff_reso == 3'd2) ? { 4'd0, ff_counter[31:22] } :
@@ -163,14 +188,14 @@ module msx_timer_core (
 	                          (ff_reso == 3'd4) ? { 8'd0, ff_counter[25:18] } :
 	                          (ff_reso == 3'd5) ? { 10'd0, ff_counter[27:20] } :
 	                          (ff_reso == 3'd6) ? { 12'd0, ff_counter[29:22] } : ff_counter[31:24];
-	assign w_count_low		= (ff_reso == 3'd0) ? { 7'b111_1111, ff_counter[ 9:0] }: 
-	                          (ff_reso == 3'd1) ? {  6'b11_1111, ff_counter[10:0] }: 
-	                          (ff_reso == 3'd2) ? {   5'b1_1111, ff_counter[11:0] }: 
-	                          (ff_reso == 3'd3) ? {     4'b1111, ff_counter[12:0] }: 
-	                          (ff_reso == 3'd4) ? {      3'b111, ff_counter[13:0] }: 
-	                          (ff_reso == 3'd5) ? {       2'b11, ff_counter[14:0] }: 
-	                          (ff_reso == 3'd6) ? {        1'b1, ff_counter[15:0] }: ff_counter[16:0];
-	assign w_count_end		= (({1'b0, ff_count} <= w_count) && (w_count_low == 17'b1_1111_1111_1111_1111)) ? 1'b1 : 1'b0;
+	assign w_count_low		= (ff_reso == 3'd0) ? { 14'b11_1111_1111_1111, ff_counter[ 9:0] }: 
+	                          (ff_reso == 3'd1) ? {    12'b1111_1111_1111, ff_counter[11:0] }: 
+	                          (ff_reso == 3'd2) ? {      10'b11_1111_1111, ff_counter[13:0] }: 
+	                          (ff_reso == 3'd3) ? {          8'b1111_1111, ff_counter[15:0] }: 
+	                          (ff_reso == 3'd4) ? {            6'b11_1111, ff_counter[17:0] }: 
+	                          (ff_reso == 3'd5) ? {               4'b1111, ff_counter[19:0] }: 
+	                          (ff_reso == 3'd6) ? {                 2'b11, ff_counter[21:0] }: ff_counter[23:0];
+	assign w_count_end		= (({1'b0, ff_count} <= w_count) && (w_count_low == 24'hFFFFFF)) ? 1'b1 : 1'b0;
 	assign counter			= w_count[7:0];
 
 	// --------------------------------------------------------------------
