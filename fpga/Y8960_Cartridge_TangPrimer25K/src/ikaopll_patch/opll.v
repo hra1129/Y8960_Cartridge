@@ -28,7 +28,7 @@ module dual_opll (
 	// --------------------------------------------------------------------
 	assign w_cs0_n		= ( bus_ioreq && ({ bus_address[7:1], 1'b0 } == 8'h7C) ) || ( bus_mereq && ({ bus_address[15:1], 1'b0 } == 16'h7FF4) ) ? ~bus_valid: 1'b1;
 	assign w_cs1_n		= ( bus_ioreq && ({ bus_address[7:1], 1'b0 } == 8'h7A) ) || ( bus_mereq && ({ bus_address[15:1], 1'b0 } == 16'h7FF2) ) ? ~bus_valid: 1'b1;
-	assign bus_ready	= ~(w_cs0_n & w_cs1_n) & (ff_divider == 5'd0 );
+	assign bus_ready	= (~(w_cs0_n & w_cs1_n) & (ff_divider == 5'd0 )) | (w_cs0_n & w_cs1_n);
 
 	// --------------------------------------------------------------------
 	//	Clock divider
@@ -62,7 +62,7 @@ module dual_opll (
 		.i_IC_n						( reset_n			),
 		.i_ALTPATCH_EN				( 1'b0				),		//	VRC7 patch disable
 		.i_CS_n						( w_cs0_n			),
-		.i_WR_n						( wr_n				),
+		.i_WR_n						( ~bus_write		),
 		.i_A0						( bus_address[0]	),
 		.i_D						( bus_wdata			),
 		.o_D						( 					),		//	no use: Read test bits
@@ -91,7 +91,7 @@ module dual_opll (
 		.i_IC_n						( reset_n			),
 		.i_ALTPATCH_EN				( 1'b0				),		//	VRC7 patch disable
 		.i_CS_n						( w_cs1_n			),
-		.i_WR_n						( wr_n				),
+		.i_WR_n						( ~bus_write		),
 		.i_A0						( bus_address[0]	),
 		.i_D						( bus_wdata			),
 		.o_D						( 					),		//	no use: Read test bits

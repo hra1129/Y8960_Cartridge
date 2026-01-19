@@ -57,7 +57,7 @@
 
 module y8960cartridge_tangprimer25k (
 	input			clk_14m,				//	H5	14.31818MHz MSX clock
-	input			clk_25m,				//	E2	50.00000MHz audio base clock (on board)
+	input			clk_50m,				//	E2	50.00000MHz audio base clock (on board)
 	//	slot
 	input			slot_reset,				//	G11
 	input	[15:0]	slot_a,					//	L11,K11,H8,H7,G7,G8,F5,G5,J11,J10,F6,F7,K8,J8,K9,L9
@@ -83,13 +83,132 @@ module y8960cartridge_tangprimer25k (
 	input			flash_spi_miso,			//	E5
 	output			flash_spi_mosi,			//	D6
 	//	PSRAM
-	output			psram_ce_n,				//	??
-	output			psram_sclk,				//	??
-	inout	[3:0]	psram_sio,				//	??,??,??,??
+	output			psram_ce_n,				//	F2
+	output			psram_sclk,				//	F1
+	inout	[3:0]	psram_sio,				//	D1,E1,D8,A1
 	//	DIP S/W
-	
+	input	[1:0]	dipsw,					//	E3,B2
 	//	LED
-	
+	output	[3:0]	led						//	B10,B11,C10,C11
 );
+	wire			reset_n;
+	wire	[2:0]	bus_address;
+	wire			bus_memreq;
+	wire			bus_ioreq;
+	wire			bus_write;
+	wire			bus_valid;
+	wire			bus_ready;
+	wire	[7:0]	bus_wdata;
+	wire	[7:0]	bus_rdata;
+	wire			bus_rdata_en;
+
+	wire			bus_timer_ready;
+	wire	[7:0]	bus_timer_rdata;
+	wire			bus_timer_rdata_en;
+
+	wire			bus_opll_ready;
+	wire	[7:0]	bus_opll_rdata;
+	wire			bus_opll_rdata_en;
+
+	wire			bus_ssg_ready;
+	wire	[7:0]	bus_ssg_rdata;
+	wire			bus_ssg_rdata_en;
+	
+	reg		[4:0]	ff_divider;
+	reg				ff_enable;
+
+	// ---------------------------------------------------------
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_divider	<= 5'd0;
+			ff_enable	<= 1'b0;
+		end
+		else if( ff_divider == 5'd23 ) begin
+			ff_divider	<= 5'd0;
+			ff_enable	<= 1'b1;				//	3.579545MHz
+		end
+		else begin
+			ff_divider	<= ff_divider + 5'd1;
+			ff_enable	<= 1'b0;
+		end
+	end
+
+	// ---------------------------------------------------------
+	msx_slot u_msx_slot (
+		.clk				( clk						),
+		.reset_n			( reset_n					),
+		.p_slot_reset_n		( slot_reset_n				),
+		.p_slot_ioreq_n		( slot_ioreq_n				),
+		.p_slot_wr_n		( slot_wr_n					),
+		.p_slot_rd_n		( slot_rd_n					),
+		.p_slot_address		( slot_address				),
+		.p_slot_data		( slot_data					),
+		.p_slot_int			( slot_int					),
+		.p_slot_data_dir	( slot_data_dir				),
+		.int_n				( int_n						),
+		.bus_address		( bus_address				),
+		.bus_ioreq			( bus_ioreq					),
+		.bus_write			( bus_write					),
+		.bus_valid			( bus_valid					),
+		.bus_ready			( bus_ready					),
+		.bus_wdata			( bus_wdata					),
+		.bus_rdata			( bus_rdata					),
+		.bus_rdata_en		( bus_rdata_en				)
+	);
+
+	// ---------------------------------------------------------
+	msx_timer u_msx_timer (
+		.clk				( clk						),
+		.reset_n			( reset_n					),
+		.bus_ioreq			( bus_ioreq					),
+		.bus_address		( bus_address				),
+		.bus_write			( bus_write					),
+		.bus_valid			( bus_valid					),
+		.bus_ready			( bus_timer_ready			),
+		.bus_wdata			( bus_wdata					),
+		.bus_rdata			( bus_timer_rdata			),
+		.bus_rdata_en		( bus_timer_rdata_en		),
+		.intr_n				( intr_n					)
+	);
+
+	// ---------------------------------------------------------
+	dual_opll u_dual_opll (
+		.clk				( clk						),
+		.reset_n			( reset_n					),
+		.enable				( ff_enable					),
+		.bus_memreq			( bus_memreq				),
+		.bus_ioreq			( bus_ioreq					),
+		.bus_address		( bus_address				),
+		.bus_write			( bus_write					),
+		.bus_valid			( bus_valid					),
+		.bus_ready			( bus_opll_ready			),
+		.bus_wdata			( bus_wdata					),
+		.sound_out0			( sound_out0				),
+		.sound_out1			( sound_out1				)
+	);
+
+	// ---------------------------------------------------------
+	dual_ssg #(
+		.BUILTIN			( 0							)
+	) u_dual_ssg (
+		.clk				( clk						),
+		.reset_n			( reset_n					),
+		.enable				( ff_enable					),
+		.bus_ioreq			( bus_ioreq					),
+		.bus_write			( bus_write					),
+		.bus_address		( bus_address				),
+		.bus_ready			( bus_ssg_ready				),
+		.bus_wdata			( bus_wdata					),
+		.bus_rdata			( bus_ssg_rdata				),
+		.bus_rdata_en		( bus_ssg_rdata_en			),
+		.ssg_ioa			( 6'd0						),
+		.ssg_iob			( 							),
+		.keyboard_type		( 1'b1						),
+		.cmt_read			( 1'b0						),
+		.kana_led			( 							),
+		.sound_out_l		( sound_out_l				),
+		.sound_out_r		( sound_out_r				),
+		.mode				( mode						)
+	);
 
 endmodule

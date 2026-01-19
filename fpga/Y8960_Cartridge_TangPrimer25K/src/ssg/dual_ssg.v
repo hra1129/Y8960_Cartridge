@@ -55,19 +55,20 @@
 //
 //-----------------------------------------------------------------------------
 
-module dual_ssg #( 
-	parameter		core_number = 1'b0
+module dual_ssg #(
+	parameter		BUILTIN = 1
 ) (
 	input			clk,
 	input			reset_n,
 	input			enable,
-	input			iorq_n,
-	input			wr_n,
-	input			rd_n,
-	input	[1:0]	address,
-	input	[7:0]	wdata,
-	output	[7:0]	rdata,
-	output			rdata_en,
+	input			bus_ioreq,
+	input			bus_valid,
+	input			bus_write,
+	input	[7:0]	bus_address,
+	output			bus_ready,
+	input	[7:0]	bus_wdata,
+	output	[7:0]	bus_rdata,
+	output			bus_rdata_en,
 
 	inout	[5:0]	ssg_ioa,
 	output	[2:0]	ssg_iob,
@@ -78,27 +79,31 @@ module dual_ssg #(
 
 	output	[12:0]	sound_out_l,		//	10bit/ch * 6ch = 13bit
 	output	[12:0]	sound_out_r,		//	10bit/ch * 6ch = 13bit
-	input	[1:0]	mode,				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
-	input			stereo				//	0: mono, 1: stereo
+	input	[1:0]	mode				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
 );
+	localparam		c_ssg_port	= 8'hA0;
+	wire			w_ioreq;
 	wire	[7:0]	w_rdata0;
 	wire			w_rdata_en0;
 	wire	[7:0]	w_rdata1;
 	wire			w_rdata_en1;
 
+	assign w_ioreq	= ( {bus_address[7:2], 2'd0} == c_ssg_port ) ? bus_ioreq: 1'b0;
+
 	ssg_core #( 
+		.builtin		( BUILTIN			),
 		.core_number	( 1'b0				)
 	) ssg_core0 (
 		.clk			( clk				),
 		.reset_n		( reset_n			),
 		.enable			( enable			),
-		.iorq_n			( iorq_n			),
-		.wr_n			( wr_n				),
-		.rd_n			( rd_n				),
-		.address		( address			),
-		.wdata			( wdata				),
-		.rdata			( w_rdata0			),
-		.rdata_en		( w_rdata_en0		),
+		.bus_ioreq		( w_ioreq			),
+		.bus_write		( bus_write			),
+		.bus_address	( bus_address		),
+		.bus_ready		( bus_ssg_ready		),
+		.bus_wdata		( bus_wdata			),
+		.bus_rdata		( w_rdata_en0		),
+		.bus_rdata_en	( w_rdata_en0		),
 		.ssg_ioa		( ssg_ioa			),
 		.ssg_iob		( ssg_iob			),
 		.keyboard_type	( keyboard_type		),
@@ -109,18 +114,19 @@ module dual_ssg #(
 	);
 
 	ssg_core #( 
+		.builtin		( 1'b1				),
 		.core_number	( 1'b1				)
 	) ssg_core1 (
 		.clk			( clk				),
 		.reset_n		( reset_n			),
 		.enable			( enable			),
-		.iorq_n			( iorq_n			),
-		.wr_n			( wr_n				),
-		.rd_n			( rd_n				),
-		.address		( address			),
-		.wdata			( wdata				),
-		.rdata			( w_rdata1			),
-		.rdata_en		( w_rdata_en1		),
+		.bus_ioreq		( w_ioreq			),
+		.bus_write		( bus_write			),
+		.bus_address	( bus_address		),
+		.bus_ready		( bus_ssg_ready		),
+		.bus_wdata		( bus_wdata			),
+		.bus_rdata		( w_rdata1			),
+		.bus_rdata_en	( w_rdata_en1		),
 		.ssg_ioa		( 6'dz				),
 		.ssg_iob		( 					),
 		.keyboard_type	( 1'b0				),

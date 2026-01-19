@@ -32,6 +32,7 @@
         <File path="src/ssg/ssg_core.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer_core.v" type="file.verilog" enable="1"/>
+        <File path="src/y8960_cartridge_tangprimer25k.v" type="file.verilog" enable="1"/>
         <File path="src/sn76489_audio/src/sn76489_audio.vhd" type="file.vhdl" enable="1"/>
         <File path="src/opl3/exp_tab.mem" type="file.other" enable="1"/>
         <File path="src/opl3/opl3prg.mem" type="file.other" enable="1"/>
