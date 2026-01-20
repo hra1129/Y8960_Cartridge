@@ -436,10 +436,10 @@ module ssg_core #(
 		else begin
 			if( enable && (ff_ssg_state == 5'd0) ) begin
 				if( ff_ssg_noise_counter != 5'd0 ) begin
-					ff_ssg_noise_counter <= ff_ssg_noise_counter - 1;
+					ff_ssg_noise_counter <= ff_ssg_noise_counter - 5'd1;
 				end
 				else if( ff_ssg_noise_frequency != 5'd0 ) begin
-					ff_ssg_noise_counter <= ff_ssg_noise_frequency - 1;
+					ff_ssg_noise_counter <= ff_ssg_noise_frequency - 5'd1;
 				end
 			end
 		end
@@ -487,10 +487,10 @@ module ssg_core #(
 		else if( enable && ff_ssg_state[3:0] == 4'd0 ) begin
 			// Envelope period counter
 			if( ff_ssg_envelope_counter != 16'd0 && ff_ssg_envelope_req == ff_ssg_envelope_ack ) begin
-				ff_ssg_envelope_counter <= ff_ssg_envelope_counter - 1;
+				ff_ssg_envelope_counter <= ff_ssg_envelope_counter - 16'd1;
 			end
 			else if( ff_ssg_envelope_frequency != 16'd0) begin
-				ff_ssg_envelope_counter <= ff_ssg_envelope_frequency - 1;
+				ff_ssg_envelope_counter <= ff_ssg_envelope_frequency - 16'd1;
 			end
 		end
 		else begin
@@ -507,7 +507,7 @@ module ssg_core #(
 				ff_ssg_envelope_ptr <= 6'b111111;
 			end
 			else if( ff_ssg_envelope_counter == 16'd0 && (ff_ssg_envelope_ptr[5] || (!ff_hold && ff_continue)) ) begin
-				ff_ssg_envelope_ptr <= ff_ssg_envelope_ptr - 1;
+				ff_ssg_envelope_ptr <= ff_ssg_envelope_ptr - 6'd1;
 			end
 		end
 		else begin
@@ -524,10 +524,10 @@ module ssg_core #(
 				ff_ssg_envelope_volume <= 5'd0;
 			end
 			else if( ff_ssg_envelope_ptr[5] || !(ff_alternate ^ ff_hold) ) begin
-				ff_ssg_envelope_volume <= ff_attack ? ~ff_ssg_envelope_ptr : ff_ssg_envelope_ptr;
+				ff_ssg_envelope_volume <= ff_attack ? ~ff_ssg_envelope_ptr[4:0] : ff_ssg_envelope_ptr[4:0];
 			end
 			else begin
-				ff_ssg_envelope_volume <= ff_attack ? ff_ssg_envelope_ptr : ~ff_ssg_envelope_ptr;
+				ff_ssg_envelope_volume <= ff_attack ? ff_ssg_envelope_ptr[4:0] : ~ff_ssg_envelope_ptr[4:0];
 			end
 		end
 		else begin

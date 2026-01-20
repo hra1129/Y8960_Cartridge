@@ -1,0 +1,232 @@
+//
+//Written by GowinSynthesis
+//Tool Version "V1.9.11.02 (64-bit)"
+//Wed Jan 21 07:24:58 2026
+
+//Source file index table:
+//file0 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/i2s_audio/i2s_audio.v"
+//file1 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL.v"
+//file2 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_dac.v"
+//file3 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_eg.v"
+//file4 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_lfo.v"
+//file5 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_op.v"
+//file6 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_pg.v"
+//file7 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_primitives.v"
+//file8 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll/src/IKAOPLL_modules/IKAOPLL_timinggen.v"
+//file9 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll_patch/IKAOPLL_reg.v"
+//file10 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC.v"
+//file11 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_player_a.v"
+//file12 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_player_s.v"
+//file13 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v"
+//file14 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_vrc_a.v"
+//file15 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_vrc_s.v"
+//file16 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/msx_slot/msx_slot.v"
+//file17 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssg/dual_ssg.v"
+//file18 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssg/ssg_core.v"
+//file19 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/timer/msx_timer.v"
+//file20 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/timer/msx_timer_core.v"
+//file21 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v"
+//file22 "\D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio/src/sn76489_audio.vhd"
+`timescale 100 ps/100 ps
+module y8960cartridge_tangprimer25k (
+  clk_14m,
+  clk_50m,
+  slot_reset,
+  slot_a,
+  slot_d,
+  slot_sltsl,
+  slot_mereq_n,
+  slot_ioreq_n,
+  slot_wr_n,
+  slot_rd_n,
+  slot_wait,
+  slot_intr,
+  slot_busdir,
+  audio_mclk,
+  audio_bclk,
+  audio_lrclk,
+  audio_sdata,
+  flash_spi_clk,
+  flash_spi_cs_n,
+  flash_spi_wp_n,
+  flash_spi_hold_n,
+  flash_spi_miso,
+  flash_spi_mosi,
+  psram_ce_n,
+  psram_sclk,
+  psram_sio,
+  dipsw,
+  led
+)
+;
+input clk_14m;
+input clk_50m;
+input slot_reset;
+input [15:0] slot_a;
+inout [7:0] slot_d;
+input slot_sltsl;
+input slot_mereq_n;
+input slot_ioreq_n;
+input slot_wr_n;
+input slot_rd_n;
+output slot_wait;
+output slot_intr;
+output slot_busdir;
+output audio_mclk;
+output audio_bclk;
+output audio_lrclk;
+output audio_sdata;
+output flash_spi_clk;
+output flash_spi_cs_n;
+output flash_spi_wp_n;
+output flash_spi_hold_n;
+input flash_spi_miso;
+output flash_spi_mosi;
+output psram_ce_n;
+output psram_sclk;
+inout [3:0] psram_sio;
+input [1:0] dipsw;
+output [3:0] led;
+wire [7:0] slot_d_in;
+wire VCC;
+wire GND;
+  IOBUF slot_d_0_iobuf (
+    .O(slot_d_in[0]),
+    .IO(slot_d[0]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_1_iobuf (
+    .O(slot_d_in[1]),
+    .IO(slot_d[1]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_2_iobuf (
+    .O(slot_d_in[2]),
+    .IO(slot_d[2]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_3_iobuf (
+    .O(slot_d_in[3]),
+    .IO(slot_d[3]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_4_iobuf (
+    .O(slot_d_in[4]),
+    .IO(slot_d[4]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_5_iobuf (
+    .O(slot_d_in[5]),
+    .IO(slot_d[5]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_6_iobuf (
+    .O(slot_d_in[6]),
+    .IO(slot_d[6]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  IOBUF slot_d_7_iobuf (
+    .O(slot_d_in[7]),
+    .IO(slot_d[7]),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF slot_wait_s0 (
+    .O(slot_wait),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF slot_intr_s0 (
+    .O(slot_intr),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF slot_busdir_s0 (
+    .O(slot_busdir),
+    .I(GND),
+    .OEN(VCC) 
+);
+  OBUF audio_mclk_obuf (
+    .O(audio_mclk),
+    .I(GND) 
+);
+  OBUF audio_bclk_obuf (
+    .O(audio_bclk),
+    .I(GND) 
+);
+  OBUF audio_lrclk_obuf (
+    .O(audio_lrclk),
+    .I(GND) 
+);
+  OBUF audio_sdata_obuf (
+    .O(audio_sdata),
+    .I(GND) 
+);
+  TBUF flash_spi_clk_s0 (
+    .O(flash_spi_clk),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF flash_spi_cs_n_s0 (
+    .O(flash_spi_cs_n),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF flash_spi_wp_n_s0 (
+    .O(flash_spi_wp_n),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF flash_spi_hold_n_s0 (
+    .O(flash_spi_hold_n),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF flash_spi_mosi_s0 (
+    .O(flash_spi_mosi),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF psram_ce_n_s0 (
+    .O(psram_ce_n),
+    .I(GND),
+    .OEN(VCC) 
+);
+  TBUF psram_sclk_s0 (
+    .O(psram_sclk),
+    .I(GND),
+    .OEN(VCC) 
+);
+  OBUF led_0_obuf (
+    .O(led[0]),
+    .I(GND) 
+);
+  OBUF led_1_obuf (
+    .O(led[1]),
+    .I(GND) 
+);
+  OBUF led_2_obuf (
+    .O(led[2]),
+    .I(GND) 
+);
+  OBUF led_3_obuf (
+    .O(led[3]),
+    .I(GND) 
+);
+  VCC VCC_cZ (
+    .V(VCC)
+);
+  GND GND_cZ (
+    .G(GND)
+);
+  GSR GSR (
+    .GSRI(VCC) 
+);
+endmodule /* y8960cartridge_tangprimer25k */

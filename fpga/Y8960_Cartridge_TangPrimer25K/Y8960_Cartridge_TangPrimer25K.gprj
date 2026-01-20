@@ -3,8 +3,9 @@
 <Project>
     <Template>FPGA</Template>
     <Version>5</Version>
-    <Device name="GW5A-25A" pn="GW5A-EV25PG256CC1/I0">gw5a25a-010</Device>
+    <Device name="GW5A-25A" pn="GW5A-LV25MG121NC1/I0">gw5a25a-002</Device>
     <FileList>
+        <File path="src/i2s_audio/i2s_audio.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_dac.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_eg.v" type="file.verilog" enable="1"/>
@@ -21,19 +22,14 @@
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_vrc_a.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_vrc_s.v" type="file.verilog" enable="1"/>
         <File path="src/msx_slot/msx_slot.v" type="file.verilog" enable="1"/>
-        <File path="src/opl3/compressor.sv" type="file.verilog" enable="1"/>
-        <File path="src/opl3/nextz80alu.v" type="file.verilog" enable="1"/>
-        <File path="src/opl3/nextz80cpu.v" type="file.verilog" enable="1"/>
-        <File path="src/opl3/nextz80reg.v" type="file.verilog" enable="1"/>
-        <File path="src/opl3/opl3.sv" type="file.verilog" enable="1"/>
-        <File path="src/opl3/opl3fm.sv" type="file.verilog" enable="1"/>
-        <File path="src/opl3/opl3seq.sv" type="file.verilog" enable="1"/>
         <File path="src/ssg/dual_ssg.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/ssg_core.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer_core.v" type="file.verilog" enable="1"/>
         <File path="src/y8960_cartridge_tangprimer25k.v" type="file.verilog" enable="1"/>
         <File path="src/sn76489_audio/src/sn76489_audio.vhd" type="file.vhdl" enable="1"/>
+        <File path="src/Y8960_Cartridge_TangPrimer25K.cst" type="file.cst" enable="1"/>
+        <File path="src/i2s_audio/i2s_audio.txt" type="file.other" enable="1"/>
         <File path="src/opl3/exp_tab.mem" type="file.other" enable="1"/>
         <File path="src/opl3/opl3prg.mem" type="file.other" enable="1"/>
         <File path="src/opl3/sin_tab_full.mem" type="file.other" enable="1"/>

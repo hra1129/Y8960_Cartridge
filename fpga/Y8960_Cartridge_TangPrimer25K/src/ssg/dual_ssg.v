@@ -70,8 +70,10 @@ module dual_ssg #(
 	output	[7:0]	bus_rdata,
 	output			bus_rdata_en,
 
-	input	[7:0]	ssg_ioa,
-	output	[7:0]	ssg_iob,
+	input	[7:0]	ssg_ioa0,
+	output	[7:0]	ssg_iob0,
+	input	[7:0]	ssg_ioa1,
+	output	[7:0]	ssg_iob1,
 
 	output	[11:0]	sound_out_l,		//	10bit/ch * 3ch = 12bit
 	output	[11:0]	sound_out_r,		//	10bit/ch * 3ch = 12bit
@@ -101,8 +103,8 @@ module dual_ssg #(
 		.bus_wdata		( bus_wdata			),
 		.bus_rdata		( w_rdata0			),
 		.bus_rdata_en	( w_rdata_en0		),
-		.ssg_ioa		( ssg_ioa			),
-		.ssg_iob		( ssg_iob			),
+		.ssg_ioa		( ssg_ioa0			),
+		.ssg_iob		( ssg_iob0			),
 		.sound_out		( sound_out_l		),
 		.mode			( mode				)
 	);
@@ -122,12 +124,12 @@ module dual_ssg #(
 		.bus_wdata		( bus_wdata			),
 		.bus_rdata		( w_rdata1			),
 		.bus_rdata_en	( w_rdata_en1		),
-		.ssg_ioa		( 8'hFF				),
-		.ssg_iob		( 					),
+		.ssg_ioa		( ssg_ioa1			),
+		.ssg_iob		( ssg_iob1			),
 		.sound_out		( sound_out_r		),
 		.mode			( mode				)
 	);
 
-	assign rdata		= w_rdata0 & w_rdata1;
-	assign rdata_en		= w_rdata_en0 | w_rdata_en1;
+	assign bus_rdata		= w_rdata0 & w_rdata1;
+	assign bus_rdata_en		= w_rdata_en0 | w_rdata_en1;
 endmodule

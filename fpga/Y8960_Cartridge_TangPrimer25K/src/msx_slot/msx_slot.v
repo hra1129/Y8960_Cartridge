@@ -57,28 +57,29 @@
 
 module msx_slot(
 	input			clk,
-	input			initial_busy,
+	output			reset_n,
 	//	MSX Slot Signal
 	input			p_slot_reset_n,
 	input			p_slot_ioreq_n,
 	input			p_slot_wr_n,
 	input			p_slot_rd_n,
-	input	[7:0]	p_slot_address,
+	input	[15:0]	p_slot_address,
 	inout	[7:0]	p_slot_data,
 	output			p_slot_int,				//	0 or HiZ: Normal, 1: Interrupt
 	output			p_slot_data_dir,		//	0: MSX→Cartridge (Write), 1: Cartridge→MSX (Read)
 	//	Local BUS
 	input			int_n,
-	output	[2:0]	bus_address,
+	output	[15:0]	bus_address,
 	output			bus_ioreq,
 	output			bus_write,
 	output			bus_valid,
 	input			bus_ready,
 	output	[7:0]	bus_wdata,
 	input	[7:0]	bus_rdata,
-	input			bus_rdata_en,
-	input			dipsw
+	input			bus_rdata_en
 );
+	reg				ff_reset_n			= 1'b0;
+
 	reg				ff_pre_slot_ioreq_n	= 1'b1;
 	reg				ff_pre_slot_wr_n	= 1'b1;
 	reg				ff_pre_slot_rd_n	= 1'b1;
@@ -87,11 +88,10 @@ module msx_slot(
 	reg				ff_slot_wr_n		= 1'b1;
 	reg				ff_slot_rd_n		= 1'b1;
 
-	reg		[7:0]	ff_slot_address;
+	reg		[15:0]	ff_slot_address;
 	reg		[7:0]	ff_slot_data;
-	reg		[2:0]	ff_bus_address;
+	reg		[15:0]	ff_bus_address;
 	wire			w_active;
-	reg				ff_initial_busy		= 1'b1;
 	reg				ff_iorq_wr			= 1'b0;
 	reg				ff_iorq_rd			= 1'b0;
 	reg				ff_active			= 1'b0;
@@ -103,21 +103,15 @@ module msx_slot(
 	reg				ff_ioreq_d1			= 1'b0;
 	reg				ff_ioreq_d2			= 1'b0;
 	reg				ff_ioreq_d3			= 1'b0;
-	wire	[7:0]	w_io_address;
-
-	assign w_io_address	= (dipsw == 1'b0) ? 8'h88: 8'h98;
 
 	// --------------------------------------------------------------------
-	//	Initial busy latch
+	//	reset signal
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !p_slot_reset_n ) begin
-			ff_initial_busy	<= 1'b1;
-		end
-		else begin
-			ff_initial_busy	<= initial_busy;
-		end
+		ff_reset_n	<= p_slot_reset_n;
 	end
+
+	assign reset_n		= ff_reset_n;
 
 	// --------------------------------------------------------------------
 	//	非同期載せ替えのために 2回叩いておく
@@ -138,9 +132,6 @@ module msx_slot(
 			ff_iorq_wr			<= 1'b0;
 			ff_iorq_rd			<= 1'b0;
 		end
-		else if( ff_initial_busy ) begin
-			//	hold
-		end
 		else begin
 			ff_iorq_wr			<= ~ff_slot_ioreq_n & ~ff_slot_wr_n;
 			ff_iorq_rd			<= ~ff_slot_ioreq_n & ~ff_slot_rd_n;
@@ -152,9 +143,7 @@ module msx_slot(
 	//	アドレスと書き込み時のデータは確定済み
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !ff_slot_ioreq_n ) begin
-			ff_slot_address		<= p_slot_address;
-		end
+		ff_slot_address		<= p_slot_address;
 	end
 
 	always @( posedge clk ) begin
@@ -213,8 +202,8 @@ module msx_slot(
 			end
 		end
 		else if( !ff_active && w_active ) begin
-			if( { ff_slot_address[7:3], 3'd0 } == w_io_address ) begin
-				ff_bus_address	<= ff_slot_address[2:0];
+			if( { ff_slot_address[7:3], 3'd0 } == 8'hA0 ) begin
+				ff_bus_address	<= ff_slot_address;
 				ff_ioreq		<= ff_iorq_wr | ff_iorq_rd;
 				ff_valid		<= 1'b1;
 			end

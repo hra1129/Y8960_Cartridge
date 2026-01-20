@@ -41,8 +41,10 @@ module tb ();
 	reg		[7:0]	bus_wdata;
 	wire	[7:0]	bus_rdata;
 	wire			bus_rdata_en;
-	reg		[7:0]	ssg_ioa = 8'd0;
-	wire	[7:0]	ssg_iob;
+	reg		[7:0]	ssg_ioa0 = 8'd0;
+	wire	[7:0]	ssg_iob0;
+	reg		[7:0]	ssg_ioa1 = 8'd0;
+	wire	[7:0]	ssg_iob1;
 	reg				keyboard_type = 1'b0;
 	reg				cmt_read = 1'b0;
 	wire			kana_led;
@@ -82,8 +84,10 @@ module tb ();
 		.bus_wdata			( bus_wdata			),
 		.bus_rdata			( bus_rdata			),
 		.bus_rdata_en		( bus_rdata_en		),
-		.ssg_ioa			( ssg_ioa			),
-		.ssg_iob			( ssg_iob			),
+		.ssg_ioa0			( ssg_ioa0			),
+		.ssg_iob0			( ssg_iob0			),
+		.ssg_ioa1			( ssg_ioa1			),
+		.ssg_iob1			( ssg_iob1			),
 		.sound_out_l		( sound_out_l		),
 		.sound_out_r		( sound_out_r		),
 		.mode				( mode				)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-synthesis-project>
+<Project>
+    <Version>beta</Version>
+    <Device id="GW5A-25A" package="MBGA121N" speed="1" partNumber="GW5A-LV25MG121NC1/I0"/>
+    <FileList>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\i2s_audio\i2s_audio.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_dac.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_eg.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_lfo.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_op.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_pg.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_primitives.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_timinggen.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll_patch\IKAOPLL_reg.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC_modules\IKASCC_player_a.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC_modules\IKASCC_player_s.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC_modules\IKASCC_primitives.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC_modules\IKASCC_vrc_a.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC_modules\IKASCC_vrc_s.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\msx_slot\msx_slot.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\dual_ssg.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\ssg_core.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\timer\msx_timer.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\timer\msx_timer_core.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\y8960_cartridge_tangprimer25k.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn76489_audio\src\sn76489_audio.vhd" type="vhdl"/>
+    </FileList>
+    <OptionList>
+        <Option type="disable_insert_pad" value="0"/>
+        <Option type="enable_dsrm" value="0"/>
+        <Option type="global_freq" value="100.000"/>
+        <Option type="looplimit" value="8000"/>
+        <Option type="output_file" value="D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg"/>
+        <Option type="print_all_synthesis_warning" value="0"/>
+        <Option type="ram_rw_check" value="0"/>
+        <Option type="top_module" value="y8960cartridge_tangprimer25k"/>
+        <Option type="vcc" value="0.9"/>
+        <Option type="verilog_language" value="verilog-2001"/>
+        <Option type="vhdl_language" value="vhdl-1993"/>
+    </OptionList>
+</Project>
