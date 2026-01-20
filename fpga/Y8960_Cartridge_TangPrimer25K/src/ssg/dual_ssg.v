@@ -70,15 +70,11 @@ module dual_ssg #(
 	output	[7:0]	bus_rdata,
 	output			bus_rdata_en,
 
-	inout	[5:0]	ssg_ioa,
-	output	[2:0]	ssg_iob,
+	input	[7:0]	ssg_ioa,
+	output	[7:0]	ssg_iob,
 
-	input			keyboard_type,		//	PortA bit6: Keyboard type  0: 50‰¹”z—ñ, 1: JIS”z—ñ 
-	input			cmt_read,			//	PortA bit7: CMT Read Signal
-	output			kana_led,			//	PortB bit7: KANA LED  0: ON, 1: OFF
-
-	output	[12:0]	sound_out_l,		//	10bit/ch * 6ch = 13bit
-	output	[12:0]	sound_out_r,		//	10bit/ch * 6ch = 13bit
+	output	[11:0]	sound_out_l,		//	10bit/ch * 3ch = 12bit
+	output	[11:0]	sound_out_r,		//	10bit/ch * 3ch = 12bit
 	input	[1:0]	mode				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
 );
 	localparam		c_ssg_port	= 8'hA0;
@@ -98,17 +94,15 @@ module dual_ssg #(
 		.reset_n		( reset_n			),
 		.enable			( enable			),
 		.bus_ioreq		( w_ioreq			),
+		.bus_valid		( bus_valid			),
 		.bus_write		( bus_write			),
-		.bus_address	( bus_address		),
+		.bus_address	( bus_address[1:0]	),
 		.bus_ready		( bus_ssg_ready		),
 		.bus_wdata		( bus_wdata			),
-		.bus_rdata		( w_rdata_en0		),
+		.bus_rdata		( w_rdata0			),
 		.bus_rdata_en	( w_rdata_en0		),
 		.ssg_ioa		( ssg_ioa			),
 		.ssg_iob		( ssg_iob			),
-		.keyboard_type	( keyboard_type		),
-		.cmt_read		( cmt_read			),
-		.kana_led		( kana_led			),
 		.sound_out		( sound_out_l		),
 		.mode			( mode				)
 	);
@@ -121,17 +115,15 @@ module dual_ssg #(
 		.reset_n		( reset_n			),
 		.enable			( enable			),
 		.bus_ioreq		( w_ioreq			),
+		.bus_valid		( bus_valid			),
 		.bus_write		( bus_write			),
-		.bus_address	( bus_address		),
+		.bus_address	( bus_address[1:0]	),
 		.bus_ready		( bus_ssg_ready		),
 		.bus_wdata		( bus_wdata			),
 		.bus_rdata		( w_rdata1			),
 		.bus_rdata_en	( w_rdata_en1		),
-		.ssg_ioa		( 6'dz				),
+		.ssg_ioa		( 8'hFF				),
 		.ssg_iob		( 					),
-		.keyboard_type	( 1'b0				),
-		.cmt_read		( 1'b0				),
-		.kana_led		( 					),
 		.sound_out		( sound_out_r		),
 		.mode			( mode				)
 	);
