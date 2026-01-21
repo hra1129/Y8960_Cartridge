@@ -80,6 +80,7 @@ module msx_timer_core (
 	reg				ff_intr_enable;
 	reg				ff_count_enable;
 	reg				ff_count_end;
+    reg             ff_valid;
 	wire	[13:0]	w_count_high;
 	wire			w_count_overflow;
 	wire	[8:0]	w_count;
@@ -130,10 +131,22 @@ module msx_timer_core (
 		end
 	end
 
+    always @( posedge clk ) begin
+        if( !reset_n ) begin
+            ff_valid <= 1'b0;
+        end
+        else if( ff_valid ) begin
+            ff_valid <= 1'b0;
+        end
+        else if( bus_valid ) begin 
+            ff_valid <= ~bus_write;
+        end
+    end
+
 	assign bus_rdata	= (bus_address == c_mode_register		) ? { ff_intr_enable, ff_reso, 3'd0, ff_repeat } :
 	                      (bus_address == c_count_register		) ? ff_count :
 	                      (bus_address == c_control_register	) ? { 7'd0, ff_count_enable } : 8'd0;
-	assign bus_rdata_en	= bus_valid & ~bus_write;
+	assign bus_rdata_en	= ff_valid;
 
 	// --------------------------------------------------------------------
 	//	Counter

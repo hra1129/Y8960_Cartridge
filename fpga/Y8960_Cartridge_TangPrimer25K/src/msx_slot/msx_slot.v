@@ -59,7 +59,7 @@ module msx_slot(
 	input			clk,
 	output			reset_n,
 	//	MSX Slot Signal
-	input			p_slot_reset_n,
+	input			p_slot_reset,
 	input			p_slot_ioreq_n,
 	input			p_slot_wr_n,
 	input			p_slot_rd_n,
@@ -108,7 +108,7 @@ module msx_slot(
 	//	reset signal
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		ff_reset_n	<= p_slot_reset_n;
+		ff_reset_n	<= ~p_slot_reset;
 	end
 
 	assign reset_n		= ff_reset_n;
@@ -127,8 +127,8 @@ module msx_slot(
 		ff_slot_rd_n			<= ff_pre_slot_rd_n;
 	end
 
-	always @( posedge clk or negedge p_slot_reset_n ) begin
-		if( !p_slot_reset_n ) begin
+	always @( posedge clk ) begin
+		if( !ff_reset_n ) begin
 			ff_iorq_wr			<= 1'b0;
 			ff_iorq_rd			<= 1'b0;
 		end
@@ -156,7 +156,7 @@ module msx_slot(
 	//	Transaction active signal
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !p_slot_reset_n ) begin
+		if( !ff_reset_n ) begin
 			ff_active		<= 1'b0;
 		end
 		else begin
@@ -167,7 +167,7 @@ module msx_slot(
 	assign w_active		= ff_iorq_wr | ff_iorq_rd;
 
 	always @( posedge clk ) begin
-		if( !p_slot_reset_n ) begin
+		if( !ff_reset_n ) begin
 			ff_ioreq_d0		<= 1'b0;
 			ff_ioreq_d1		<= 1'b0;
 			ff_ioreq_d2		<= 1'b0;
@@ -191,7 +191,7 @@ module msx_slot(
 	//	Address latch
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !p_slot_reset_n ) begin
+		if( !ff_reset_n ) begin
 			ff_valid	<= 1'b0;
 			ff_ioreq	<= 1'b0;
 			ff_write	<= 1'b1;
@@ -222,7 +222,7 @@ module msx_slot(
 	//	Read data
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !p_slot_reset_n ) begin
+		if( !ff_reset_n ) begin
 			ff_rdata	<= 8'h00;
 		end
 		else if( !ff_ioreq ) begin

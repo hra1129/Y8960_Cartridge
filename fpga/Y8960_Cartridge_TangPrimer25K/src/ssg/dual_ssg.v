@@ -83,8 +83,10 @@ module dual_ssg #(
 	wire			w_ioreq;
 	wire	[7:0]	w_rdata0;
 	wire			w_rdata_en0;
+    wire            w_bus_ssg_ready0;
 	wire	[7:0]	w_rdata1;
 	wire			w_rdata_en1;
+    wire            w_bus_ssg_ready1;
 
 	assign w_ioreq	= ( {bus_address[7:2], 2'd0} == c_ssg_port ) ? bus_ioreq: 1'b0;
 
@@ -99,7 +101,7 @@ module dual_ssg #(
 		.bus_valid		( bus_valid			),
 		.bus_write		( bus_write			),
 		.bus_address	( bus_address[1:0]	),
-		.bus_ready		( bus_ssg_ready		),
+		.bus_ready		( w_bus_ssg_ready0	),
 		.bus_wdata		( bus_wdata			),
 		.bus_rdata		( w_rdata0			),
 		.bus_rdata_en	( w_rdata_en0		),
@@ -120,7 +122,7 @@ module dual_ssg #(
 		.bus_valid		( bus_valid			),
 		.bus_write		( bus_write			),
 		.bus_address	( bus_address[1:0]	),
-		.bus_ready		( bus_ssg_ready		),
+		.bus_ready		( w_bus_ssg_ready1	),
 		.bus_wdata		( bus_wdata			),
 		.bus_rdata		( w_rdata1			),
 		.bus_rdata_en	( w_rdata_en1		),
@@ -130,6 +132,7 @@ module dual_ssg #(
 		.mode			( mode				)
 	);
 
+    assign bus_ready        = w_bus_ssg_ready0 | w_bus_ssg_ready1;
 	assign bus_rdata		= w_rdata0 & w_rdata1;
 	assign bus_rdata_en		= w_rdata_en0 | w_rdata_en1;
 endmodule

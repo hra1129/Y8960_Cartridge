@@ -123,6 +123,17 @@ module y8960cartridge_tangprimer25k (
 	wire	[7:0]	w_led;
 	wire	[15:0]	w_sound_out;
 
+	assign flash_spi_clk        = 1'b0;
+	assign flash_spi_cs_n       = 1'b1;
+	assign flash_spi_wp_n       = 1'b0;
+	assign flash_spi_hold_n     = 1'b1;
+	assign flash_spi_mosi       = 1'b0;
+	assign psram_ce_n           = 1'b1;
+	assign psram_sclk           = 1'b0;
+	assign psram_sio            = 4'd0;
+
+	assign slot_wait            = 1'b0;
+
 	// ---------------------------------------------------------
 	always @( posedge clk_14m ) begin
 		if( !reset_n ) begin
@@ -143,14 +154,14 @@ module y8960cartridge_tangprimer25k (
 	msx_slot u_msx_slot (
 		.clk				( clk_14m					),
 		.reset_n			( reset_n					),
-		.p_slot_reset_n		( slot_reset_n				),
+		.p_slot_reset		( slot_reset				),
 		.p_slot_ioreq_n		( slot_ioreq_n				),
 		.p_slot_wr_n		( slot_wr_n					),
 		.p_slot_rd_n		( slot_rd_n					),
 		.p_slot_address		( slot_a	    			),
 		.p_slot_data		( slot_d					),
-		.p_slot_int			( slot_int					),
-		.p_slot_data_dir	( slot_data_dir				),
+		.p_slot_int			( slot_intr					),
+		.p_slot_data_dir	( slot_busdir				),
 		.int_n				( w_int_n					),
 		.bus_address		( bus_address				),
 		.bus_ioreq			( bus_ioreq					),
@@ -161,6 +172,10 @@ module y8960cartridge_tangprimer25k (
 		.bus_rdata			( bus_rdata					),
 		.bus_rdata_en		( bus_rdata_en				)
 	);
+
+    assign bus_ready    = bus_timer_ready | bus_ssg_ready;
+    assign bus_rdata    = bus_timer_rdata & bus_ssg_rdata;
+    assign bus_rdata_en = bus_timer_rdata_en | bus_ssg_rdata_en;
 
 	// ---------------------------------------------------------
 	msx_timer u_msx_timer (

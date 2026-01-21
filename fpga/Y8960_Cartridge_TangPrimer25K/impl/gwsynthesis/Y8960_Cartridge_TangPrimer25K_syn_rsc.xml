@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="y8960cartridge_tangprimer25k"/>
+<Module name="y8960cartridge_tangprimer25k" Register="6" Alu="16" Lut="14" T_Register="726(6)" T_Alu="38(16)" T_Lut="1580(14)">
+ <SubModule name="u_msx_slot" Register="49" Lut="20" T_Register="49(49)" T_Lut="20(20)"/>
+ <SubModule name="u_msx_timer" Register="36" Lut="188" T_Register="228(36)" T_Lut="893(188)">
+  <SubModule name="u_msx_timer_core0" Register="48" Lut="193" T_Register="48(48)" T_Lut="193(193)"/>
+  <SubModule name="u_msx_timer_core1" Register="48" Lut="181" T_Register="48(48)" T_Lut="181(181)"/>
+  <SubModule name="u_msx_timer_core2" Register="48" Lut="146" T_Register="48(48)" T_Lut="146(146)"/>
+  <SubModule name="u_msx_timer_core3" Register="48" Lut="185" T_Register="48(48)" T_Lut="185(185)"/>
+ </SubModule>
+ <SubModule name="u_dual_ssg" T_Register="417(0)" T_Alu="22(0)" T_Lut="620(0)">
+  <SubModule name="ssg_core0" Register="208" Alu="11" Lut="280" T_Register="208(208)" T_Alu="11(11)" T_Lut="280(280)"/>
+  <SubModule name="ssg_core1" Register="209" Alu="11" Lut="340" T_Register="209(209)" T_Alu="11(11)" T_Lut="340(340)"/>
+ </SubModule>
+ <SubModule name="u_i2s" Register="26" Lut="33" T_Register="26(26)" T_Lut="33(33)"/>
+</Module>

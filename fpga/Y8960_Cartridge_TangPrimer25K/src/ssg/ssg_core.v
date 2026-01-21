@@ -192,6 +192,7 @@ module ssg_core #(
 		end
 	end
 
+    assign bus_ready            = bus_valid;
 	assign bus_rdata			= ff_rdata;
 	assign bus_rdata_en			= ff_rdata_en;
 

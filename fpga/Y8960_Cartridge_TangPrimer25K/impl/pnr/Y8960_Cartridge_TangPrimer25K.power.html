@@ -89,7 +89,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Wed Jan 21 07:25:09 2026
+<td>Wed Jan 21 18:44:33 2026
 </td>
 </tr>
 <tr>
@@ -161,22 +161,22 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <table class="summary_table">
 <tr>
 <td class="label">Total Power (mW)</td>
-<td>53.519</td>
+<td>60.538</td>
 </tr>
 <tr>
 <td class="label">Quiescent Power (mW)</td>
-<td>53.519</td>
+<td>53.487</td>
 </tr>
 <tr>
 <td class="label">Dynamic Power (mW)</td>
-<td>0.000</td>
+<td>7.052</td>
 </tr>
 </table>
 <h2><a name="Thermal_Info">Thermal Information:</a></h2>
 <table class="summary_table">
 <tr>
 <td class="label">Junction Temperature</td>
-<td>26.809</td>
+<td>27.046</td>
 </tr>
 <tr>
 <td class="label">Theta JA</td>
@@ -184,7 +184,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Max Allowed Ambient Temperature</td>
-<td>83.191</td>
+<td>82.954</td>
 </tr>
 </table>
 <h2><a name="Supply_Summary">Supply Information:</a></h2>
@@ -199,23 +199,23 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <tr>
 <td>VCC</td>
 <td>0.900</td>
-<td>0.000</td>
-<td>30.012</td>
-<td>27.011</td>
+<td>1.717</td>
+<td>30.014</td>
+<td>28.558</td>
 </tr>
 <tr>
 <td>VCCX</td>
 <td>3.300</td>
-<td>0.000</td>
+<td>0.834</td>
 <td>3.000</td>
-<td>9.900</td>
+<td>12.653</td>
 </tr>
 <tr>
 <td>VCCIO33</td>
 <td>3.300</td>
-<td>0.000</td>
-<td>1.033</td>
-<td>3.408</td>
+<td>0.834</td>
+<td>1.022</td>
+<td>6.127</td>
 </tr>
 <tr>
 <td>VCCLDO</td>
@@ -235,10 +235,16 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <th class="label">Average Toggle Rate(millions of transitions/sec)</th>
 </tr>
 <tr>
+<td>Logic</td>
+<td>0.805</td>
+<td>NA</td>
+<td>12.495</td>
+</tr>
+<tr>
 <td>IO</td>
-<td>8.119
-<td>8.119
-<td>0.000
+<td>15.892
+<td>9.645
+<td>10.377
 </tr>
 </table>
 <h2><a name="By_Hierarchy">Power By Hierarchy:</a></h2>
@@ -250,8 +256,48 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td>y8960cartridge_tangprimer25k</td>
-<td>0.000</td>
-<td>0.000(0.000)</td>
+<td>0.805</td>
+<td>0.805(0.755)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_dual_ssg/</td>
+<td>0.362</td>
+<td>0.362(0.362)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_dual_ssg/ssg_core0/</td>
+<td>0.170</td>
+<td>0.170(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_dual_ssg/ssg_core1/</td>
+<td>0.192</td>
+<td>0.192(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_i2s/</td>
+<td>0.017</td>
+<td>0.017(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_msx_slot/</td>
+<td>0.015</td>
+<td>0.015(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_msx_timer/</td>
+<td>0.361</td>
+<td>0.361(0.287)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_msx_timer/u_msx_timer_core0/</td>
+<td>0.078</td>
+<td>0.078(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_msx_timer/u_msx_timer_core1/</td>
+<td>0.074</td>
+<td>0.074(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_msx_timer/u_msx_timer_core2/</td>
+<td>0.061</td>
+<td>0.061(0.000)</td>
+<tr>
+<td>y8960cartridge_tangprimer25k/u_msx_timer/u_msx_timer_core3/</td>
+<td>0.075</td>
+<td>0.075(0.000)</td>
 </table>
 <h2><a name="By_Clock_Domain">Power By Clock Domain:</a></h2>
 <table class="detail_table">
@@ -259,6 +305,16 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <th class="label">Clock Domain</th>
 <th class="label">Clock Frequency(Mhz)</th>
 <th class="label">Total Dynamic Power(mW)</th>
+</tr>
+<tr>
+<td>clk_14m</td>
+<td>100.000</td>
+<td>0.805</td>
+</tr>
+<tr>
+<td>NO CLOCK DOMAIN</td>
+<td>0.000</td>
+<td>0.000</td>
 </tr>
 </table>
 </div><!-- content -->
