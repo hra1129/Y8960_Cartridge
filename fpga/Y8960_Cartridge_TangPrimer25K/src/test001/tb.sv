@@ -35,7 +35,7 @@ module tb ();
 	reg				slot_reset;
 	reg		[15:0]	slot_a;
 	wire	[7:0]	slot_d;
-	reg				slot_sltsl;
+	reg				slot_sltsl_n;
 	reg				slot_mereq_n;
 	reg				slot_ioreq_n;
 	reg				slot_wr_n;
@@ -73,7 +73,7 @@ module tb ();
 		.slot_reset				( slot_reset			),
 		.slot_a					( slot_a				),
 		.slot_d					( slot_d				),
-		.slot_sltsl				( slot_sltsl			),
+		.slot_sltsl_n			( slot_sltsl_n			),
 		.slot_mereq_n			( slot_mereq_n			),
 		.slot_ioreq_n			( slot_ioreq_n			),
 		.slot_wr_n				( slot_wr_n				),
@@ -120,7 +120,7 @@ module tb ();
 		clk = 1;
 		slot_reset = 0;
 		slot_a = 0;
-		slot_sltsl = 0;
+		slot_sltsl_n = 0;
 		slot_mereq_n = 0;
 		slot_ioreq_n = 0;
 		slot_wr_n = 0;

@@ -15,13 +15,47 @@
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_primitives.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_timinggen.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll_patch/IKAOPLL_reg.v" type="file.verilog" enable="1"/>
+        <File path="src/ikaopll_patch/opll.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_player_a.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_player_s.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_primitives.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_vrc_a.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_vrc_s.v" type="file.verilog" enable="1"/>
+        <File path="src/ikascc_patch/scc.v" type="file.verilog" enable="1"/>
         <File path="src/msx_slot/msx_slot.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl2.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_acc.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_csr.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_div.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg_cnt.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg_comb.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg_final.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg_pure.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_eg_step.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_exprom.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_lfo.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_logsin.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_mmr.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_noise.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_op.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_pg.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_pg_comb.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_pg_inc.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_pg_rhy.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_pg_sum.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_pm.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_reg.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_reg_ch.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_sh.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_sh_rst.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_single_acc.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_slot_cnt.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2/src/jtopl_timers.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/opl2.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/dual_ssg.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/ssg_core.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer.v" type="file.verilog" enable="1"/>
