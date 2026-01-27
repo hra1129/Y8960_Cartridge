@@ -82,10 +82,10 @@ module y8960cartridge_tangprimer25k (
 	output			flash_spi_hold_n,		//	E4
 	input			flash_spi_miso,			//	E5
 	output			flash_spi_mosi,			//	D6
-	//	PSRAM
-	output			psram_ce_n,				//	F2
-	output			psram_sclk,				//	F1
-	inout	[3:0]	psram_sio,				//	D1,E1,C2,A1
+	//	SRAM
+	output			sram_ce_n,				//	F2
+	output			sram_sclk,				//	F1
+	inout	[3:0]	sram_sio,				//	D1,E1,C2,A1
 	//	DIP S/W
 	input	[1:0]	dipsw,					//	E3,E8
 	//	LED
@@ -122,6 +122,8 @@ module y8960cartridge_tangprimer25k (
 	wire			scc_memory_cs;
 	wire	[5:0]	scc_ma;
 
+	wire			bus_dcsg_ready;
+
 	wire	[15:0]	w_opl2_out_l;
 	wire	[15:0]	w_opl2_out_r;
 
@@ -132,6 +134,9 @@ module y8960cartridge_tangprimer25k (
 	wire	[11:0]	w_ssg_out_r;
 
 	wire	[10:0]	w_scc_out;
+
+	wire	[13:0]	w_dcsg_out_l;
+	wire	[13:0]	w_dcsg_out_r;
 
 	reg		[4:0]	ff_divider;
 	reg				ff_enable;
@@ -146,9 +151,9 @@ module y8960cartridge_tangprimer25k (
 	assign flash_spi_wp_n       = 1'b0;
 	assign flash_spi_hold_n     = 1'b1;
 	assign flash_spi_mosi       = 1'b0;
-	assign psram_ce_n           = 1'b1;
-	assign psram_sclk           = 1'b0;
-	assign psram_sio            = 4'd0;
+	assign sram_ce_n            = 1'b1;
+	assign sram_sclk            = 1'b0;
+	assign sram_sio             = 4'd0;
 
 	assign slot_wait            = 1'b0;
 
@@ -194,7 +199,7 @@ module y8960cartridge_tangprimer25k (
 		.bus_rdata_en		( bus_rdata_en				)
 	);
 
-    assign bus_ready    = bus_timer_ready | bus_ssg_ready | bus_opl2_ready | bus_opll_ready | bus_scc_ready;
+    assign bus_ready    = bus_timer_ready | bus_ssg_ready | bus_opl2_ready | bus_opll_ready | bus_scc_ready | bus_dcsg_ready;
     assign bus_rdata    = bus_timer_rdata & bus_opl2_rdata & bus_ssg_rdata & bus_scc_rdata;
     assign bus_rdata_en = bus_timer_rdata_en | bus_opl2_rdata_en | bus_ssg_rdata_en | bus_scc_rdata_en;
     assign w_int_n		= w_timer_intr_n & w_opl2_intr_n;
@@ -283,7 +288,7 @@ module y8960cartridge_tangprimer25k (
 		.bus_address		( bus_address				),
 		.bus_write			( bus_write					),
 		.bus_ready			( bus_scc_ready				),
-        .bus_valid          ( bus_valid                 ),
+        .bus_valid          ( bus_valid					),
 		.bus_wdata			( bus_wdata					),
 		.bus_rdata			( bus_scc_rdata				),
 		.bus_rdata_en		( bus_scc_rdata_en			),
@@ -293,10 +298,26 @@ module y8960cartridge_tangprimer25k (
 	);
 
 	// ---------------------------------------------------------
+	dual_dcsg u_dcsg (
+		.clk				( clk_14m					),
+		.reset_n			( reset_n					),
+		.enable				( ff_enable					),
+		.bus_ioreq			( bus_ioreq					),
+		.bus_address		( bus_address				),
+		.bus_write			( bus_write					),
+		.bus_valid			( bus_valid					),
+		.bus_ready			( bus_dcsg_ready			),
+		.bus_wdata			( bus_wdata					),
+		.sound_out0			( w_dcsg_out_l				),
+		.sound_out1			( w_dcsg_out_r				)
+	);
+
+	// ---------------------------------------------------------
 	assign w_sound_out	= 
 			{ 4'd0, w_ssg_out_l } + { 4'd0, w_ssg_out_r } + 
 			w_opll_out_l + w_opll_out_r + 
 			w_opl2_out_l + w_opl2_out_r + 
+			w_dcsg_out_l + w_dcsg_out_r + 
 			{ 3'd0, w_scc_out, 2'd0 };
 
 	i2s_audio u_i2s (

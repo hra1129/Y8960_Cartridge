@@ -1,5 +1,13 @@
 [
  {
+  "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
+  "InstLine" : 35,
+  "InstName" : "IKASCC_primitive_buf",
+  "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
+  "ModuleLine" : 35,
+  "ModuleName" : "IKASCC_primitive_buf"
+ },
+ {
   "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
   "InstLine" : 58,
   "InstName" : "y8960cartridge_tangprimer25k",
@@ -9,7 +17,7 @@
   "SubInsts" : [
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 172,
+    "InstLine" : 177,
     "InstName" : "u_msx_slot",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/msx_slot/msx_slot.v",
     "ModuleLine" : 58,
@@ -17,7 +25,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 203,
+    "InstLine" : 208,
     "InstName" : "u_msx_timer",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/timer/msx_timer.v",
     "ModuleLine" : 58,
@@ -59,7 +67,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 218,
+    "InstLine" : 223,
     "InstName" : "u_dual_opl2",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2_patch/opl2.v",
     "ModuleLine" : 7,
@@ -837,7 +845,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 236,
+    "InstLine" : 241,
     "InstName" : "u_dual_opll",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll_patch/opll.v",
     "ModuleLine" : 7,
@@ -1463,7 +1471,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 254,
+    "InstLine" : 259,
     "InstName" : "u_dual_ssg",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssg/dual_ssg.v",
     "ModuleLine" : 58,
@@ -1489,7 +1497,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 278,
+    "InstLine" : 283,
     "InstName" : "u_scc",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc.v",
     "ModuleLine" : 7,
@@ -1507,8 +1515,8 @@
         "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC.v",
         "InstLine" : 136,
         "InstName" : "IKASCC_SYNC_MODE.u_vrc_s_main",
-        "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_vrc_s.v",
-        "ModuleLine" : 1,
+        "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_vrc_s.v",
+        "ModuleLine" : 25,
         "ModuleName" : "IKASCC_vrc_s"
        },
        {
@@ -1809,20 +1817,38 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 302,
+    "InstLine" : 301,
+    "InstName" : "u_dcsg",
+    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
+    "ModuleLine" : 7,
+    "ModuleName" : "dual_dcsg",
+    "SubInsts" : [
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
+      "InstLine" : 36,
+      "InstName" : "u_sn76489_0",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio/src/sn76489_audio.vhd",
+      "ModuleLine" : 108,
+      "ModuleName" : "sn76489_audio"
+     },
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
+      "InstLine" : 54,
+      "InstName" : "u_sn76489_1",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio/src/sn76489_audio.vhd",
+      "ModuleLine" : 108,
+      "ModuleName" : "sn76489_audio"
+     }
+    ]
+   },
+   {
+    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
+    "InstLine" : 323,
     "InstName" : "u_i2s",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/i2s_audio/i2s_audio.v",
     "ModuleLine" : 58,
     "ModuleName" : "i2s_audio"
    }
   ]
- },
- {
-  "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio/src/sn76489_audio.vhd",
-  "InstLine" : 108,
-  "InstName" : "sn76489_audio",
-  "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio/src/sn76489_audio.vhd",
-  "ModuleLine" : 108,
-  "ModuleName" : "sn76489_audio"
  }
 ]
