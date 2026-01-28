@@ -52,6 +52,7 @@ module ssram (
 	reg		[18:0]	ff_address;
 	reg		[7:0]	ff_wdata;
 	reg		[7:0]	ff_rdata;
+	reg				ff_rdata_en;
 	reg				ff_write;
 	reg				ff_read;
 	reg		[4:0]	ff_state;
@@ -231,15 +232,19 @@ module ssram (
 				ff_state	<= c_state_dummy2;
 			end
 			c_state_dummy2: begin
-				ff_rdata[7:4]	<= sram_sio;
 				ff_state		<= c_state_read0;
 			end
 			c_state_read0: begin
-				ff_rdata[3:0]	<= sram_sio;
+				ff_rdata[7:4]	<= sram_sio;
 				ff_state		<= c_state_read1;
 			end
 			c_state_read1: begin
-				ff_state		<= c_state_idle;
+				if( ff_rdata_en ) begin
+					ff_state		<= c_state_idle;
+				end
+				if( ff_read ) begin
+					ff_rdata[3:0]	<= sram_sio;
+				end
 				ff_active		<= 1'b1;
 				ff_cs_n			<= 1'b1;
 				ff_read			<= 1'b0;
@@ -248,7 +253,21 @@ module ssram (
 		end
 	end
 
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_rdata_en <= 1'b0;
+		end
+		else if( ff_state == c_state_read1 ) begin
+			ff_rdata_en <= 1'b1;
+		end
+		else begin
+			ff_rdata_en <= 1'b0;
+		end
+	end
+
 	assign sram_sclk	= ~clk_136m & ~ff_cs_n;
 	assign sram_cs_n	= ff_cs_n;
 	assign sram_sio		= ff_read ? 4'bzzzz: ff_so;
+	assign rdata		= ff_rdata;
+	assign rdata_en		= ff_rdata_en;
 endmodule

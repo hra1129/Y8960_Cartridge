@@ -45,6 +45,7 @@ module tb ();
 	reg		[7:0]	ff_rdata = 8'd0;
 	reg				ff_read = 1'b0;
 	reg		[3:0]	ff_sram_sio;
+	reg		[7:0]	ff_sram_image[0:512*1024-1];
 
 	// --------------------------------------------------------------------
 	//	DUT
@@ -85,6 +86,7 @@ module tb ();
 		input	[18:0]	target_address,
 		input	[7:0]	data
 	);
+		$display( "write_data( 0x%05X, 0x%02X )", target_address, data );
 		address		<= target_address;
 		write		<= 1'b1;
 		wdata		<= data;
@@ -92,6 +94,7 @@ module tb ();
 		while( !ready ) begin
 			@( posedge clk );
 		end
+		@( posedge clk );
 		valid		<= 1'b0;
 		@( posedge clk );
 	endtask
@@ -107,12 +110,14 @@ module tb ();
 		while( !ready ) begin
 			@( posedge clk );
 		end
+		@( posedge clk );
 		valid		<= 1'b0;
-		while( !rdata_en ) begin
+		while( rdata_en !== 1'b1 ) begin
 			@( posedge clk );
 		end
 		data		<= rdata;
 		@( posedge clk );
+		$display( "read_data( 0x%05X, 0x%02X )", target_address, data );
 	endtask
 
 	// --------------------------------------------------------------------
@@ -130,7 +135,12 @@ module tb ();
 		ff_address	= 0;
 		fork
 			forever begin
-				if( !sram_cs_n ) begin
+				@( posedge clk_136m );
+				if( ff_count == 14 ) begin
+					ff_count			<= 0;
+					ff_read				<= 1'b0;
+				end
+				else if( !sram_cs_n ) begin
 					if( quad_mode ) begin
 						case( ff_count )
 						0: begin
@@ -143,13 +153,8 @@ module tb ();
 						end
 						2: begin
 							ff_count		<= ff_count + 1;
-							if( ff_command == 8'd2 ) begin
-								ff_read <= 1'b0;
-							end
-							else begin
-								ff_read <= 1'b1;
-							end
 						end
+						// --- address phase ------------------------
 						3: begin
 							ff_address[18:16]	<= sram_sio[2:0];
 							ff_count			<= ff_count + 1;
@@ -168,28 +173,39 @@ module tb ();
 						end
 						7: begin
 							ff_address[3:0]		<= sram_sio;
-							ff_count			<= ff_count + 1;
+							if( ff_command == 11 ) begin
+								ff_count			<= 10;
+							end
+							else begin
+								ff_count			<= ff_count + 1;
+							end
 						end
+						// --- data phase for write -----------------
 						8: begin
 							ff_data[7:4]		<= sram_sio;
 							ff_count			<= ff_count + 1;
 						end
 						9: begin
 							ff_data[3:0]		<= sram_sio;
-							ff_count			<= 15;
+							ff_count			<= 14;
 						end
-						10, 11, 12: begin
+						// --- dummy phase for read -----------------
+						10, 11: begin
 							ff_count			<= ff_count + 1;
+							ff_rdata			<= ff_sram_image[ ff_address ];
 						end
-						13: begin
+						// --- data phase for read ------------------
+						12: begin
 							ff_sram_sio			<= ff_rdata[7:4];
 							ff_count			<= ff_count + 1;
+							ff_read				<= 1'b1;
 						end
-						14: begin
+						13: begin
 							ff_sram_sio			<= ff_rdata[3:0];
 							ff_count			<= ff_count + 1;
 						end
-						15: begin
+						// --- finish phase -------------------------
+						14: begin
 							ff_sram_sio			<= 4'bzzzz;
 							ff_read				<= 1'b0;
 							ff_count			<= 0;
@@ -207,14 +223,15 @@ module tb ();
 						end
 					end
 				end
-				@( negedge sram_sclk );
+				@( negedge clk_136m );
 				if( quad_mode ) begin
-					if( ff_count == 15 ) begin
+					if( ff_count == 14 ) begin
 						if( ff_read ) begin
-							$display( "[info] read data %02x", ff_rdata );
+							$display( "[info] read data address = %05X, data = %02X", ff_address, ff_rdata );
 						end
 						else begin
-							$display( "[info] write data %02x", ff_data );
+							$display( "[info] write data address = %05X, data = %02X", ff_address, ff_data );
+							ff_sram_image[ ff_address ]	<= ff_data;
 						end
 					end
 				end
@@ -244,6 +261,10 @@ module tb ();
 		write = 0;
 		wdata = 0;
 
+		for( i = 0; i < (512 * 1024); i++ ) begin
+			ff_sram_image[i] <= 0;
+		end
+
 		start_serial_sram_dummy();
 
 		@( negedge clk );
@@ -253,13 +274,13 @@ module tb ();
 		reset_n = 1;
 		@( posedge clk );
 
-		write_data( 19'd100, 8'd123 );
-		write_data( 19'd200, 8'd234 );
-		write_data( 19'd300, 8'd34 );
+		write_data( 19'h123, 8'h12 );
+		write_data( 19'h1234, 8'h56 );
+		write_data( 19'h12345, 8'hAB );
 
-		read_data( 19'd100, data );
-		read_data( 19'd200, data );
-		read_data( 19'd300, data );
+		read_data( 19'h123, data );
+		read_data( 19'h1234, data );
+		read_data( 19'h12345, data );
 		repeat( 100 ) @( posedge clk );
 		$finish;
 	end
