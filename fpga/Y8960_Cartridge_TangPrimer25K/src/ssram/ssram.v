@@ -6,7 +6,7 @@
 
 module ssram (
 	input			clk,
-	input			clk_136m,
+	input			clk_258m,
 	input			reset_n,
 	input	[18:0]	address,		//	512KB
 	input			valid,
@@ -44,6 +44,7 @@ module ssram (
 	localparam		c_state_dummy2		= 5'd22;
 	localparam		c_state_read0		= 5'd23;
 	localparam		c_state_read1		= 5'd24;
+	localparam		c_state_read2		= 5'd25;
 
 	reg				ff_ready;
 	reg				ff_valid_d0;
@@ -59,35 +60,61 @@ module ssram (
 	reg				ff_active;
 	reg				ff_cs_n;
 	reg		[3:0]	ff_so;
+	reg				ff_sclk_div;		//	258MHz -> 129MHz divider
+
+	// ---------------------------------------------------------
+	//	SCLK divider (258MHz -> 129MHz)
+	// ---------------------------------------------------------
+	always @( posedge clk_258m ) begin
+		if( !reset_n ) begin
+			ff_sclk_div <= 1'b0;
+		end
+		else begin
+			ff_sclk_div <= ~ff_sclk_div;
+		end
+	end
+
+	wire w_sclk_timing = ~ff_sclk_div;	//	State machine timing enable (update on SCLK falling edge)
+	wire w_sclk_sample = ff_sclk_div;	//	Read data sample timing (sample on SCLK rising edge)
 
 	// ---------------------------------------------------------
 	//	Access timing pulse
 	// ---------------------------------------------------------
-	always @( posedge clk_136m ) begin
+	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
 			ff_valid_d0 <= 1'b0;
 			ff_valid_d1 <= 1'b0;
 		end
 		else begin
 			ff_valid_d0 <= valid & ff_ready;
-			ff_valid_d1 <= ff_valid_d0;
+			if( w_sclk_timing ) begin
+				ff_valid_d1 <= ff_valid_d0;
+			end
 		end
 	end
 
 	assign w_valid		= ff_valid_d0 & ~ff_valid_d1;
 
 	// ---------------------------------------------------------
-	//	Ready
+	//	Ready (synchronize ff_active to clk domain)
 	// ---------------------------------------------------------
+	reg ff_active_sync1;
+	reg ff_active_sync2;
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_ready <= 1'b0;
+			ff_active_sync1 <= 1'b0;
+			ff_active_sync2 <= 1'b0;
 		end
-		else if( ff_active ) begin
-			ff_ready <= 1'b1;
-		end
-		else if( ff_valid_d0 ) begin
-			ff_ready <= 1'b0;
+		else begin
+			ff_active_sync1 <= ff_active;
+			ff_active_sync2 <= ff_active_sync1;
+			if( ff_active_sync2 ) begin
+				ff_ready <= 1'b1;
+			end
+			else if( ff_valid_d0 ) begin
+				ff_ready <= 1'b0;
+			end
 		end
 	end
 
@@ -96,7 +123,7 @@ module ssram (
 	// ---------------------------------------------------------
 	//	Data latch
 	// ---------------------------------------------------------
-	always @( posedge clk_136m ) begin
+	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
 			ff_address	<= 19'd0;
 			ff_wdata	<= 8'd0;
@@ -112,16 +139,15 @@ module ssram (
 	// ---------------------------------------------------------
 	//	State machine
 	// ---------------------------------------------------------
-	always @( posedge clk_136m ) begin
+	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
 			ff_state	<= c_state_init_w0;
 			ff_active	<= 1'b0;
 			ff_cs_n		<= 1'b1;
 			ff_so		<= 4'b1zz0;
 			ff_read		<= 1'b0;
-			ff_rdata	<= 8'd0;
 		end
-		else begin
+		else if( w_sclk_timing ) begin
 			case( ff_state )
 			c_state_init_w0: begin
 				ff_state	<= c_state_init_eqio0;
@@ -235,16 +261,13 @@ module ssram (
 				ff_state		<= c_state_read0;
 			end
 			c_state_read0: begin
-				ff_rdata[7:4]	<= sram_sio;
 				ff_state		<= c_state_read1;
 			end
 			c_state_read1: begin
-				if( ff_rdata_en ) begin
-					ff_state		<= c_state_idle;
-				end
-				if( ff_read ) begin
-					ff_rdata[3:0]	<= sram_sio;
-				end
+				ff_state		<= c_state_read2;
+			end
+			c_state_read2: begin
+				ff_state		<= c_state_idle;
 				ff_active		<= 1'b1;
 				ff_cs_n			<= 1'b1;
 				ff_read			<= 1'b0;
@@ -253,19 +276,61 @@ module ssram (
 		end
 	end
 
-	always @( posedge clk ) begin
+	// Sample read data on SCLK rising edge
+	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
-			ff_rdata_en <= 1'b0;
+			ff_rdata <= 8'd0;
 		end
-		else if( ff_state == c_state_read1 ) begin
-			ff_rdata_en <= 1'b1;
-		end
-		else begin
-			ff_rdata_en <= 1'b0;
+		else if( w_sclk_sample ) begin
+			if( ff_state == c_state_read0 ) begin
+				ff_rdata[7:4] <= sram_sio;
+			end
+			else if( ff_state == c_state_read1 ) begin
+				ff_rdata[3:0] <= sram_sio;
+			end
 		end
 	end
 
-	assign sram_sclk	= ~clk_136m & ~ff_cs_n;
+	// Generate rdata_en trigger in clk_258m domain
+	// Keep trigger high while in c_state_read2 (for synchronization to clk domain)
+	reg ff_rdata_en_trigger;
+	always @( posedge clk_258m ) begin
+		if( !reset_n ) begin
+			ff_rdata_en_trigger <= 1'b0;
+		end
+		else if( ff_state == c_state_read2 ) begin
+			ff_rdata_en_trigger <= 1'b1;
+		end
+		else begin
+			ff_rdata_en_trigger <= 1'b0;
+		end
+	end
+
+	// Synchronize and stretch rdata_en in clk domain
+	reg ff_rdata_en_sync1;
+	reg ff_rdata_en_sync2;
+	reg [2:0] ff_rdata_en_hold;
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_rdata_en <= 1'b0;
+			ff_rdata_en_sync1 <= 1'b0;
+			ff_rdata_en_sync2 <= 1'b0;
+			ff_rdata_en_hold <= 3'b0;
+		end
+		else begin
+			ff_rdata_en_sync1 <= ff_rdata_en_trigger;
+			ff_rdata_en_sync2 <= ff_rdata_en_sync1;
+			if( ff_rdata_en_sync1 & ~ff_rdata_en_sync2 ) begin
+				ff_rdata_en_hold <= 3'b111;		// Hold for 3 clk cycles
+			end
+			else if( ff_rdata_en_hold != 3'b0 ) begin
+				ff_rdata_en_hold <= ff_rdata_en_hold - 1;
+			end
+			ff_rdata_en <= (ff_rdata_en_hold != 3'b0);
+		end
+	end
+
+	assign sram_sclk	= ff_sclk_div & ~ff_cs_n;
 	assign sram_cs_n	= ff_cs_n;
 	assign sram_sio		= ff_read ? 4'bzzzz: ff_so;
 	assign rdata		= ff_rdata;
