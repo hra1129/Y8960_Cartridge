@@ -91,10 +91,11 @@ module tb ();
 		write		<= 1'b1;
 		wdata		<= data;
 		valid		<= 1'b1;
+		@( posedge clk );
 		while( !ready ) begin
 			@( posedge clk );
 		end
-		@( posedge clk );
+		// ready=1 was sampled, deassert valid on next cycle
 		valid		<= 1'b0;
 		// Wait for CS to go high (command completion)
 		while( !sram_cs_n ) begin
@@ -112,6 +113,7 @@ module tb ();
 		address		<= target_address;
 		write		<= 1'b0;
 		valid		<= 1'b1;
+		@( posedge clk );
 		timeout = 0;
 		while( !ready && timeout < 10000 ) begin
 			@( posedge clk );
@@ -120,7 +122,7 @@ module tb ();
 		if( timeout >= 10000 ) begin
 			$display( "[TIMEOUT] Waiting for ready in read_data, address=0x%05X", target_address );
 		end
-		@( posedge clk );
+		// ready=1 was sampled, deassert valid on next cycle
 		valid		<= 1'b0;
 		// Wait for rdata_en to go high
 		timeout = 0;
@@ -464,6 +466,230 @@ module tb ();
 		if( data !== 8'h55 ) begin
 			$display( "[ERROR] Test %0d: Pattern 0x55 failed, got 0x%02X", test_no, data );
 			error_count++;
+		end
+
+		// ============================================================
+		//	Test 6: Continuous write access test (back-to-back)
+		// ============================================================
+		test_no = 6;
+		$display( "======================================" );
+		$display( "Test %0d: Continuous write access test", test_no );
+		$display( "======================================" );
+
+		// Continuous writes without explicit wait
+		for( i = 0; i < 32; i++ ) begin
+			int timeout;
+			address		<= 19'h10000 + i;
+			write		<= 1'b1;
+			wdata		<= i ^ 8'hA5;
+			valid		<= 1'b1;
+			@( posedge clk );
+			timeout = 0;
+			while( !ready && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for ready in write, address=0x%05X", test_no, 19'h10000 + i );
+			end
+			// ready=1 was sampled, deassert valid on next cycle
+			valid		<= 1'b0;
+			// Wait for CS to go high (command completion)
+			timeout = 0;
+			while( !sram_cs_n && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			$display( "write: address=0x%05X, data=0x%02X", 19'h10000 + i, i ^ 8'hA5 );
+		end
+
+		// Verify written data
+		for( i = 0; i < 32; i++ ) begin
+			expected = i ^ 8'hA5;
+			read_data( 19'h10000 + i, data );
+			if( data !== expected ) begin
+				$display( "[ERROR] Test %0d: Address 0x%05X expected 0x%02X, got 0x%02X", test_no, 19'h10000 + i, expected, data );
+				error_count++;
+			end
+		end
+
+		// ============================================================
+		//	Test 7: Continuous read access test (back-to-back)
+		// ============================================================
+		test_no = 7;
+		$display( "======================================" );
+		$display( "Test %0d: Continuous read access test", test_no );
+		$display( "======================================" );
+
+		// Continuous reads without explicit wait
+		for( i = 0; i < 32; i++ ) begin
+			int timeout;
+			expected = i ^ 8'hA5;
+			address		<= 19'h10000 + i;
+			write		<= 1'b0;
+			valid		<= 1'b1;
+			@( posedge clk );
+			timeout = 0;
+			while( !ready && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for ready in read, address=0x%05X", test_no, 19'h10000 + i );
+			end
+			// ready=1 was sampled, deassert valid on next cycle
+			valid		<= 1'b0;
+			// Wait for rdata_en
+			timeout = 0;
+			while( !rdata_en && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for rdata_en in read, address=0x%05X", test_no, 19'h10000 + i );
+			end
+			data = rdata;
+			$display( "read: address=0x%05X, data=0x%02X", 19'h10000 + i, data );
+			if( data !== expected ) begin
+				$display( "[ERROR] Test %0d: Address 0x%05X expected 0x%02X, got 0x%02X", test_no, 19'h10000 + i, expected, data );
+				error_count++;
+			end
+			// Wait for rdata_en to go low
+			timeout = 0;
+			while( rdata_en && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+		end
+
+		// ============================================================
+		//	Test 8: Alternating write-read continuous access test
+		// ============================================================
+		test_no = 8;
+		$display( "======================================" );
+		$display( "Test %0d: Alternating write-read continuous access", test_no );
+		$display( "======================================" );
+
+		// Write then immediately read the same address
+		for( i = 0; i < 16; i++ ) begin
+			int timeout;
+			expected = 8'hC0 + i;
+			
+			// Write
+			address		<= 19'h20000 + i;
+			write		<= 1'b1;
+			wdata		<= expected;
+			valid		<= 1'b1;
+			@( posedge clk );
+			timeout = 0;
+			while( !ready && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for ready in write, address=0x%05X", test_no, 19'h20000 + i );
+			end
+			// ready=1 was sampled, deassert valid on next cycle
+			valid		<= 1'b0;
+			// Wait for CS to go high (command completion)
+			timeout = 0;
+			while( !sram_cs_n && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			$display( "write: address=0x%05X, data=0x%02X", 19'h20000 + i, expected );
+			
+			// Immediately read back
+			address		<= 19'h20000 + i;
+			write		<= 1'b0;
+			valid		<= 1'b1;
+			@( posedge clk );
+			timeout = 0;
+			while( !ready && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for ready in read, address=0x%05X", test_no, 19'h20000 + i );
+			end
+			// ready=1 was sampled, deassert valid on next cycle
+			valid		<= 1'b0;
+			// Wait for rdata_en
+			timeout = 0;
+			while( !rdata_en && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for rdata_en in read, address=0x%05X", test_no, 19'h20000 + i );
+			end
+			data = rdata;
+			$display( "read: address=0x%05X, data=0x%02X", 19'h20000 + i, data );
+			if( data !== expected ) begin
+				$display( "[ERROR] Test %0d: Address 0x%05X expected 0x%02X, got 0x%02X", test_no, 19'h20000 + i, expected, data );
+				error_count++;
+			end
+			// Wait for rdata_en to go low
+			timeout = 0;
+			while( rdata_en && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+		end
+
+		// ============================================================
+		//	Test 9: Rapid fire access - minimal wait between accesses
+		// ============================================================
+		test_no = 9;
+		$display( "======================================" );
+		$display( "Test %0d: Rapid fire access test", test_no );
+		$display( "======================================" );
+
+		// First, write test data
+		for( i = 0; i < 8; i++ ) begin
+			write_data( 19'h30000 + i, 8'hF0 + i );
+		end
+
+		// Now read as fast as possible by asserting valid immediately when ready
+		for( i = 0; i < 8; i++ ) begin
+			int timeout;
+			expected = 8'hF0 + i;
+			address		<= 19'h30000 + i;
+			write		<= 1'b0;
+			valid		<= 1'b1;
+			// Wait for ready and hold valid for exactly 1 cycle when ready
+			@( posedge clk );
+			timeout = 0;
+			while( !ready && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for ready in rapid read, address=0x%05X", test_no, 19'h30000 + i );
+			end
+			// ready=1 was sampled, deassert valid on next cycle
+			valid		<= 1'b0;
+			// Wait for rdata_en
+			timeout = 0;
+			while( !rdata_en && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
+			if( timeout >= 10000 ) begin
+				$display( "[TIMEOUT] Test %0d: Waiting for rdata_en in rapid read, address=0x%05X", test_no, 19'h30000 + i );
+			end
+			data = rdata;
+			$display( "rapid read: address=0x%05X, data=0x%02X", 19'h30000 + i, data );
+			if( data !== expected ) begin
+				$display( "[ERROR] Test %0d: Address 0x%05X expected 0x%02X, got 0x%02X", test_no, 19'h30000 + i, expected, data );
+				error_count++;
+			end
+			// Wait for rdata_en to go low
+			timeout = 0;
+			while( rdata_en && timeout < 10000 ) begin
+				@( posedge clk );
+				timeout++;
+			end
 		end
 
 		// ============================================================
