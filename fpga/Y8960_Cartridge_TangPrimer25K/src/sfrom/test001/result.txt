@@ -1,0 +1,147 @@
+Reading pref.tcl
+
+# 2020.1
+
+# vsim -c -t 1ps -do "run 5ms; quit" tb 
+# Start time: 21:21:44 on Jan 31,2026
+# Loading sv_std.std
+# Loading work.tb
+# Loading work.sfrom
+# run 5ms
+# ========================================
+# Starting Serial FlashROM Controller Test
+# ========================================
+# [INFO] DUT is ready
+# 
+# [Test 1] Read from address 0x000000
+# [DEBUG] issue_read called, addr=000000h
+# [DEBUG] issue_read: wait_ready done
+# [DEBUG] issue_read: valid pulse sent
+# [MOCK] Received command: ebh
+# [TRC] cnt=60, CS=0, spiclk=0, DUT: state=6 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=1 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=61, CS=0, spiclk=1, DUT: state=7 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=1 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=62, CS=0, spiclk=0, DUT: state=7 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=0 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=63, CS=0, spiclk=1, DUT: state=7 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=0 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=64, CS=0, spiclk=0, DUT: state=7 bit=0 dummy=0 io_qout=1 | MOCK: state=7 qcnt=1 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=65, CS=0, spiclk=1, DUT: state=15 bit=1 dummy=0 io_qout=1 | MOCK: state=7 qcnt=1 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=66, CS=0, spiclk=0, DUT: state=15 bit=1 dummy=0 io_qout=1 | MOCK: state=7 qcnt=0 dcnt=4 qout=0 | io=1111
+# [TRC] cnt=67, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=0 io_qout=1 | MOCK: state=7 qcnt=0 dcnt=4 qout=0 | io=1111
+# [TRC] cnt=68, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=0 io_qout=1 | MOCK: state=7 qcnt=0 dcnt=3 qout=0 | io=1111
+# [TRC] cnt=69, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=3 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=3 qout=0 | io=11z1
+# [TRC] cnt=70, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=2 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=2 qout=0 | io=11z1
+# [TRC] cnt=71, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=2 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=2 qout=0 | io=11z1
+# [TRC] cnt=72, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=1 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=1 qout=0 | io=11z1
+# [TRC] cnt=73, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=1 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=1 qout=0 | io=11z1
+# [TRC] cnt=74, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=0 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=0 qout=0 | io=11z1
+# [TRC] cnt=75, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=1 dcnt=0 qout=1 | io=xx0x
+# [TRC] cnt=76, CS=0, spiclk=0, DUT: state=8 bit=1 dummy=0 io_qout=0 | MOCK: state=4 qcnt=1 dcnt=0 qout=1 | io=0000
+# [TRC] cnt=77, CS=0, spiclk=1, DUT: state=8 bit=1 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=1 | io=0000
+# [TRC] cnt=78, CS=0, spiclk=0, DUT: state=8 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=1 | io=0000
+# [TRC] cnt=79, CS=0, spiclk=1, DUT: state=8 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=0 | io=zz1z
+# [TRC] cnt=80, CS=0, spiclk=0, DUT: state=13 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=0 | io=zz1z
+# [TRC] cnt=81, CS=1, spiclk=1, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=82, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=83, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=84, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=85, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=86, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=87, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=88, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=89, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=90, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=91, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=92, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=93, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=94, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [ERROR] Test 1: rdata mismatch. Expected: 00h, Got: 0Zh
+# 
+# [Test 2] Read from address 0x000055
+# [DEBUG] issue_read called, addr=000055h
+# [DEBUG] issue_read: wait_ready done
+# [TRC] cnt=95, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=96, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=97, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=98, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=99, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=100, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=101, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=102, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=103, CS=1, spiclk=0, DUT: state=3 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [DEBUG] issue_read: valid pulse sent
+# [TRC] cnt=104, CS=0, spiclk=0, DUT: state=4 bit=7 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=105, CS=0, spiclk=1, DUT: state=4 bit=7 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=106, CS=0, spiclk=0, DUT: state=4 bit=7 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=107, CS=0, spiclk=1, DUT: state=4 bit=6 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=108, CS=0, spiclk=0, DUT: state=4 bit=6 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=109, CS=0, spiclk=1, DUT: state=4 bit=5 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=110, CS=0, spiclk=0, DUT: state=4 bit=5 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=111, CS=0, spiclk=1, DUT: state=4 bit=4 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1110
+# [TRC] cnt=112, CS=0, spiclk=0, DUT: state=4 bit=4 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1110
+# [TRC] cnt=113, CS=0, spiclk=1, DUT: state=4 bit=3 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=114, CS=0, spiclk=0, DUT: state=4 bit=3 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=115, CS=0, spiclk=1, DUT: state=4 bit=2 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1110
+# [TRC] cnt=116, CS=0, spiclk=0, DUT: state=4 bit=2 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1110
+# [TRC] cnt=117, CS=0, spiclk=1, DUT: state=4 bit=1 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=118, CS=0, spiclk=0, DUT: state=4 bit=1 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [MOCK] Received command: ebh
+# [TRC] cnt=119, CS=0, spiclk=1, DUT: state=4 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=120, CS=0, spiclk=0, DUT: state=4 bit=0 dummy=0 io_qout=0 | MOCK: state=6 qcnt=5 dcnt=0 qout=0 | io=11z1
+# [TRC] cnt=121, CS=0, spiclk=1, DUT: state=5 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=5 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=122, CS=0, spiclk=0, DUT: state=5 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=4 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=123, CS=0, spiclk=1, DUT: state=5 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=4 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=124, CS=0, spiclk=0, DUT: state=5 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=3 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=125, CS=0, spiclk=1, DUT: state=6 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=3 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=126, CS=0, spiclk=0, DUT: state=6 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=2 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=127, CS=0, spiclk=1, DUT: state=6 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=2 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=128, CS=0, spiclk=0, DUT: state=6 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=1 dcnt=0 qout=0 | io=0000
+# [TRC] cnt=129, CS=0, spiclk=1, DUT: state=7 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=1 dcnt=0 qout=0 | io=0101
+# [TRC] cnt=130, CS=0, spiclk=0, DUT: state=7 bit=1 dummy=0 io_qout=1 | MOCK: state=6 qcnt=0 dcnt=0 qout=0 | io=0101
+# [TRC] cnt=131, CS=0, spiclk=1, DUT: state=7 bit=0 dummy=0 io_qout=1 | MOCK: state=6 qcnt=0 dcnt=0 qout=0 | io=0101
+# [TRC] cnt=132, CS=0, spiclk=0, DUT: state=7 bit=0 dummy=0 io_qout=1 | MOCK: state=7 qcnt=1 dcnt=0 qout=0 | io=0101
+# [TRC] cnt=133, CS=0, spiclk=1, DUT: state=15 bit=1 dummy=0 io_qout=1 | MOCK: state=7 qcnt=1 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=134, CS=0, spiclk=0, DUT: state=15 bit=1 dummy=0 io_qout=1 | MOCK: state=7 qcnt=0 dcnt=4 qout=0 | io=1111
+# [TRC] cnt=135, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=0 io_qout=1 | MOCK: state=7 qcnt=0 dcnt=4 qout=0 | io=1111
+# [TRC] cnt=136, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=0 io_qout=1 | MOCK: state=7 qcnt=0 dcnt=3 qout=0 | io=1111
+# [TRC] cnt=137, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=3 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=3 qout=0 | io=11z1
+# [TRC] cnt=138, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=2 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=2 qout=0 | io=11z1
+# [TRC] cnt=139, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=2 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=2 qout=0 | io=11z1
+# [TRC] cnt=140, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=1 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=1 qout=0 | io=11z1
+# [TRC] cnt=141, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=1 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=1 qout=0 | io=11z1
+# [TRC] cnt=142, CS=0, spiclk=0, DUT: state=15 bit=0 dummy=0 io_qout=0 | MOCK: state=7 qcnt=0 dcnt=0 qout=0 | io=11z1
+# [TRC] cnt=143, CS=0, spiclk=1, DUT: state=15 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=1 dcnt=0 qout=1 | io=x101
+# [TRC] cnt=144, CS=0, spiclk=0, DUT: state=8 bit=1 dummy=0 io_qout=0 | MOCK: state=4 qcnt=1 dcnt=0 qout=1 | io=0101
+# [TRC] cnt=145, CS=0, spiclk=1, DUT: state=8 bit=1 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=1 | io=0101
+# [TRC] cnt=146, CS=0, spiclk=0, DUT: state=8 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=1 | io=0101
+# [TRC] cnt=147, CS=0, spiclk=1, DUT: state=8 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=0 | io=zz1z
+# [TRC] cnt=148, CS=0, spiclk=0, DUT: state=13 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=0 | io=zz1z
+# [TRC] cnt=149, CS=1, spiclk=1, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=4 qcnt=0 dcnt=0 qout=0 | io=1111
+# [TRC] cnt=150, CS=1, spiclk=0, DUT: state=0 bit=0 dummy=0 io_qout=0 | MOCK: state=0 qcnt=0 dcnt=0 qout=0 | io=1111
+# [ERROR] Test 2: rdata mismatch. Expected: 55h, Got: 5Zh
+# 
+# [Test 3] Read from address 0x0000AA
+# [DEBUG] issue_read called, addr=0000aah
+# [DEBUG] issue_read: wait_ready done
+# [DEBUG] issue_read: valid pulse sent
+# [MOCK] Received command: ebh
+# [ERROR] Test 3: rdata mismatch. Expected: aah, Got: aZh
+# 
+# [Test 4] Write 0x5A to address 0x000010
+# [MOCK] Received command: 06h
+# [MOCK] Received command: 02h
+# [MOCK] Received command: 05h
+# [INFO] Write operation complete
+# 
+# [Test 5] Read back from address 0x000010
+# [DEBUG] issue_read called, addr=000010h
+# [DEBUG] issue_read: wait_ready done
+# [DEBUG] issue_read: valid pulse sent
+# [MOCK] Received command: ebh
+# [ERROR] Test 5: rdata mismatch. Expected: 5ah, Got: aZh
+# 
+# [Test 6] Write 0xA5 to address 0x000020
+# [MOCK] Received command: 06h
+# [MOCK] Received command: 02h
+# [MOCK] Received command: 05h
+#  quit
+# End time: 21:21:45 on Jan 31,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0

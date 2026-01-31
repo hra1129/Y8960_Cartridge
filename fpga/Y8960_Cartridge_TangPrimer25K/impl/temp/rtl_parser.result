@@ -17,7 +17,33 @@
   "SubInsts" : [
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 177,
+    "InstLine" : 173,
+    "InstName" : "u_pll",
+    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "Gowin_PLL",
+    "SubInsts" : [
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll.v",
+      "InstLine" : 23,
+      "InstName" : "u_pll",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll_mod.v",
+      "ModuleLine" : 10,
+      "ModuleName" : "Gowin_PLL_MOD"
+     },
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll.v",
+      "InstLine" : 37,
+      "InstName" : "u_pll_init",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/pll_init.v",
+      "ModuleLine" : 4,
+      "ModuleName" : "PLL_INIT"
+     }
+    ]
+   },
+   {
+    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
+    "InstLine" : 181,
     "InstName" : "u_msx_slot",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/msx_slot/msx_slot.v",
     "ModuleLine" : 58,
@@ -25,7 +51,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 208,
+    "InstLine" : 212,
     "InstName" : "u_msx_timer",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/timer/msx_timer.v",
     "ModuleLine" : 58,
@@ -67,7 +93,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 223,
+    "InstLine" : 227,
     "InstName" : "u_dual_opl2",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2_patch/opl2.v",
     "ModuleLine" : 7,
@@ -845,7 +871,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 241,
+    "InstLine" : 245,
     "InstName" : "u_dual_opll",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll_patch/opll.v",
     "ModuleLine" : 7,
@@ -1471,7 +1497,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 259,
+    "InstLine" : 263,
     "InstName" : "u_dual_ssg",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssg/dual_ssg.v",
     "ModuleLine" : 58,
@@ -1497,7 +1523,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 283,
+    "InstLine" : 287,
     "InstName" : "u_scc",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc.v",
     "ModuleLine" : 7,
@@ -1817,7 +1843,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 301,
+    "InstLine" : 305,
     "InstName" : "u_dcsg",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
     "ModuleLine" : 7,
@@ -1843,7 +1869,7 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 323,
+    "InstLine" : 327,
     "InstName" : "u_i2s",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/i2s_audio/i2s_audio.v",
     "ModuleLine" : 58,

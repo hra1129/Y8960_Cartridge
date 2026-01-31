@@ -2,6 +2,14 @@
  "Device" : "GW5A-25A",
  "Files" : [
   {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll_mod.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/i2s_audio/i2s_audio.v",
    "Type" : "verilog"
   },
@@ -55,6 +63,10 @@
   },
   {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_vrc_s.v",
    "Type" : "verilog"
   },
   {
@@ -194,6 +206,14 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/pll_init.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssg/dual_ssg.v",
    "Type" : "verilog"
   },
@@ -211,14 +231,6 @@
   },
   {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_vrc_s.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
    "Type" : "verilog"
   },
   {

@@ -5,6 +5,8 @@
     <Version>5</Version>
     <Device name="GW5A-25A" pn="GW5A-LV25MG121NC1/I0">gw5a25a-002</Device>
     <FileList>
+        <File path="src/gowin_pll/gowin_pll.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_pll/gowin_pll_mod.v" type="file.verilog" enable="1"/>
         <File path="src/i2s_audio/i2s_audio.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_dac.v" type="file.verilog" enable="1"/>
@@ -54,6 +56,7 @@
         <File path="src/opl2/src/jtopl_slot_cnt.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_timers.v" type="file.verilog" enable="1"/>
         <File path="src/opl2_patch/opl2.v" type="file.verilog" enable="1"/>
+        <File path="src/pll_init.v" type="file.verilog" enable="1"/>
         <File path="src/sn76489_audio_patch/sn76489.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/dual_ssg.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/ssg_core.v" type="file.verilog" enable="1"/>

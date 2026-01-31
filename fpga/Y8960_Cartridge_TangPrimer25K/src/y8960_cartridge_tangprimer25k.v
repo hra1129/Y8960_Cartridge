@@ -4,25 +4,25 @@
 //
 //	Copyright (C) 2026 Takayuki Hara
 //
-//	�{�\�t�g�E�F�A����і{�\�t�g�E�F�A�Ɋ�Â��č쐬���ꂽ�h�����́A�ȉ��̏�����
-//	�������ꍇ�Ɍ���A�ĔЕz����юg�p��������܂��B
+//	本ソフトウェアおよび本ソフトウェアに基づいて作成された派生物は、以下の条件を
+//	満たす場合に限り、再頒布および使用が許可されます。
 //
-//	1.�\�[�X�R�[�h�`���ōĔЕz����ꍇ�A��L�̒��쌠�\���A�{�����ꗗ�A����щ��L
-//	  �Ɛӏ��������̂܂܂̌`�ŕێ����邱�ƁB
-//	2.�o�C�i���`���ōĔЕz����ꍇ�A�Еz���ɕt���̃h�L�������g���̎����ɁA��L��
-//	  ���쌠�\���A�{�����ꗗ�A����щ��L�Ɛӏ������܂߂邱�ƁB
-//	3.���ʂɂ�鎖�O�̋��Ȃ��ɁA�{�\�t�g�E�F�A��̔��A����я��ƓI�Ȑ��i�⊈��
-//	  �Ɏg�p���Ȃ����ƁB
+//	1.ソースコード形式で再頒布する場合、上記の著作権表示、本条件一覧、および下記
+//	  免責条項をそのままの形で保持すること。
+//	2.バイナリ形式で再頒布する場合、頒布物に付属のドキュメント等の資料に、上記の
+//	  著作権表示、本条件一覧、および下記免責条項を含めること。
+//	3.書面による事前の許可なしに、本ソフトウェアを販売、および商業的な製品や活動
+//	  に使用しないこと。
 //
-//	�{�\�t�g�E�F�A�́A���쌠�҂ɂ���āu����̂܂܁v�񋟂���Ă��܂��B���쌠�҂́A
-//	����ړI�ւ̓K�����̕ۏ؁A���i���̕ۏ؁A�܂�����Ɍ��肳��Ȃ��A�����Ȃ閾��
-//	�I�������͈ÖقȕۏؐӔC�������܂���B���쌠�҂́A���R�̂�������킸�A���Q
-//	�����̌�����������킸�A���ӔC�̍������_��ł��邩���i�ӔC�ł��邩�i�ߎ�
-//	���̑��́j�s�@�s�ׂł��邩���킸�A���ɂ��̂悤�ȑ��Q����������\����m��
-//	����Ă����Ƃ��Ă��A�{�\�t�g�E�F�A�̎g�p�ɂ���Ĕ��������i��֕i�܂��͑�p�T
-//	�[�r�X�̒��B�A�g�p�̑r���A�f�[�^�̑r���A���v�̑r���A�Ɩ��̒��f���܂߁A�܂���
-//	��Ɍ��肳��Ȃ��j���ڑ��Q�A�Ԑڑ��Q�A�����I�ȑ��Q�A���ʑ��Q�A�����I���Q�A��
-//	���͌��ʑ��Q�ɂ��āA��ؐӔC�𕉂�Ȃ����̂Ƃ��܂��B
+//	本ソフトウェアは、著作権者によって「現状のまま」提供されています。著作権者は、
+//	特定目的への適合性の保証、商品性の保証、またそれに限定されない、いかなる明示
+//	的もしくは暗黙な保証責任も負いません。著作権者は、事由のいかんを問わず、損害
+//	発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失
+//	その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知ら
+//	されていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サ
+//	ービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそ
+//	れに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、ま
+//	たは結果損害について、一切責任を負わないものとします。
 //
 //	Note that above Japanese version license is the formal document.
 //	The following translation is only for reference.
@@ -56,7 +56,7 @@
 //-----------------------------------------------------------------------------
 
 module y8960cartridge_tangprimer25k (
-	input			clk_14m,				//	H5	14.31818MHz MSX clock
+	input			clk_28m,				//	H5	28.63636MHz MSX clock
 	input			clk_50m,				//	E2	50.00000MHz audio base clock (on board)
 	//	slot
 	input			slot_reset,				//	G11
@@ -78,10 +78,7 @@ module y8960cartridge_tangprimer25k (
 	//	flash ROM
 	output			flash_spi_clk,			//	E7
 	output			flash_spi_cs_n,			//	E6
-	output			flash_spi_wp_n,			//	D5
-	output			flash_spi_hold_n,		//	E4
-	input			flash_spi_miso,			//	E5
-	output			flash_spi_mosi,			//	D6
+	inout	[3:0]	flash_spi_io,			//	E4,D5,E5,D6
 	//	SRAM
 	output			sram_ce_n,				//	F2
 	output			sram_sclk,				//	F1
@@ -138,7 +135,7 @@ module y8960cartridge_tangprimer25k (
 	wire	[13:0]	w_dcsg_out_l;
 	wire	[13:0]	w_dcsg_out_r;
 
-	reg		[4:0]	ff_divider;
+	reg		[2:0]	ff_divider;
 	reg				ff_enable;
 	wire			w_int_n;
 	wire			w_timer_intr_n;
@@ -158,13 +155,13 @@ module y8960cartridge_tangprimer25k (
 	assign slot_wait            = 1'b0;
 
 	// ---------------------------------------------------------
-	always @( posedge clk_14m ) begin
+	always @( posedge clk_28m ) begin
 		if( !reset_n ) begin
-			ff_divider	<= 5'd0;
+			ff_divider	<= 3'd0;
 			ff_enable	<= 1'b0;
 		end
-		else if( ff_divider == 5'd23 ) begin
-			ff_divider	<= 5'd0;
+		else if( ff_divider == 3'd7 ) begin
+			ff_divider	<= 3'd0;
 			ff_enable	<= 1'b1;				//	3.579545MHz
 		end
 		else begin
@@ -173,9 +170,16 @@ module y8960cartridge_tangprimer25k (
 		end
 	end
 
+	Gowin_PLL u_pll(
+		.clkin				( clk_28m					),	//	28.63636MHz
+		.clkout0			( clk_258m					),	//	257.72724MHz
+		.clkout1			( clk_25m					),	//	24.576MHz
+		.mdclk				( clk_50m					)	//	50MHz
+	);
+
 	// ---------------------------------------------------------
 	msx_slot u_msx_slot (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.p_slot_reset		( slot_reset				),
         .p_slot_sltsl_n     ( slot_sltsl_n				),
@@ -206,7 +210,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	msx_timer u_msx_timer (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.bus_ioreq			( bus_ioreq					),
 		.bus_address		( bus_address[7:0]			),
@@ -221,7 +225,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	dual_opl2 u_dual_opl2 (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
 		.bus_ioreq			( bus_ioreq					),
@@ -239,7 +243,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	dual_opll u_dual_opll (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
 		.bus_memreq			( bus_memreq				),
@@ -257,7 +261,7 @@ module y8960cartridge_tangprimer25k (
 	dual_ssg #(
 		.BUILTIN			( 0							)
 	) u_dual_ssg (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
 		.bus_ioreq			( bus_ioreq					),
@@ -282,7 +286,7 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	scc u_scc (
 		.reset_n			( reset_n					),
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.enable				( ff_enable					),
 		.bus_memreq			( bus_memreq				),
 		.bus_address		( bus_address				),
@@ -299,7 +303,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	dual_dcsg u_dcsg (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
 		.bus_ioreq			( bus_ioreq					),
@@ -321,7 +325,7 @@ module y8960cartridge_tangprimer25k (
 			{ 3'd0, w_scc_out, 2'd0 };
 
 	i2s_audio u_i2s (
-		.clk				( clk_14m					),
+		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.sound_in			( w_sound_out				),
 		.i2s_audio_en		( audio_mclk				),

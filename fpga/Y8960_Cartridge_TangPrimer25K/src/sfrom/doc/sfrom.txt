@@ -1,0 +1,17 @@
+ステートマシン構成
+ステート	説明
+ST_IDLE	待機状態、ready=1を出力
+ST_SEND_WREN	Write Enable コマンド送信開始
+ST_WREN_WAIT	WREN バイト送信
+ST_CS_HIGH	CS# High 期間（コマンド間の待機）
+ST_SEND_CMD	SPIコマンド送信開始
+ST_SEND_ADDR2	コマンドバイト送信 → アドレスバイト2開始
+ST_SEND_ADDR1	アドレスバイト2送信 → アドレスバイト1開始
+ST_SEND_ADDR0	アドレスバイト1送信 → アドレスバイト0開始
+ST_SEND_ADDR_LAST	アドレスバイト0送信 → データフェーズ
+ST_READ_DATA	データ読み出し
+ST_WRITE_DATA	データ書き込み
+ST_WAIT_BUSY	ビジー状態チェック開始
+ST_READ_STATUS	ステータスレジスタ読み出しコマンド送信
+ST_CHECK_STATUS	WIP ビット確認
+ST_FINISH	操作完了
