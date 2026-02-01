@@ -165,7 +165,7 @@ module y8960cartridge_tangprimer25k (
 			ff_enable	<= 1'b1;				//	3.579545MHz
 		end
 		else begin
-			ff_divider	<= ff_divider + 5'd1;
+			ff_divider	<= ff_divider + 3'd1;
 			ff_enable	<= 1'b0;
 		end
 	end
