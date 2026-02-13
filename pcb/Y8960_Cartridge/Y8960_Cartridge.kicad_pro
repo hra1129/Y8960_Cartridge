@@ -60,6 +60,14 @@
       ],
       "drc_exclusions": [
         [
+          "footprint_type_mismatch|135525000|74425000|bd8cc691-5f4e-477a-becc-e9749e85f58f|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "footprint_type_mismatch|87100000|71300000|40813050-24b9-47c9-94d6-9b9a5bb16c9f|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
           "silk_edge_clearance|107850000|67889974|bee4dda8-003d-498e-aea6-8d905a054183|f577b8a3-6536-42cf-861e-5f540776b568",
           ""
         ],
@@ -295,7 +303,7 @@
         "footprint": "error",
         "footprint_filters_mismatch": "ignore",
         "footprint_symbol_mismatch": "warning",
-        "footprint_type_mismatch": "ignore",
+        "footprint_type_mismatch": "warning",
         "hole_clearance": "error",
         "hole_to_hole": "warning",
         "holes_co_located": "warning",

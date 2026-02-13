@@ -20279,7 +20279,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric_Pad1.33x2.70mm_HandSolder"
 			(at 166.0652 273.05 0)
 			(effects
 				(font
