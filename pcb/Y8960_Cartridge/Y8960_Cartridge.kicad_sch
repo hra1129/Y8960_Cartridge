@@ -15936,7 +15936,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 20.32 177.038 90)
 			(effects
 				(font
@@ -15956,6 +15956,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 20.32 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C17710"
+			(at 20.32 175.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 20.32 175.26 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16137,7 +16155,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 83.312 238.76 90)
 			(effects
 				(font
@@ -16157,6 +16175,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 85.09 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 85.09 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 85.09 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16206,7 +16242,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
 			(at 35.56 175.26 0)
 			(effects
 				(font
@@ -16234,6 +16270,24 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
+			(at 35.56 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C84256"
+			(at 35.56 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 35.56 175.26 0)
 			(effects
 				(font
@@ -16302,6 +16356,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 354.33 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C19197"
+			(at 354.33 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 354.33 201.93 0)
 			(effects
 				(font
@@ -16510,6 +16582,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C387408"
+			(at 281.94 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 281.94 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "4"
 			(uuid "5351d1c9-d3c5-426c-82b4-8b3aeefa1897")
 		)
@@ -16559,7 +16649,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 179.832 68.58 90)
 			(effects
 				(font
@@ -16583,6 +16673,24 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC" "C26010"
+			(at 181.61 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 181.61 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -16920,6 +17028,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 379.73 52.07 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 379.73 52.07 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "e013ec44-6e57-42b9-843b-c071cc26e9ca")
 		)
@@ -16965,7 +17091,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 170.942 238.76 90)
 			(effects
 				(font
@@ -16985,6 +17111,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 172.72 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 172.72 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 172.72 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17052,6 +17196,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 354.33 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C19197"
+			(at 354.33 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 354.33 121.92 0)
 			(effects
 				(font
@@ -17301,7 +17463,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 279.0952 102.87 0)
 			(effects
 				(font
@@ -17320,6 +17482,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 278.13 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 278.13 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 278.13 99.06 0)
 			(effects
 				(font
@@ -17370,7 +17550,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 56.642 34.29 90)
 			(effects
 				(font
@@ -17390,6 +17570,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 58.42 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 58.42 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 58.42 34.29 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17505,7 +17703,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 80.772 238.76 90)
 			(effects
 				(font
@@ -17525,6 +17723,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 82.55 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 82.55 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 82.55 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17597,6 +17813,24 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC" ""
+			(at 45.72 209.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 45.72 209.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "9"
@@ -17738,7 +17972,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 249.8852 182.88 0)
 			(effects
 				(font
@@ -17757,6 +17991,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 248.92 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 248.92 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 248.92 179.07 0)
 			(effects
 				(font
@@ -17873,7 +18125,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
 			(at 27.94 177.8 0)
 			(effects
 				(font
@@ -17901,6 +18153,24 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
+			(at 27.94 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C84256"
+			(at 27.94 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 27.94 177.8 0)
 			(effects
 				(font
@@ -17951,7 +18221,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
 			(at 27.94 182.88 0)
 			(effects
 				(font
@@ -17979,6 +18249,24 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
+			(at 27.94 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C84256"
+			(at 27.94 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 27.94 182.88 0)
 			(effects
 				(font
@@ -18179,6 +18467,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 109.22 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C597938"
+			(at 109.22 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" "Use two specified connectors"
 			(at 109.22 110.49 0)
 			(effects
 				(font
@@ -18584,7 +18890,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 279.0952 182.88 0)
 			(effects
 				(font
@@ -18603,6 +18909,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 278.13 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 278.13 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 278.13 179.07 0)
 			(effects
 				(font
@@ -18654,7 +18978,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 249.8852 102.87 0)
 			(effects
 				(font
@@ -18673,6 +18997,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 248.92 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 248.92 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 248.92 99.06 0)
 			(effects
 				(font
@@ -18855,7 +19197,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 184.912 165.1 90)
 			(effects
 				(font
@@ -18875,6 +19217,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 186.69 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C26010"
+			(at 186.69 165.1 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 186.69 165.1 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18925,7 +19285,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 369.2652 182.88 0)
 			(effects
 				(font
@@ -18944,6 +19304,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 368.3 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 368.3 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 368.3 179.07 0)
 			(effects
 				(font
@@ -18995,7 +19373,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 295.6052 49.53 0)
 			(effects
 				(font
@@ -19014,6 +19392,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 294.64 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 294.64 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 294.64 45.72 0)
 			(effects
 				(font
@@ -19152,6 +19548,24 @@
 		)
 		(property "Description" ""
 			(at 379.73 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 379.73 71.12 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 379.73 71.12 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19336,7 +19750,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 31.242 62.23 90)
 			(effects
 				(font
@@ -19356,6 +19770,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 33.02 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 33.02 62.23 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 33.02 62.23 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19670,7 +20102,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 179.832 99.06 90)
 			(effects
 				(font
@@ -19694,6 +20126,24 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC" "C26010"
+			(at 181.61 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 181.61 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -19804,7 +20254,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 178.562 238.76 90)
 			(effects
 				(font
@@ -19824,6 +20274,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 180.34 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 180.34 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 180.34 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20071,7 +20539,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 54.102 34.29 90)
 			(effects
 				(font
@@ -20091,6 +20559,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 55.88 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 55.88 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 55.88 34.29 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20140,7 +20626,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 20.32 184.658 90)
 			(effects
 				(font
@@ -20160,6 +20646,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 20.32 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C17710"
+			(at 20.32 182.88 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 20.32 182.88 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20210,7 +20714,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 257.5052 274.32 0)
 			(effects
 				(font
@@ -20229,6 +20733,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 256.54 270.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 256.54 270.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 256.54 270.51 0)
 			(effects
 				(font
@@ -20279,7 +20801,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric_Pad1.33x2.70mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
 			(at 166.0652 273.05 0)
 			(effects
 				(font
@@ -20303,6 +20825,24 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC" "C49066"
+			(at 165.1 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 165.1 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "2"
@@ -20347,7 +20887,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 20.32 179.578 90)
 			(effects
 				(font
@@ -20367,6 +20907,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 20.32 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C17710"
+			(at 20.32 177.8 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 20.32 177.8 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20483,7 +21041,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 340.0552 182.88 0)
 			(effects
 				(font
@@ -20502,6 +21060,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 339.09 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 339.09 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 339.09 179.07 0)
 			(effects
 				(font
@@ -20636,6 +21212,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 264.16 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C19197"
+			(at 264.16 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 264.16 201.93 0)
 			(effects
 				(font
@@ -20818,7 +21412,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 49.022 34.29 90)
 			(effects
 				(font
@@ -20838,6 +21432,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 50.8 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 50.8 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 50.8 34.29 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20887,7 +21499,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 182.372 165.1 90)
 			(effects
 				(font
@@ -20907,6 +21519,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 184.15 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C26010"
+			(at 184.15 165.1 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 184.15 165.1 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20956,7 +21586,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 51.562 34.29 90)
 			(effects
 				(font
@@ -20976,6 +21606,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 53.34 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 53.34 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 53.34 34.29 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21223,7 +21871,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 36.322 62.23 90)
 			(effects
 				(font
@@ -21243,6 +21891,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 38.1 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 38.1 62.23 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 38.1 62.23 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21376,6 +22042,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 138.43 227.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 138.43 227.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" "Card edge"
 			(at 138.43 227.33 0)
 			(effects
 				(font
@@ -21592,6 +22276,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 52.07 265.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 52.07 265.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "848ad17c-a88c-4998-a2db-cda5b2025863")
 		)
@@ -21686,6 +22388,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C458143"
+			(at 195.58 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 195.58 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "7a1e009c-aa31-4bcb-94dc-36ad724a18c5")
 		)
@@ -21732,7 +22452,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 305.7652 49.53 0)
 			(effects
 				(font
@@ -21751,6 +22471,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 304.8 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C63339"
+			(at 304.8 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 304.8 45.72 0)
 			(effects
 				(font
@@ -21801,7 +22539,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 85.852 238.76 90)
 			(effects
 				(font
@@ -21821,6 +22559,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 87.63 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 87.63 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 87.63 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21870,7 +22626,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 179.832 165.1 90)
 			(effects
 				(font
@@ -21890,6 +22646,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 181.61 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C26010"
+			(at 181.61 165.1 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 181.61 165.1 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21939,7 +22713,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
 			(at 35.56 180.34 0)
 			(effects
 				(font
@@ -21967,6 +22741,24 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
+			(at 35.56 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C84256"
+			(at 35.56 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 35.56 180.34 0)
 			(effects
 				(font
@@ -22084,7 +22876,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 210.312 39.37 90)
 			(effects
 				(font
@@ -22108,6 +22900,24 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC" "C17414"
+			(at 212.09 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 212.09 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -22284,7 +23094,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 20.32 182.118 90)
 			(effects
 				(font
@@ -22304,6 +23114,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 20.32 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C17710"
+			(at 20.32 180.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 20.32 180.34 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22353,7 +23181,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 88.392 238.76 90)
 			(effects
 				(font
@@ -22373,6 +23201,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 90.17 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 90.17 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 90.17 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22442,6 +23288,24 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 86.36 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 86.36 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 86.36 269.24 0)
 			(effects
 				(font
@@ -22808,6 +23672,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C458143"
+			(at 226.06 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 226.06 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "b63bce61-bf4f-4ac9-96fc-1c3c53757511")
 		)
@@ -22881,6 +23763,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 374.65 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 374.65 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e4c1314b-53c9-49fc-aa25-512da6680012")
 		)
@@ -22936,7 +23836,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 340.0552 102.87 0)
 			(effects
 				(font
@@ -22955,6 +23855,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 339.09 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 339.09 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 339.09 99.06 0)
 			(effects
 				(font
@@ -23023,6 +23941,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 264.16 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C19197"
+			(at 264.16 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 264.16 121.92 0)
 			(effects
 				(font
@@ -23139,7 +24075,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 177.292 165.1 90)
 			(effects
 				(font
@@ -23159,6 +24095,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 179.07 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C26010"
+			(at 179.07 165.1 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 179.07 165.1 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23274,7 +24228,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 173.482 238.76 90)
 			(effects
 				(font
@@ -23294,6 +24248,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 175.26 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 175.26 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 175.26 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23343,7 +24315,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 176.022 238.76 90)
 			(effects
 				(font
@@ -23363,6 +24335,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 177.8 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C104350"
+			(at 177.8 238.76 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 177.8 238.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23504,6 +24494,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C27585175"
+			(at 238.76 254 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 238.76 254 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "1a84f234-c504-437c-9f3c-73acbc6b93ff")
 		)
@@ -23618,6 +24626,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C458143"
+			(at 195.58 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
+			(at 195.58 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "70899586-2595-47a0-86db-fa42f3963568")
 		)
@@ -23664,7 +24690,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 369.2652 102.87 0)
 			(effects
 				(font
@@ -23683,6 +24709,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 368.3 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1525"
+			(at 368.3 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "note" ""
 			(at 368.3 99.06 0)
 			(effects
 				(font
