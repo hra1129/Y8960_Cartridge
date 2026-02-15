@@ -137,12 +137,18 @@ end
 ////
 
 generate
-if(RAMCTRL_ASYNC == 0) begin : ramctrl_sync
-always @(posedge emuclk) if(!mclkpcen_n) o_SCCREG_EN = (bankreg2 == 6'h3F) & (i_ABHI == 5'b10011); //synchronized
-end
-else begin : ramctrl_async
-always @(*) o_SCCREG_EN = (bankreg2 == 6'h3F) & (i_ABHI == 5'b10011);
-end
+	if(RAMCTRL_ASYNC == 0) begin : ramctrl_sync
+		always @(posedge emuclk) begin
+			if(!mclkpcen_n) begin
+				//synchronized
+				o_SCCREG_EN = ((bankreg2 == 6'h3F) & (i_ABHI == 5'b1001_1)) | (rammode & (bankreg1 == 6'h3F) & (i_ABHI == 5'b0111_1));
+			end
+		end
+	else begin : ramctrl_async
+		always @(*) begin
+			o_SCCREG_EN = (bankreg2 == 6'h3F) & (i_ABHI == 5'b1001_1);
+		end
+	end
 endgenerate
 
 
