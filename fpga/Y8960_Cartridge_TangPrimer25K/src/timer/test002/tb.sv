@@ -30,8 +30,8 @@ module tb ();
 	int				i, j;
 	reg				clk;
 	reg				reset_n;
-	reg				bus_ioreq;
-	reg		[7:0]	bus_address;
+	reg				bus_cs;
+	reg		[1:0]	bus_address;
 	reg				bus_write;
 	reg				bus_valid;
 	wire			bus_ready;
@@ -47,7 +47,7 @@ module tb ();
 	msx_timer u_msx_timer (
 		.clk			( clk			),
 		.reset_n		( reset_n		),
-		.bus_ioreq		( bus_ioreq		),
+		.bus_cs			( bus_cs		),
 		.bus_address	( bus_address	),
 		.bus_write		( bus_write		),
 		.bus_valid		( bus_valid		),
@@ -79,8 +79,8 @@ module tb ();
 	);
 		int		counter;
 
-		bus_ioreq		<= 1'b1;
-		bus_address		<= address;
+		bus_cs			<= 1'b1;
+		bus_address		<= address[1:0];
 		bus_wdata		<= value;
 		bus_write		<= 1'b1;
 		bus_valid		<= 1'b1;
@@ -97,7 +97,7 @@ module tb ();
 		end
 		@( posedge clk );
 
-		bus_ioreq		<= 1'b0;
+		bus_cs			<= 1'b0;
 		bus_address		<= 8'd0;
 		bus_wdata		<= 8'd0;
 		bus_write		<= 1'b0;
@@ -114,8 +114,8 @@ module tb ();
 		int		counter1;
 		int		counter2;
 	
-		bus_ioreq		<= 1'b1;
-		bus_address		<= address;
+		bus_cs			<= 1'b1;
+		bus_address		<= address[1:0];
 		bus_wdata		<= 8'd0;
 		bus_write		<= 1'b0;
 		bus_valid		<= 1'b1;
@@ -149,7 +149,7 @@ module tb ();
 			end
 		join
 
-		bus_ioreq		<= 1'b0;
+		bus_cs		<= 1'b0;
 		bus_address		<= 8'd0;
 		bus_wdata		<= 8'd0;
 		bus_write		<= 1'b0;
@@ -301,7 +301,7 @@ module tb ();
 		test_no			= -1;
 		reset_n			= 0;
 		clk				= 1;
-		bus_ioreq		= 0;
+		bus_cs			= 0;
 		bus_address		= 0;
 		bus_write		= 0;
 		bus_valid		= 0;

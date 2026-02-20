@@ -58,8 +58,8 @@
 module msx_timer (
 	input			clk,
 	input			reset_n,
-	input			bus_ioreq,
-	input	[7:0]	bus_address,
+	input			bus_cs,
+	input	[1:0]	bus_address,
 	input			bus_write,
 	input			bus_valid,
 	output			bus_ready,
@@ -68,10 +68,10 @@ module msx_timer (
 	output			bus_rdata_en,
 	output			intr_n
 );
-	localparam		c_register_index	= 8'hB0;
-	localparam		c_register_value	= 8'hB1;
-	localparam		c_interrupt_flag	= 8'hB2;
-	localparam		c_counter_read		= 8'hB3;
+	localparam		c_register_index	= 2'd0;
+	localparam		c_register_value	= 2'd1;
+	localparam		c_interrupt_flag	= 2'd2;
+	localparam		c_counter_read		= 2'd3;
 	reg				ff_busy;
 	reg		[7:0]	ff_register_index;
 	reg		[7:0]	ff_register_value;
@@ -126,7 +126,7 @@ module msx_timer (
 				ff_busy			<= 1'b0;
 			end
 		end
-		else if( bus_ioreq && bus_valid ) begin
+		else if( bus_cs && bus_valid ) begin
 			if( bus_write ) begin
 				//	write access
 				case( bus_address )
@@ -227,7 +227,7 @@ module msx_timer (
 		if( !reset_n ) begin
 			ff_interrupt_clear <= 4'd0;
 		end
-		else if( bus_ioreq && bus_valid && bus_write && (bus_address == c_interrupt_flag) ) begin
+		else if( bus_cs && bus_valid && bus_write && (bus_address == c_interrupt_flag) ) begin
 			ff_interrupt_clear <= bus_wdata[3:0];
 		end
 		else begin

@@ -79,8 +79,23 @@ module msx_slot(
 	input			bus_ready,
 	output	[7:0]	bus_wdata,
 	input	[7:0]	bus_rdata,
-	input			bus_rdata_en
+	input			bus_rdata_en,
+	//	Module chip select
+	output			bus_timer_cs,
+	output			bus_opl2_cs,
+	output			bus_opll_cs,
+	output			bus_ssg_cs,
+	output			bus_scc_cs,
+	output			bus_dcsg_cs
 );
+	//	I/O interface is disconnect at power on and reset.
+	localparam		c_timer_io				= 8'hB0;	//	MSX-TIMER: B0h-B3h
+	localparam		c_ssg_io				= 8'hA0;	//	SSG      : A0h-A3h
+	localparam		c_opll_io				= 8'h7A;	//	MSX-MUSIC: 7Ah-7Dh
+	localparam		c_opl2_io				= 8'hC0;	//	MSX-AUDIO: C0h-C3h
+	localparam		c_dcsg_io				= 8'h7E;	//	DCSG     : 7Eh-7Fh
+	//	Memory interface is always connect.
+
 	reg				ff_reset_n				= 1'b0;
 
 	reg				ff_pre_slot_sltsl_n		= 1'b1;
@@ -105,8 +120,12 @@ module msx_slot(
 	reg				ff_active			= 1'b0;
 	reg				ff_write			= 1'b0;
 	reg				ff_valid			= 1'b0;
-	reg				ff_memreq			= 1'b0;
-	reg				ff_ioreq			= 1'b0;
+	reg				ff_bus_timer_cs		= 1'b0;
+	reg				ff_bus_opl2_cs		= 1'b0;
+	reg				ff_bus_opll_cs		= 1'b0;
+	reg				ff_bus_ssg_cs		= 1'b0;
+	reg				ff_bus_scc_cs		= 1'b0;
+	reg				ff_bus_dcsg_cs		= 1'b0;
 	reg		[7:0]	ff_rdata			= 8'd0;
 	reg				ff_ioreq_d0			= 1'b0;
 	reg				ff_ioreq_d1			= 1'b0;
@@ -208,10 +227,14 @@ module msx_slot(
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !ff_reset_n ) begin
-			ff_valid	<= 1'b0;
-			ff_memreq	<= 1'b0;
-			ff_ioreq	<= 1'b0;
-			ff_write	<= 1'b1;
+			ff_bus_timer_cs		<= 1'b0;
+			ff_bus_opl2_cs		<= 1'b0;
+			ff_bus_opll_cs		<= 1'b0;
+			ff_bus_ssg_cs		<= 1'b0;
+			ff_bus_scc_cs		<= 1'b0;
+			ff_bus_dcsg_cs		<= 1'b0;
+			ff_valid			<= 1'b0;
+			ff_write			<= 1'b1;
 		end
 		else if( ff_valid ) begin
 			if( bus_ready || (!ff_ioreq && !ff_memreq) ) begin
@@ -221,9 +244,8 @@ module msx_slot(
 		else if( !ff_active && w_active ) begin
 			if( { ff_slot_address[7:3], 3'd0 } == 8'hA0 ) begin
 				ff_bus_address	<= ff_slot_address;
-				ff_memreq		<= ff_memrq_wr | ff_memrq_rd;
-				ff_ioreq		<= ff_iorq_wr | ff_iorq_rd;
 				ff_valid		<= 1'b1;
+
 			end
 			else begin
 				ff_memreq	<= 1'b0;
@@ -253,8 +275,12 @@ module msx_slot(
 		end
 	end
 
-	assign bus_memreq		= ff_memreq;
-	assign bus_ioreq		= ff_ioreq;
+	assign bus_timer_cs		= ff_bus_timer_cs;
+	assign bus_opl2_cs		= ff_bus_opl2_cs;
+	assign bus_opll_cs		= ff_bus_opll_cs;
+	assign bus_ssg_cs		= ff_bus_ssg_cs;
+	assign bus_scc_cs		= ff_bus_scc_cs;
+	assign bus_dcsg_cs		= ff_bus_dcsg_cs;
 	assign bus_address		= ff_bus_address;
 	assign bus_wdata		= ff_slot_data;
 	assign bus_write		= ff_write;

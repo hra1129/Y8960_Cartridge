@@ -8,9 +8,8 @@ module dual_opll (
 	input			clk,
 	input			reset_n,
 	input			enable,
-	input			bus_memreq,
-	input			bus_ioreq,
-	input	[15:0]	bus_address,
+	input			bus_cs,
+	input	[1:0]	bus_address,
 	input			bus_write,
 	input			bus_valid,
 	output			bus_ready,
@@ -25,8 +24,8 @@ module dual_opll (
 	// --------------------------------------------------------------------
 	//	Address decoder
 	// --------------------------------------------------------------------
-	assign w_cs0_n		= ( bus_ioreq && ({ bus_address[7:1], 1'b0 } == 8'h7C) ) || ( bus_memreq && ({ bus_address[15:1], 1'b0 } == 16'h7FF4) ) ? ~bus_valid: 1'b1;
-	assign w_cs1_n		= ( bus_ioreq && ({ bus_address[7:1], 1'b0 } == 8'h7A) ) || ( bus_memreq && ({ bus_address[15:1], 1'b0 } == 16'h7FF2) ) ? ~bus_valid: 1'b1;
+	assign w_cs0_n		= ( bus_cs && !bus_address[1] ) ? ~bus_valid: 1'b1;
+	assign w_cs1_n		= ( bus_cs &&  bus_address[1] ) ? ~bus_valid: 1'b1;
 	assign bus_ready	= (~(w_cs0_n & w_cs1_n) & enable) | (w_cs0_n & w_cs1_n);
 
 	// --------------------------------------------------------------------

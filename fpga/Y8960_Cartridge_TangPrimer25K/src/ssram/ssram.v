@@ -16,7 +16,7 @@ module ssram (
 	output	[7:0]	rdata,
 	output			rdata_en,
 	output			sram_sclk,
-	output			sram_cs_n,
+	output			sram_ce_n,
 	inout	[3:0]	sram_sio
 );
 	localparam		c_state_init_w0		= 5'd0;
@@ -62,7 +62,7 @@ module ssram (
 	reg		[4:0]	ff_state;
 	reg				ff_active;
 	reg				ff_active_write;		// Toggle signal for write complete
-	reg				ff_cs_n;
+	reg				ff_ce_n;
 	reg		[3:0]	ff_so;
 	reg				ff_sclk_div;		//	258MHz -> 129MHz divider
 
@@ -205,7 +205,7 @@ module ssram (
 			ff_active	<= 1'b0;
 			ff_active_write <= 1'b0;
 			ff_read_complete <= 1'b0;
-			ff_cs_n		<= 1'b1;
+			ff_ce_n		<= 1'b1;
 			ff_so		<= 4'b1zz0;
 			ff_read		<= 1'b0;
 		end
@@ -213,7 +213,7 @@ module ssram (
 			case( ff_state )
 			c_state_init_w0: begin
 				ff_state	<= c_state_init_eqio0;
-				ff_cs_n		<= 1'b0;
+				ff_ce_n		<= 1'b0;
 				ff_so		<= 4'b1zz0;
 			end
 			c_state_init_eqio0: begin
@@ -248,12 +248,12 @@ module ssram (
 				ff_state	<= c_state_idle;
 				ff_so		<= 4'bzzzz;
 				ff_active	<= 1'b1;		// Init complete (stays high)
-				ff_cs_n		<= 1'b1;
+				ff_ce_n		<= 1'b1;
 			end
 			c_state_idle: begin
 				if( w_valid ) begin
 					ff_state	<= c_state_start;
-					ff_cs_n		<= 1'b0;
+					ff_ce_n		<= 1'b0;
 					ff_so		<= 4'd0;
 				end
 			end
@@ -308,7 +308,7 @@ module ssram (
 				ff_so		<= 4'bzzzz;
 				ff_state	<= c_state_idle;
 				ff_active_write	<= ~ff_active_write;	// Toggle on write complete
-				ff_cs_n		<= 1'b1;
+				ff_ce_n		<= 1'b1;
 			end
 			c_state_dummy0: begin
 				ff_read		<= 1'b1;
@@ -329,7 +329,7 @@ module ssram (
 			end
 			c_state_read2: begin
 				ff_state		<= c_state_idle;
-				ff_cs_n			<= 1'b1;
+				ff_ce_n			<= 1'b1;
 				ff_read			<= 1'b0;
 				ff_read_complete <= ~ff_read_complete;	// Toggle on read complete
 			end
@@ -352,8 +352,8 @@ module ssram (
 		end
 	end
 
-	assign sram_sclk	= ff_sclk_div & ~ff_cs_n;
-	assign sram_cs_n	= ff_cs_n;
+	assign sram_sclk	= ff_sclk_div & ~ff_ce_n;
+	assign sram_ce_n	= ff_ce_n;
 	assign sram_sio		= ff_read ? 4'bzzzz: ff_so;
 	assign rdata		= ff_rdata;
 	assign rdata_en		= ff_rdata_en;

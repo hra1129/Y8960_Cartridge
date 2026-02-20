@@ -24,9 +24,12 @@ module dual_opl2 (
 	output	[15:0]	adpcm_sound_out_r1,			//	signed
 	output			intr_n
 	//	ADPCM Memory I/F
-	output   [23:0] addr,
-	input    [ 7:0] data,
-	output reg roe_n,
+	output			adpcm_oe_n,
+	output			adpcm_we_n,
+	output	[17:0]	adpcm_address,				//	256KB
+	output	[7:0]	adpcm_wdata,
+	input	[7:0]	adpcm_rdata,
+	input			adpcm_rdata_en
 );
 	wire			w_cs0_n;
 	wire			w_cs1_n;
@@ -44,36 +47,12 @@ module dual_opl2 (
 	wire	[3:0]	w_pcm_rdata0;
 	wire	[3:0]	w_pcm_rdata1;
 	reg				ff_ready;
+	reg		[7:0]	ff_rdata;
 	reg				ff_rdata_en;
-	// ADPCM registers and signals
-	wire	[7:0]	ff_reg_select0;
-	wire			reg_acmd_on0;		// Control - Process start, Key On
-	wire			reg_acmd_rep0;		// Control - Repeat
-	wire			reg_acmd_rst0;		// Control - Reset
-	wire			reg_acmd_up0;		// Control - New command received
-	wire	[1:0]	reg_alr0;			// Left / Right
-	wire	[15:0]	reg_astart0;		// Start address
-	wire	[15:0]	reg_aend0;			// End	 address
-	wire	[15:0]	reg_adeltan0;		// Delta-N
-	wire	[7:0]	reg_aeg0;			// Envelope Generator Control
-	wire			w_pcm_busy0;
-	wire	[15:0]	w_pcm55_l0;
-	wire	[15:0]	w_pcm55_r0;
-
-	wire	[7:0]	ff_reg_select1;
-	wire			reg_acmd_on1;		// Control - Process start, Key On
-	wire			reg_acmd_rep1;		// Control - Repeat
-	wire			reg_acmd_rst1;		// Control - Reset
-	wire			reg_acmd_up1;		// Control - New command received
-	wire	[1:0]	reg_alr1;			// Left / Right
-	wire	[15:0]	reg_astart1;		// Start address
-	wire	[15:0]	reg_aend1;			// End	 address
-	wire	[15:0]	reg_adeltan1;		// Delta-N
-	wire	[7:0]	reg_aeg1;			// Envelope Generator Control
-	wire			w_pcm_busy1;
-	wire	[15:0]	w_pcm55_l1;
-	wire	[15:0]	w_pcm55_r1;
-
+	wire	[15:0]	w_adpcm_sound_out_l0;
+	wire	[15:0]	w_adpcm_sound_out_r0;
+	wire	[15:0]	w_adpcm_sound_out_l1;
+	wire	[15:0]	w_adpcm_sound_out_r1;
 	reg		[9:0]	ff_clk55_cnt;
 	wire			w_cen55;
 
@@ -133,78 +112,45 @@ module dual_opl2 (
 	// ---------------------------------------------------------
 	//	JT ADPCM (TypeB) body
 	// ---------------------------------------------------------
-	jt10_adpcm_drvB u_adpcm_0 (
-		.rst_n			( reset_n				),
-		.clk			( clk					),
-		.cen			( enable				),
-		.cen55			( w_cen55				),
-		.acmd_on_b		( reg_acmd_on0			),
-		.acmd_rep_b		( reg_acmd_rep0			),
-		.acmd_rst_b		( reg_acmd_rst0			),
-		.acmd_up_b		( reg_acmd_up0			),
-		.alr_b			( reg_alr0				),
-		.astart_b		( reg_astart0			),
-		.aend_b			( reg_aend0				),
-		.adeltan_b		( reg_adeltan0			),
-		.aeg_b			( reg_aeg0				),
-		.flag			( w_pcm_busy0			),
-		.clr_flag		( clr_flag				),
-		.addr			( addr					),
-		.data			( data					),
-		.roe_n			( roe_n					),
-		.pcm55_l		( w_pcm55_l0			),
-		.pcm55_r		( w_pcm55_r0			)
+	adpcm u_adpcm0 (
+		.clk				( clk					),
+		.reset_n			( reset_n				),
+		.enable				( enable				),
+		.cen55				( w_cen55				),
+		.bus_cs				( ~w_cs0_n				),
+		.bus_address		( bus_address[0]		),
+		.bus_write			( bus_write				),
+		.bus_valid			( bus_valid				),
+		.bus_wdata			( bus_wdata				),
+		.bus_rdata			( w_bus_rdata0			),
+		.bus_rdata_en		( w_bus_rdata0_en		),
+		.opl2_status		( w_opl_rdata0			),
+		.adpcm_sound_out_l	( w_adpcm_sound_out_l0	),
+		.adpcm_sound_out_r	( w_adpcm_sound_out_r0	),
+		.addr				( addr					),
+		.data				( data					),
+		.roe_n				( roe_n					)
 	);
 
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_reg_select0		<= 8'd0;
-			reg_mask_eds		<= 1'b1;
-			reg_mask_buf_rdy	<= 1'b1;
-			reg_start
-		end
-		else if( !w_cs0_n || !bus_valid ) begin
-		end
-		else if( bus_write ) begin
-			if( !bus_address[0] ) begin
-				ff_reg_select0	<= bus_wdata;
-			end
-			else begin
-				case( ff_reg_select0 )
-					8'h04: begin
-						reg_mask_eds		<= bus_wdata[4];
-						reg_mask_buf_rdy	<= bus_wdata[3];
-					end
-				endcase
-			end
-		end
-	end
-
-	jt10_adpcm_drvB u_adpcm_1 (
-		.rst_n			( reset_n				),
-		.clk			( clk					),
-		.cen			( enable				),
-		.cen55			( w_cen55				),
-		.acmd_on_b		( reg_acmd_on1			),
-		.acmd_rep_b		( reg_acmd_rep1			),
-		.acmd_rst_b		( reg_acmd_rst1			),
-		.acmd_up_b		( reg_acmd_up1			),
-		.alr_b			( reg_alr1				),
-		.astart_b		( reg_astart1			),
-		.aend_b			( reg_aend1				),
-		.adeltan_b		( reg_adeltan1			),
-		.aeg_b			( reg_aeg1				),
-		.flag			( w_pcm_busy1			),
-		.clr_flag		( clr_flag				),
-		.addr			( addr					),
-		.data			( data					),
-		.roe_n			( roe_n					),
-		.pcm55_l		( w_pcm55_l1			),
-		.pcm55_r		( w_pcm55_r1			)
+	adpcm u_adpcm1 (
+		.clk				( clk					),
+		.reset_n			( reset_n				),
+		.enable				( enable				),
+		.cen55				( w_cen55				),
+		.bus_cs				( ~w_cs1_n				),
+		.bus_address		( bus_address[0]		),
+		.bus_write			( bus_write				),
+		.bus_valid			( bus_valid				),
+		.bus_wdata			( bus_wdata				),
+		.bus_rdata			( w_bus_rdata1			),
+		.bus_rdata_en		( w_bus_rdata1_en		),
+		.opl2_status		( w_opl_rdata1			),
+		.adpcm_sound_out_l	( w_adpcm_sound_out_l1	),
+		.adpcm_sound_out_r	( w_adpcm_sound_out_r1	),
+		.addr				( addr					),
+		.data				( data					),
+		.roe_n				( roe_n					)
 	);
-
-	assign w_pcm_rdata0		= { 1'b0, 2'b11, w_pcm_busy0 };
-	assign w_pcm_rdata1		= { 1'b0, 2'b11, w_pcm_busy1 };
 
 	// ---------------------------------------------------------
 	//	BUS
@@ -213,14 +159,23 @@ module dual_opl2 (
 		if( !reset_n ) begin
 			ff_rdata_en <= 1'd0;
 		end
-		else if( !enable ) begin
-			//	hold
+		else if( w_bus_rdata0_en || w_bus_rdata1_en ) begin
+			ff_rdata_en <= 1'd1;
 		end
-		else if( ff_rdata_en ) begin
-			ff_rdata_en <= 1'd0;
+		else begin
+			ff_rdata_en <= 1'b0;
 		end
-		else if( ~(w_cs0_n & w_cs1_n) && ~bus_write ) begin
-			ff_rdata_en <= 1'b1;
+	end
+
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_rdata <= 8'd0;
+		end
+		else if( w_bus_rdata0_en ) begin
+			ff_rdata <= w_bus_rdata0;
+		end
+		else if( w_bus_rdata1_en ) begin
+			ff_rdata <= w_bus_rdata1;
 		end
 	end
 
@@ -228,10 +183,7 @@ module dual_opl2 (
 		if( !reset_n ) begin
 			ff_ready <= 1'd1;
 		end
-		else if( !enable ) begin
-			//	hold
-		end
-		else if( ff_rdata_en ) begin
+		else if( w_bus_rdata0_en || w_bus_rdata1_en ) begin
 			ff_ready <= 1'd1;
 		end
 		else if( ~(w_cs0_n & w_cs1_n) && ~bus_write ) begin
@@ -251,15 +203,15 @@ module dual_opl2 (
 		else begin
 			ff_opl2_sound_out0		<= w_opl2_sound_en0  ? w_opl2_sound_out0: 16'd0;
 			ff_opl2_sound_out1		<= w_opl2_sound_en1  ? w_opl2_sound_out1: 16'd0;
-			ff_adpcm_sound_out_l0	<= w_adpcm_sound_en0 ? w_pcm55_l0: 16'd0;
-			ff_adpcm_sound_out_r0	<= w_adpcm_sound_en0 ? w_pcm55_r0: 16'd0;
-			ff_adpcm_sound_out_l1	<= w_adpcm_sound_en1 ? w_pcm55_l1: 16'd0;
-			ff_adpcm_sound_out_r1	<= w_adpcm_sound_en1 ? w_pcm55_r1: 16'd0;
+			ff_adpcm_sound_out_l0	<= w_adpcm_sound_en0 ? w_adpcm_sound_out_l0: 16'd0;
+			ff_adpcm_sound_out_r0	<= w_adpcm_sound_en0 ? w_adpcm_sound_out_r0: 16'd0;
+			ff_adpcm_sound_out_l1	<= w_adpcm_sound_en1 ? w_adpcm_sound_out_l1: 16'd0;
+			ff_adpcm_sound_out_r1	<= w_adpcm_sound_en1 ? w_adpcm_sound_out_r1: 16'd0;
 		end
 	end
 
 	assign bus_ready			= ff_ready;
-	assign bus_rdata			= ( w_cs0_n == 1'b0 ) ? {w_opl_rdata0[7:4], w_pcm_rdata0} : {w_opl_rdata1[7:4], w_pcm_rdata1};
+	assign bus_rdata			= ff_rdata;
 	assign bus_rdata_en			= ff_rdata_en;
 	assign opl2_sound_out_0		= ff_opl2_sound_out0;
 	assign opl2_sound_out_1		= ff_opl2_sound_out1;
@@ -268,5 +220,5 @@ module dual_opl2 (
 	assign adpcm_sound_out_l1	= ff_adpcm_sound_out_l1;
 	assign adpcm_sound_out_r1	= ff_adpcm_sound_out_r1;
 
-	assign intr_n			= w_intr_n0 & w_intr_n1;
+	assign intr_n				= w_intr_n0 & w_intr_n1;
 endmodule
