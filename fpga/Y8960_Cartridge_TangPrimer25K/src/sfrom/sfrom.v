@@ -94,6 +94,7 @@ module sfrom (
 	// Effective SPI clock frequency: clk_258m / 2 ≈ 128.86MHz
 	reg			ff_spi_clk;				// SPI clock register
 	reg			ff_spi_clk_d;			// Delayed SPI clock for edge detection
+	reg			ff_spi_clk_en_sync;		// Synchronized clock enable (1 cycle delayed)
 	wire		w_spi_rising_edge;		// SPI clock rising edge
 	wire		w_spi_falling_edge;		// SPI clock falling edge
 
@@ -101,22 +102,31 @@ module sfrom (
 		if(!reset_n) begin
 			ff_spi_clk <= 1'b0;
 			ff_spi_clk_d <= 1'b0;
+			ff_spi_clk_en_sync <= 1'b0;
 		end
 		else begin
 			ff_spi_clk_d <= ff_spi_clk;
-			if(ff_spi_clk_en) begin
+			ff_spi_clk_en_sync <= ff_spi_clk_en;
+			// Clock generation with proper start/stop timing
+			// Use ff_spi_clk_en_sync for toggling, but force 0 when ff_spi_clk_en is 0
+			if(ff_spi_clk_en && ff_spi_clk_en_sync) begin
 				ff_spi_clk <= ~ff_spi_clk;
 			end
+			else if(!ff_spi_clk_en) begin
+				ff_spi_clk <= 1'b0;		// Force clock low when disabled
+			end
 			else begin
+				// ff_spi_clk_en=1 but ff_spi_clk_en_sync=0 (clock just enabled)
+				// Keep clock at 0, will start toggling next cycle
 				ff_spi_clk <= 1'b0;
 			end
 		end
 	end
 
 	// SPI clock: clk_258m / 2 ≈ 128.86MHz
-	// Detect edges after the clock has transitioned
-	assign w_spi_rising_edge = ff_spi_clk_en && !ff_spi_clk_d && ff_spi_clk;
-	assign w_spi_falling_edge = ff_spi_clk_en && ff_spi_clk_d && !ff_spi_clk;
+	// Detect edges using synchronized enable to match clock generation timing
+	assign w_spi_rising_edge = ff_spi_clk_en_sync && !ff_spi_clk_d && ff_spi_clk;
+	assign w_spi_falling_edge = ff_spi_clk_en_sync && ff_spi_clk_d && !ff_spi_clk;
 	assign flash_spi_clk = ff_spi_clk;
 
 	// ----------------------------------------------------------------
@@ -263,11 +273,16 @@ module sfrom (
 					ff_spi_cs_n <= 1'b1;
 					ff_spi_clk_en <= 1'b0;
 					ff_ready_reg <= 1'b1;
+					// Reset Quad mode flags in idle state
+					ff_io_quad_out <= 1'b0;
+					ff_quad_read_mode <= 1'b0;
 
 					if(w_valid_pulse) begin
 						ff_ready_reg <= 1'b0;
 						ff_addr_reg <= address;
 						ff_wdata_reg <= wdata;
+						// Reset I/O output register
+						ff_io_out <= 4'd0;
 
 						case(command)
 							c_command_read: begin
@@ -318,14 +333,18 @@ module sfrom (
 				ST_WREN_WAIT: begin
 					// Sample on rising, shift on falling
 					if(w_spi_rising_edge) begin
-						// Rising edge - this is when Flash samples MOSI
-						// Nothing to do here for output
+						// Rising edge - Flash samples MOSI here
+						// Check if this was the last bit (bit 0)
+						if(ff_bit_cnt == 3'd0) begin
+							// Last bit sampled by Flash, stop clock now
+							// This prevents extra clock edges
+							ff_spi_clk_en <= 1'b0;
+						end
 					end
 					if(w_spi_falling_edge) begin
 						// Falling edge - update MOSI for next bit
 						if(ff_bit_cnt == 3'd0) begin
 							// WREN complete, go to CS high then main command
-							ff_spi_clk_en <= 1'b0;
 							ff_state <= ST_CS_HIGH;
 							ff_next_state <= ST_SEND_CMD;
 						end
@@ -380,10 +399,11 @@ module sfrom (
 							end
 							else if(ff_spi_cmd_reg == SPI_CMD_QUAD_IO_READ) begin
 								// Quad I/O Read: Send address in Quad mode (4 bits per clock)
-								// Address byte 2 high nibble (bits 23:20 -> bits 19:16 with MSB=0)
+								// Address byte 2 high nibble (bits 23:16)
+								// 24-bit address: [23:20] then [19:16] then [15:12] ...
 								ff_io_quad_out <= 1'b1;
-								ff_io_out <= {1'b0, ff_addr_reg[22:20]};
-								ff_bit_cnt <= 3'd1;		// 2 clocks for address byte 2
+								ff_io_out <= {1'b0, ff_addr_reg[22:20]};	// High nibble of addr[23:16]
+								ff_bit_cnt <= 3'd5;		// 6 clocks total for 24-bit address (6 nibbles)
 								ff_state <= ST_SEND_ADDR1;
 							end
 							else begin
@@ -403,20 +423,26 @@ module sfrom (
 				end
 
 				// ----------------------------------------------------
-				// ST_SEND_ADDR1: Shift out address byte 2, then send address byte 1
+				// ST_SEND_ADDR1: Shift out address in Quad mode (all 6 nibbles)
 				ST_SEND_ADDR1: begin
 					if(w_spi_falling_edge) begin
 						if(ff_io_quad_out) begin
-							// Quad mode address transmission
-							if(ff_bit_cnt == 3'd0) begin
-								// Address byte 2 complete, start byte 1 high nibble
-								ff_io_out <= ff_addr_reg[15:12];
-								ff_bit_cnt <= 3'd1;		// 2 clocks for address byte 1
-								ff_state <= ST_SEND_ADDR0;
-							end
-							else begin
-								// Address byte 2 low nibble
-								ff_io_out <= ff_addr_reg[19:16];
+							// Quad mode address transmission (6 nibbles = 24 bits)
+							case(ff_bit_cnt)
+								3'd5: ff_io_out <= ff_addr_reg[19:16];	// Nibble 1
+								3'd4: ff_io_out <= ff_addr_reg[15:12];	// Nibble 2
+								3'd3: ff_io_out <= ff_addr_reg[11:8];	// Nibble 3
+								3'd2: ff_io_out <= ff_addr_reg[7:4];	// Nibble 4
+								3'd1: ff_io_out <= ff_addr_reg[3:0];	// Nibble 5
+								3'd0: begin
+									// Address complete, send mode byte
+									ff_io_out <= 4'hF;		// Mode byte high nibble
+									ff_bit_cnt <= 3'd1;		// 2 clocks for mode byte
+									ff_state <= ST_DUMMY_CYCLES;
+								end
+								default: ;
+							endcase
+							if(ff_bit_cnt != 3'd0) begin
 								ff_bit_cnt <= ff_bit_cnt - 3'd1;
 							end
 						end
@@ -439,88 +465,50 @@ module sfrom (
 				end
 
 				// ----------------------------------------------------
-				// ST_SEND_ADDR0: Shift out address byte 1, then send address byte 0
+				// ST_SEND_ADDR0: Shift out address byte 1 (Single SPI mode only)
 				ST_SEND_ADDR0: begin
 					if(w_spi_falling_edge) begin
-						if(ff_io_quad_out) begin
-							// Quad mode address transmission
-							if(ff_bit_cnt == 3'd0) begin
-								// Address byte 1 complete, start byte 0 high nibble
-								ff_io_out <= ff_addr_reg[7:4];
-								ff_bit_cnt <= 3'd1;		// 2 clocks for address byte 0
-								ff_state <= ST_SEND_ADDR_LAST;
-							end
-							else begin
-								// Address byte 1 low nibble
-								ff_io_out <= ff_addr_reg[11:8];
-								ff_bit_cnt <= ff_bit_cnt - 3'd1;
-							end
+						// Single SPI mode only (Quad mode is handled in ST_SEND_ADDR1)
+						if(ff_bit_cnt == 3'd0) begin
+							// Address byte 1 complete, start address byte 0 (bits 7:0)
+							ff_shift_out <= ff_addr_reg[7:0];
+							ff_bit_cnt <= 3'd7;
+							ff_spi_mosi <= ff_addr_reg[7];
+							ff_state <= ST_SEND_ADDR_LAST;
 						end
 						else begin
-							// Single SPI mode
-							if(ff_bit_cnt == 3'd0) begin
-								// Address byte 1 complete, start address byte 0 (bits 7:0)
-								ff_shift_out <= ff_addr_reg[7:0];
-								ff_bit_cnt <= 3'd7;
-								ff_spi_mosi <= ff_addr_reg[7];
-								ff_state <= ST_SEND_ADDR_LAST;
-							end
-							else begin
-								ff_bit_cnt <= ff_bit_cnt - 3'd1;
-								ff_shift_out <= {ff_shift_out[6:0], 1'b0};
-								ff_spi_mosi <= ff_shift_out[6];
-							end
+							ff_bit_cnt <= ff_bit_cnt - 3'd1;
+							ff_shift_out <= {ff_shift_out[6:0], 1'b0};
+							ff_spi_mosi <= ff_shift_out[6];
 						end
 					end
 				end
 
 				// ----------------------------------------------------
-				// ST_SEND_ADDR_LAST: Shift out address byte 0, then go to data phase
+				// ST_SEND_ADDR_LAST: Shift out address byte 0 (Single SPI mode only)
 				ST_SEND_ADDR_LAST: begin
 					if(w_spi_falling_edge) begin
-						if(ff_io_quad_out) begin
-							// Quad mode
-							if(ff_bit_cnt == 3'd0) begin
-								// Address complete, send mode byte (FFh for continuous read)
-								// Then go to dummy cycles
-								ff_io_out <= 4'hF;		// Mode byte high nibble
-								ff_bit_cnt <= 3'd1;		// 2 clocks for mode byte
-								ff_state <= ST_DUMMY_CYCLES;
+						// Single SPI mode only (Quad mode is handled in ST_SEND_ADDR1)
+						if(ff_bit_cnt == 3'd0) begin
+							// Address complete, go to data phase
+							if(ff_return_state == ST_WRITE_DATA) begin
+								// Initialize for write
+								ff_shift_out <= ff_wdata_reg;
+								ff_bit_cnt <= 3'd7;
+								ff_spi_mosi <= ff_wdata_reg[7];
+								ff_state <= ST_WRITE_DATA;
 							end
 							else begin
-								// Address byte 0 low nibble
-								ff_io_out <= ff_addr_reg[3:0];
-								ff_bit_cnt <= ff_bit_cnt - 3'd1;
+								// Sector erase - wait for busy
+								ff_spi_clk_en <= 1'b0;
+								ff_state <= ST_CS_HIGH;
+								ff_next_state <= ST_WAIT_BUSY;
 							end
 						end
 						else begin
-							// Single SPI mode
-							if(ff_bit_cnt == 3'd0) begin
-								// Address complete, go to data phase
-								if(ff_return_state == ST_READ_DATA) begin
-									// Initialize for read
-									ff_bit_cnt <= 3'd7;
-									ff_state <= ST_READ_DATA;
-								end
-								else if(ff_return_state == ST_WRITE_DATA) begin
-									// Initialize for write
-									ff_shift_out <= ff_wdata_reg;
-									ff_bit_cnt <= 3'd7;
-									ff_spi_mosi <= ff_wdata_reg[7];
-									ff_state <= ST_WRITE_DATA;
-								end
-								else begin
-									// Sector erase - wait for busy
-									ff_spi_clk_en <= 1'b0;
-									ff_state <= ST_CS_HIGH;
-									ff_next_state <= ST_WAIT_BUSY;
-								end
-							end
-							else begin
-								ff_bit_cnt <= ff_bit_cnt - 3'd1;
-								ff_shift_out <= {ff_shift_out[6:0], 1'b0};
-								ff_spi_mosi <= ff_shift_out[6];
-							end
+							ff_bit_cnt <= ff_bit_cnt - 3'd1;
+							ff_shift_out <= {ff_shift_out[6:0], 1'b0};
+							ff_spi_mosi <= ff_shift_out[6];
 						end
 					end
 				end
@@ -600,44 +588,54 @@ module sfrom (
 				// ----------------------------------------------------
 				ST_WAIT_BUSY: begin
 					// Start status read sequence
-					ff_spi_cmd_reg <= SPI_CMD_READ_STATUS;
-					ff_state <= ST_READ_STATUS;
-				end
-
-				// ----------------------------------------------------
-				ST_READ_STATUS: begin
-					// Send Read Status command
 					ff_spi_cs_n <= 1'b0;
 					ff_spi_clk_en <= 1'b1;
 					ff_shift_out <= SPI_CMD_READ_STATUS;
 					ff_bit_cnt <= 3'd7;
 					ff_spi_mosi <= SPI_CMD_READ_STATUS[7];
-					ff_state <= ST_CHECK_STATUS;
+					ff_state <= ST_READ_STATUS;
+				end
+
+				// ----------------------------------------------------
+				ST_READ_STATUS: begin
+					// Shift out Read Status command (8 bits)
+					if(w_spi_falling_edge) begin
+						if(ff_bit_cnt == 3'd0) begin
+							// Command sent, now read status byte
+							ff_bit_cnt <= 3'd7;
+							ff_state <= ST_CHECK_STATUS;
+						end
+						else begin
+							ff_bit_cnt <= ff_bit_cnt - 3'd1;
+							ff_shift_out <= {ff_shift_out[6:0], 1'b0};
+							ff_spi_mosi <= ff_shift_out[6];
+						end
+					end
 				end
 
 				// ----------------------------------------------------
 				ST_CHECK_STATUS: begin
+					// Read status byte from Flash
 					if(w_spi_rising_edge) begin
-						// Sample MISO on rising edge (only when reading status byte)
+						// Sample MISO on rising edge
 						ff_shift_in <= {ff_shift_in[6:0], w_spi_miso};
 					end
 					if(w_spi_falling_edge) begin
 						if(ff_bit_cnt == 3'd0) begin
-							// Check WIP (Write In Progress) bit
+							// Status byte received, check WIP bit
+							// WIP is bit 0 of the status register
 							if(ff_shift_in[0] == 1'b0) begin
 								// Not busy, operation complete
 								ff_spi_clk_en <= 1'b0;
 								ff_state <= ST_FINISH;
 							end
 							else begin
-								// Still busy, read status again
+								// Still busy, read another status byte
 								ff_bit_cnt <= 3'd7;
 							end
 						end
 						else begin
 							ff_bit_cnt <= ff_bit_cnt - 3'd1;
-							ff_shift_out <= {ff_shift_out[6:0], 1'b0};
-							ff_spi_mosi <= ff_shift_out[6];
 						end
 					end
 				end
