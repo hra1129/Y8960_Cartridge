@@ -22,7 +22,7 @@ module dual_opl2 (
 	output	[15:0]	adpcm_sound_out_r0,			//	signed
 	output	[15:0]	adpcm_sound_out_l1,			//	signed
 	output	[15:0]	adpcm_sound_out_r1,			//	signed
-	output			intr_n
+	output			intr_n,
 	//	ADPCM Memory I/F
 	output			adpcm_oe_n,
 	output			adpcm_we_n,
@@ -46,6 +46,10 @@ module dual_opl2 (
 	wire	[7:0]	w_opl_rdata1;
 	wire	[3:0]	w_pcm_rdata0;
 	wire	[3:0]	w_pcm_rdata1;
+	wire	[7:0]	w_bus_rdata0;
+	wire	[7:0]	w_bus_rdata1;
+	wire			w_bus_rdata0_en;
+	wire			w_bus_rdata1_en;
 	reg				ff_ready;
 	reg		[7:0]	ff_rdata;
 	reg				ff_rdata_en;
@@ -53,30 +57,47 @@ module dual_opl2 (
 	wire	[15:0]	w_adpcm_sound_out_r0;
 	wire	[15:0]	w_adpcm_sound_out_l1;
 	wire	[15:0]	w_adpcm_sound_out_r1;
-	reg		[9:0]	ff_clk55_cnt;
-	wire			w_cen55;
+	reg		[15:0]	ff_adpcm_sound_out_l0;
+	reg		[15:0]	ff_adpcm_sound_out_r0;
+	reg		[15:0]	ff_adpcm_sound_out_l1;
+	reg		[15:0]	ff_adpcm_sound_out_r1;
+	reg		[9:0]	ff_clk50_cnt;
+	wire			w_cen50_0;
+	wire			w_cen50_1;
+	wire			w_adpcm_oe_n0;
+	wire			w_adpcm_oe_n1;
+	wire			w_adpcm_we_n0;
+	wire			w_adpcm_we_n1;
+	wire	[23:0]	w_adpcm_address0;
+	wire	[23:0]	w_adpcm_address1;
+	wire	[7:0]	w_adpcm_wdata0;
+	wire	[7:0]	w_adpcm_wdata1;
 
 	// ---------------------------------------------------------
-	//	55.5kHz enabler
+	//	49.7159kHz enabler
 	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_clk55_cnt <= 10'd0;
+			ff_clk50_cnt <= 7'd0;
 		end
-		else if( w_cen55 ) begin
-			ff_clk55_cnt <= 10'd0;
+		else if( !enable ) begin				//	3.579545MHz
+			//	hold
+		end
+		else if( ff_clk50_cnt == 7'd71 ) begin	//	49.7159kHz
+			ff_clk50_cnt <= 7'd0;
 		end
 		else begin
-			ff_clk55_cnt <= ff_clk55_cnt + 10'd1;
+			ff_clk50_cnt <= ff_clk50_cnt + 7'd1;
 		end
 	end
-	assign w_cen55	= (ff_clk55_cnt == 10'd515);
+	assign w_cen50_0	= (ff_clk50_cnt == 7'd0);
+	assign w_cen50_1	= (ff_clk50_cnt == 7'd36);
 
 	// --------------------------------------------------------------------
 	//	Address decoder
 	// --------------------------------------------------------------------
-	assign w_cs0_n		= ( bus_cs && !bus_address[1] ) ? ~bus_valid: 1'b1;
-	assign w_cs1_n		= ( bus_cs &&  bus_address[1] ) ? ~bus_valid: 1'b1;
+	assign w_cs0_n		= ( bus_cs && !bus_address[1] ) ? 1'b0: 1'b1;
+	assign w_cs1_n		= ( bus_cs &&  bus_address[1] ) ? 1'b0: 1'b1;
 
 	// --------------------------------------------------------------------
 	//	JT OPL2 body
@@ -103,7 +124,7 @@ module dual_opl2 (
 		.addr			( bus_address[0]		),
 		.cs_n			( w_cs1_n				),
 		.wr_n			( ~bus_write			),
-		.dout			( w_rdata1				),
+		.dout			( w_opl_rdata1			),
 		.irq_n			( w_intr_n1				),
 		.snd			( w_opl2_sound_out1		),
 		.sample			( w_opl2_sound_en1		)
@@ -116,7 +137,7 @@ module dual_opl2 (
 		.clk				( clk					),
 		.reset_n			( reset_n				),
 		.enable				( enable				),
-		.cen55				( w_cen55				),
+		.cen55				( w_cen50_0				),
 		.bus_cs				( ~w_cs0_n				),
 		.bus_address		( bus_address[0]		),
 		.bus_write			( bus_write				),
@@ -127,16 +148,19 @@ module dual_opl2 (
 		.opl2_status		( w_opl_rdata0			),
 		.adpcm_sound_out_l	( w_adpcm_sound_out_l0	),
 		.adpcm_sound_out_r	( w_adpcm_sound_out_r0	),
-		.addr				( addr					),
-		.data				( data					),
-		.roe_n				( roe_n					)
+		.adpcm_oe_n			( w_adpcm_oe_n0			),
+		.adpcm_we_n			( w_adpcm_we_n0			),
+		.adpcm_address		( w_adpcm_address0		),
+		.adpcm_wdata		( w_adpcm_wdata0		),
+		.adpcm_rdata		( adpcm_rdata			),
+		.adpcm_rdata_en		( adpcm_rdata_en		)
 	);
 
 	adpcm u_adpcm1 (
 		.clk				( clk					),
 		.reset_n			( reset_n				),
 		.enable				( enable				),
-		.cen55				( w_cen55				),
+		.cen55				( w_cen50_1				),
 		.bus_cs				( ~w_cs1_n				),
 		.bus_address		( bus_address[0]		),
 		.bus_write			( bus_write				),
@@ -147,9 +171,12 @@ module dual_opl2 (
 		.opl2_status		( w_opl_rdata1			),
 		.adpcm_sound_out_l	( w_adpcm_sound_out_l1	),
 		.adpcm_sound_out_r	( w_adpcm_sound_out_r1	),
-		.addr				( addr					),
-		.data				( data					),
-		.roe_n				( roe_n					)
+		.adpcm_oe_n			( w_adpcm_oe_n1			),
+		.adpcm_we_n			( w_adpcm_we_n1			),
+		.adpcm_address		( w_adpcm_address1		),
+		.adpcm_wdata		( w_adpcm_wdata1		),
+		.adpcm_rdata		( adpcm_rdata			),
+		.adpcm_rdata_en		( adpcm_rdata_en		)
 	);
 
 	// ---------------------------------------------------------
@@ -186,7 +213,7 @@ module dual_opl2 (
 		else if( w_bus_rdata0_en || w_bus_rdata1_en ) begin
 			ff_ready <= 1'd1;
 		end
-		else if( ~(w_cs0_n & w_cs1_n) && ~bus_write ) begin
+		else if( ~(w_cs0_n & w_cs1_n) && ~bus_write && bus_valid ) begin
 			ff_ready <= 1'd0;
 		end
 	end
@@ -201,12 +228,20 @@ module dual_opl2 (
 			ff_adpcm_sound_out_r1	<= 16'd0;
 		end
 		else begin
-			ff_opl2_sound_out0		<= w_opl2_sound_en0  ? w_opl2_sound_out0: 16'd0;
-			ff_opl2_sound_out1		<= w_opl2_sound_en1  ? w_opl2_sound_out1: 16'd0;
-			ff_adpcm_sound_out_l0	<= w_adpcm_sound_en0 ? w_adpcm_sound_out_l0: 16'd0;
-			ff_adpcm_sound_out_r0	<= w_adpcm_sound_en0 ? w_adpcm_sound_out_r0: 16'd0;
-			ff_adpcm_sound_out_l1	<= w_adpcm_sound_en1 ? w_adpcm_sound_out_l1: 16'd0;
-			ff_adpcm_sound_out_r1	<= w_adpcm_sound_en1 ? w_adpcm_sound_out_r1: 16'd0;
+			if( w_opl2_sound_en0 ) begin
+				ff_opl2_sound_out0		<= w_opl2_sound_out0;
+			end
+			if( w_opl2_sound_en1 ) begin
+				ff_opl2_sound_out1		<= w_opl2_sound_out1;
+			end
+			if( w_cen50_0 ) begin
+				ff_adpcm_sound_out_l0	<= w_adpcm_sound_out_l0;
+				ff_adpcm_sound_out_r0	<= w_adpcm_sound_out_r0;
+			end
+			if( w_cen50_1 ) begin
+				ff_adpcm_sound_out_l1	<= w_adpcm_sound_out_l1;
+				ff_adpcm_sound_out_r1	<= w_adpcm_sound_out_r1;
+			end
 		end
 	end
 
@@ -219,6 +254,9 @@ module dual_opl2 (
 	assign adpcm_sound_out_r0	= ff_adpcm_sound_out_r0;
 	assign adpcm_sound_out_l1	= ff_adpcm_sound_out_l1;
 	assign adpcm_sound_out_r1	= ff_adpcm_sound_out_r1;
-
+	assign adpcm_address		= ( !(w_adpcm_we_n0 & w_adpcm_oe_n0) ) ? w_adpcm_address0: w_adpcm_address1;
+	assign adpcm_wdata			= ( !w_adpcm_we_n0 ) ? w_adpcm_wdata0: w_adpcm_wdata1;
+	assign adpcm_we_n			= w_adpcm_we_n0 & w_adpcm_we_n1;
+	assign adpcm_oe_n			= w_adpcm_oe_n0 & w_adpcm_oe_n1;
 	assign intr_n				= w_intr_n0 & w_intr_n1;
 endmodule

@@ -23,11 +23,14 @@ module adpcm (
 	output			adpcm_oe_n,
 	output			adpcm_we_n,
 	output	[23:0]	adpcm_address,
-	input	[ 7:0]	adpcm_data
+	output	[ 7:0]	adpcm_wdata,
+	input	[ 7:0]	adpcm_rdata,
+	input			adpcm_rdata_en
 );
 	reg		[7:0]	ff_reg_select;
 	reg		[7:0]	ff_rdata;
 	reg		[7:0]	ff_adpcm_data;
+	reg				ff_bus_valid;
 	reg				reg_mask_eds;				// 04h [4]
 	reg				reg_mask_buffer_ready;		// 04h [3]
 	reg				reg_start;					// 07h [7]
@@ -40,7 +43,9 @@ module adpcm (
 	reg		[7:0]	reg_adpcm_data;				// 0Fh
 	reg		[15:0]	reg_delta_n;				// 10h, 11h
 	reg		[7:0]	reg_envelope_control;		// 12h
+	wire			w_flag;
 	wire			w_adpcm_oe_n;
+	wire			w_adpcm_we_n;
 
 	// ---------------------------------------------------------
 	//	JT ADPCM (TypeB) body
@@ -59,7 +64,7 @@ module adpcm (
 		.aend_b			( reg_stop_address		),
 		.adeltan_b		( reg_delta_n			),
 		.aeg_b			( reg_envelope_control	),
-		.flag			( 						),
+		.flag			( w_flag				),
 		.clr_flag		( reg_mask_eds			),
 		.addr			( adpcm_address			),
 		.data			( ff_adpcm_data			),
@@ -86,7 +91,7 @@ module adpcm (
 		else if( bus_cs || !bus_valid ) begin
 		end
 		else if( bus_write ) begin
-			if( !bus_address[0] ) begin
+			if( !bus_address ) begin
 				ff_reg_select	<= bus_wdata;
 			end
 			else begin
@@ -131,8 +136,38 @@ module adpcm (
 		end
 	end
 
-	assign bus_rdata	= !bus_address[0] ? { opl2_status[7:4], flag, 2'b11, reg_start }:
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_bus_valid <= 1'b0;
+		end
+		else if( bus_cs ) begin
+			if( !bus_address ) begin
+				//	read status
+				ff_bus_valid <= bus_valid;
+			end
+			else begin
+				//	read register
+				if( ff_reg_select == 8'h0F ) begin
+					//	ADPCM-DATA register
+					ff_bus_valid <= adpcm_rdata_en;
+				end
+				else begin
+					//	others
+					ff_bus_valid <= bus_valid;
+				end
+			end
+		end
+		else begin
+			ff_bus_valid <= 1'b0;
+		end
+	end
+
+	assign w_adpcm_we_n	= 1'b1;
+
+	assign bus_rdata	= !bus_address ? { opl2_status[7:4], w_flag, 2'b11, reg_start }:
 						  (ff_reg_select == 8'h0F) ? ff_rdata : 8'hFF;
-	assign adpcm_oe_n	= ;
-	assign adpcm_we_n	= ;
+	assign bus_rdata_en	= ~bus_write & ff_bus_valid;
+
+	assign adpcm_oe_n	= w_adpcm_oe_n;
+	assign adpcm_we_n	= w_adpcm_we_n;
 endmodule
