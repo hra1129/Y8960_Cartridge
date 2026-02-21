@@ -16218,6 +16218,18 @@
 			(justify left bottom)
 		)
 	)
+	(gr_text "ROM"
+		(at 99.025 70.4 0)
+		(layer "F.SilkS")
+		(uuid "2b0130f3-dbac-4f3a-a93e-1ac893a1dea0")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
 	(gr_text "SDAT"
 		(at 77.5 84 0)
 		(layer "F.SilkS")
@@ -16234,6 +16246,18 @@
 		(at 152.95 79.875 0)
 		(layer "F.SilkS")
 		(uuid "32adb57e-e9b7-43da-967d-f9e6426caaab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "OFF"
+		(at 99.225 72.6 0)
+		(layer "F.SilkS")
+		(uuid "334edbff-e545-4f40-9dc1-69b8f8fb4e8d")
 		(effects
 			(font
 				(size 1 1)
@@ -16638,6 +16662,18 @@
 				(thickness 0.1)
 			)
 			(justify right bottom)
+		)
+	)
+	(gr_text "ON"
+		(at 99.575 77.75 0)
+		(layer "F.SilkS")
+		(uuid "c5c22581-b0fd-4174-8d38-d00b94f5faa1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
 		)
 	)
 	(gr_text "5V"
