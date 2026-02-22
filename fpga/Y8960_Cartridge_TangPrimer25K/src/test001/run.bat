@@ -67,6 +67,8 @@ vlog ..\opl2_patch\opl2.v
 vcom ..\sn76489_audio\src\sn76489_audio.vhd
 vlog ..\sn76489_audio_patch\sn76489.v
 
+vlog gowin_pll_dummy.v
+
 vlog ..\i2s_audio\i2s_audio.v
 if errorlevel 1 (
 	pause

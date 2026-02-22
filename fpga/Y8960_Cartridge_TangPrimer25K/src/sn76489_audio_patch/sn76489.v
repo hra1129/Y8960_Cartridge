@@ -8,8 +8,8 @@ module dual_dcsg (
 	input			clk,
 	input			reset_n,
 	input			enable,
-	input			bus_ioreq,
-	input	[7:0]	bus_address,
+	input			bus_cs,
+	input			bus_address,
 	input			bus_write,
 	input			bus_valid,
 	output			bus_ready,
@@ -23,9 +23,9 @@ module dual_dcsg (
 	// --------------------------------------------------------------------
 	//	Address decoder
 	// --------------------------------------------------------------------
-	assign w_cs0_n		= ( bus_ioreq && ( {bus_address[7], 1'b1, bus_address[5:0]} == 8'h7E ) ) ? ~bus_valid: 1'b1;
-	assign w_cs1_n		= ( bus_ioreq && ( {bus_address[7], 1'b1, bus_address[5:0]} == 8'h7F ) ) ? ~bus_valid: 1'b1;
-	assign bus_ready	= (~(w_cs0_n & w_cs1_n) & enable);
+	assign w_cs0_n		= ( bus_cs && !bus_address ) ? 1'b0: 1'b1;
+	assign w_cs1_n		= ( bus_cs &&  bus_address ) ? 1'b0: 1'b1;
+	assign bus_ready	= bus_cs & enable;
 
 	// --------------------------------------------------------------------
 	//	sn76489an body

@@ -94,12 +94,6 @@ module y8960cartridge_tangprimer25k (
 	wire			w_bus_ioreq;
 	wire			w_bus_write;
 	wire			w_bus_valid;
-	wire			w_bus_timer_ready;
-	wire			w_bus_opl2_ready;
-	wire			w_bus_opll_ready;
-	wire			w_bus_ssg_ready;
-	wire			w_bus_scc_ready;
-	wire			w_bus_dcsg_ready;
 	wire	[7:0]	w_bus_wdata;
 	wire	[7:0]	w_bus_rdata;
 	wire			w_bus_rdata_en;
@@ -133,12 +127,12 @@ module y8960cartridge_tangprimer25k (
 
 	wire			w_bus_dcsg_ready;
 
-	wire	[15:0]	w_opl2_out_0;
-	wire	[15:0]	w_opl2_out_1;
-	wire	[15:0]	w_adpcm_out_l0;
-	wire	[15:0]	w_adpcm_out_r0;
-	wire	[15:0]	w_adpcm_out_l1;
-	wire	[15:0]	w_adpcm_out_r1;
+	wire	[15:0]	w_opl2_sound_out0;
+	wire	[15:0]	w_opl2_sound_out1;
+	wire	[15:0]	w_adpcm_sound_out_l0;
+	wire	[15:0]	w_adpcm_sound_out_r0;
+	wire	[15:0]	w_adpcm_sound_out_l1;
+	wire	[15:0]	w_adpcm_sound_out_r1;
 	wire			w_adpcm_oe_n;
 	wire			w_adpcm_we_n;
 	wire	[17:0]	w_adpcm_address;
@@ -146,16 +140,16 @@ module y8960cartridge_tangprimer25k (
 	wire	[7:0]	w_adpcm_rdata;
 	wire			w_adpcm_rdata_en;
 
-	wire	[15:0]	w_opll_out_l;
-	wire	[15:0]	w_opll_out_r;
+	wire	[15:0]	w_opll_sound_out0;
+	wire	[15:0]	w_opll_sound_out1;
 
-	wire	[11:0]	w_ssg_out_l;
-	wire	[11:0]	w_ssg_out_r;
+	wire	[11:0]	w_ssg_sound_out0;
+	wire	[11:0]	w_ssg_sound_out1;
 
-	wire	[10:0]	w_scc_out;
+	wire	[10:0]	w_scc_sound_out;
 
-	wire	[13:0]	w_dcsg_out_l;
-	wire	[13:0]	w_dcsg_out_r;
+	wire	[13:0]	w_dcsg_sound_out0;
+	wire	[13:0]	w_dcsg_sound_out1;
 
 	reg		[2:0]	ff_divider;
 	reg				ff_enable;
@@ -185,7 +179,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	always @( posedge clk_28m ) begin
-		if( !reset_n ) begin
+		if( !w_reset_n ) begin
 			ff_divider	<= 3'd0;
 			ff_enable	<= 1'b0;
 		end
@@ -276,8 +270,8 @@ module y8960cartridge_tangprimer25k (
 		.bus_wdata			( w_bus_wdata				),
 		.bus_rdata			( w_bus_opl2_rdata			),
 		.bus_rdata_en		( w_bus_opl2_rdata_en		),
-		.opl2_sound_out_0	( w_opl2_out_0				),
-		.opl2_sound_out_1	( w_opl2_out_1				),
+		.opl2_sound_out_0	( w_opl2_sound_out0		),
+		.opl2_sound_out_1	( w_opl2_sound_out1		),
 		.adpcm_sound_out_l0	( w_adpcm_sound_out_l0		),
 		.adpcm_sound_out_r0	( w_adpcm_sound_out_r0		),
 		.adpcm_sound_out_l1	( w_adpcm_sound_out_l1		),
@@ -302,8 +296,8 @@ module y8960cartridge_tangprimer25k (
 		.bus_valid			( w_bus_valid				),
 		.bus_ready			( w_bus_opll_ready			),
 		.bus_wdata			( w_bus_wdata				),
-		.sound_out0			( w_opll_out_l				),
-		.sound_out1			( w_opll_out_r				)
+		.sound_out0			( w_opll_sound_out0			),
+		.sound_out1			( w_opll_sound_out1			)
 	);
 
 	// ---------------------------------------------------------
@@ -325,8 +319,8 @@ module y8960cartridge_tangprimer25k (
 		.ssg_iob0			( 							),
 		.ssg_ioa1			( { 6'd0, dipsw }			),
 		.ssg_iob1			( w_led						),
-		.sound_out_l		( w_ssg_out_l				),
-		.sound_out_r		( w_ssg_out_r				),
+		.sound_out0			( w_ssg_sound_out0			),
+		.sound_out1			( w_ssg_sound_out1			),
 		.mode				( 2'b11						)
 	);
 
@@ -338,7 +332,7 @@ module y8960cartridge_tangprimer25k (
 		.clk				( clk_28m					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_scc_cs				),
-		.bus_address		( w_bus_address[1:0]		),
+		.bus_address		( w_bus_address				),
 		.bus_write			( w_bus_write				),
 		.bus_ready			( w_bus_scc_ready			),
         .bus_valid          ( w_bus_valid				),
@@ -347,7 +341,7 @@ module y8960cartridge_tangprimer25k (
 		.bus_rdata_en		( w_bus_scc_rdata_en		),
 		.scc_memory_cs		( w_scc_memory_cs			),
 		.scc_ma				( w_scc_ma					),
-		.sound_out			( w_scc_out					)
+		.sound_out			( w_scc_sound_out			)
 	);
 
 	// ---------------------------------------------------------
@@ -356,13 +350,13 @@ module y8960cartridge_tangprimer25k (
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_dcsg_cs				),
-		.bus_address		( w_bus_address[1:0]		),
+		.bus_address		( w_bus_address[0]			),
 		.bus_write			( w_bus_write				),
 		.bus_valid			( w_bus_valid				),
 		.bus_ready			( w_bus_dcsg_ready			),
 		.bus_wdata			( w_bus_wdata				),
-		.sound_out0			( w_dcsg_out_l				),
-		.sound_out1			( w_dcsg_out_r				)
+		.sound_out0			( w_dcsg_sound_out0			),
+		.sound_out1			( w_dcsg_sound_out1			)
 	);
 
 	// ---------------------------------------------------------
@@ -405,13 +399,13 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	assign w_sound_out	= 
-			{ 4'd0, w_ssg_out_l } + { 4'd0, w_ssg_out_r } + 
-			w_opll_out_l + w_opll_out_r + 
-			w_opl2_out_0 + w_opl2_out_1 + 
+			{ 4'd0, w_ssg_sound_out0 } + { 4'd0, w_ssg_sound_out1 } + 
+			w_opll_sound_out0 + w_opll_sound_out1 + 
+			w_opl2_sound_out0 + w_opl2_sound_out1 + 
 			w_adpcm_sound_out_l0 + w_adpcm_sound_out_l1 +
 			w_adpcm_sound_out_r0 + w_adpcm_sound_out_r1 +
-			w_dcsg_out_l + w_dcsg_out_r + 
-			{ 3'd0, w_scc_out, 2'd0 };
+			w_dcsg_sound_out0 + w_dcsg_sound_out1 + 
+			{ 3'd0, w_scc_sound_out, 2'd0 };
 
 	i2s_audio u_i2s (
 		.clk				( clk_28m					),

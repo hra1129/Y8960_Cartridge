@@ -8,7 +8,7 @@ module scc (
 	input			reset_n,
 	input			clk,			//	base clock
 	input			enable,			//	3.579545MHz
-	input			bus_memreq,
+	input			bus_cs,
 	input	[15:0]	bus_address,
 	input			bus_write,
 	output			bus_ready,
@@ -20,7 +20,7 @@ module scc (
 	output	[18:13]	scc_ma,
 	output	[10:0]	sound_out		//	signed
 );
-	wire			w_cs_n;
+	wire			w_cs;
 	wire			w_wr_n;
 	wire			w_rd_n;
 	wire	[10:0]	w_sound_out;
@@ -28,8 +28,8 @@ module scc (
 	// --------------------------------------------------------------------
 	//	Address decode
 	// --------------------------------------------------------------------
-	assign w_cs_n		= bus_memreq & bus_valid;
-	assign bus_ready	= w_cs_n & enable;
+	assign w_cs			= bus_cs & bus_valid;
+	assign bus_ready	= w_cs & enable;
 
 	assign w_wr_n		= ~bus_write;
 	assign w_rd_n		= bus_write;
@@ -44,7 +44,7 @@ module scc (
 		.i_EMUCLK				( clk					),
 		.i_MCLK_PCEN_n			( enable				),
 		.i_RST_n				( reset_n				),
-		.i_CS_n					( w_cs_n				),
+		.i_CS_n					( ~w_cs					),
 		.i_RD_n					( w_rd_n				),
 		.i_WR_n					( w_wr_n				),
 		.i_ABLO					( bus_address[7:0]		),

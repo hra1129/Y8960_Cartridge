@@ -65,7 +65,7 @@ module tb ();
 	//	DUT
 	// --------------------------------------------------------------------
 	y8960cartridge_tangprimer25k u_dut (
-		.clk_14m				( clk					),
+		.clk_28m				( clk					),
 		.clk_50m				( clk					),
 		.slot_reset				( slot_reset			),
 		.slot_a					( slot_a				),
