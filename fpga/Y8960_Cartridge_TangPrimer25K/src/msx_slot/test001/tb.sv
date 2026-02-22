@@ -2,25 +2,25 @@
 //	Test of msx_slot.v
 //	Copyright (C)2025 Takayuki Hara (HRA!)
 //	
-//	–{ƒ\ƒtƒgƒEƒFƒA‚¨‚æ‚Ñ–{ƒ\ƒtƒgƒEƒFƒA‚ÉŠî‚Ã‚¢‚Äì¬‚³‚ê‚½”h¶•¨‚ÍAˆÈ‰º‚ÌğŒ‚ğ
-//	–‚½‚·ê‡‚ÉŒÀ‚èAÄ”Ğ•z‚¨‚æ‚Ñg—p‚ª‹–‰Â‚³‚ê‚Ü‚·B
+//	æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ãŠã‚ˆã³æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã«åŸºã¥ã„ã¦ä½œæˆã•ã‚ŒãŸæ´¾ç”Ÿç‰©ã¯ã€ä»¥ä¸‹ã®æ¡ä»¶ã‚’
+//	æº€ãŸã™å ´åˆã«é™ã‚Šã€å†é ’å¸ƒãŠã‚ˆã³ä½¿ç”¨ãŒè¨±å¯ã•ã‚Œã¾ã™ã€‚
 //
-//	1.ƒ\[ƒXƒR[ƒhŒ`®‚ÅÄ”Ğ•z‚·‚éê‡Aã‹L‚Ì’˜ìŒ •\¦A–{ğŒˆê——A‚¨‚æ‚Ñ‰º‹L
-//	  –ÆÓğ€‚ğ‚»‚Ì‚Ü‚Ü‚ÌŒ`‚Å•Û‚·‚é‚±‚ÆB
-//	2.ƒoƒCƒiƒŠŒ`®‚ÅÄ”Ğ•z‚·‚éê‡A”Ğ•z•¨‚É•t‘®‚ÌƒhƒLƒ…ƒƒ“ƒg“™‚Ì‘—¿‚ÉAã‹L‚Ì
-//	  ’˜ìŒ •\¦A–{ğŒˆê——A‚¨‚æ‚Ñ‰º‹L–ÆÓğ€‚ğŠÜ‚ß‚é‚±‚ÆB
-//	3.‘–Ê‚É‚æ‚é–‘O‚Ì‹–‰Â‚È‚µ‚ÉA–{ƒ\ƒtƒgƒEƒFƒA‚ğ”Ì”„A‚¨‚æ‚Ñ¤‹Æ“I‚È»•i‚âŠˆ“®
-//	  ‚Ég—p‚µ‚È‚¢‚±‚ÆB
+//	1.ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰å½¢å¼ã§å†é ’å¸ƒã™ã‚‹å ´åˆã€ä¸Šè¨˜ã®è‘—ä½œæ¨©è¡¨ç¤ºã€æœ¬æ¡ä»¶ä¸€è¦§ã€ãŠã‚ˆã³ä¸‹è¨˜
+//	  å…è²¬æ¡é …ã‚’ãã®ã¾ã¾ã®å½¢ã§ä¿æŒã™ã‚‹ã“ã¨ã€‚
+//	2.ãƒã‚¤ãƒŠãƒªå½¢å¼ã§å†é ’å¸ƒã™ã‚‹å ´åˆã€é ’å¸ƒç‰©ã«ä»˜å±ã®ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆç­‰ã®è³‡æ–™ã«ã€ä¸Šè¨˜ã®
+//	  è‘—ä½œæ¨©è¡¨ç¤ºã€æœ¬æ¡ä»¶ä¸€è¦§ã€ãŠã‚ˆã³ä¸‹è¨˜å…è²¬æ¡é …ã‚’å«ã‚ã‚‹ã“ã¨ã€‚
+//	3.æ›¸é¢ã«ã‚ˆã‚‹äº‹å‰ã®è¨±å¯ãªã—ã«ã€æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã‚’è²©å£²ã€ãŠã‚ˆã³å•†æ¥­çš„ãªè£½å“ã‚„æ´»å‹•
+//	  ã«ä½¿ç”¨ã—ãªã„ã“ã¨ã€‚
 //
-//	–{ƒ\ƒtƒgƒEƒFƒA‚ÍA’˜ìŒ Ò‚É‚æ‚Á‚ÄuŒ»ó‚Ì‚Ü‚Üv’ñ‹Ÿ‚³‚ê‚Ä‚¢‚Ü‚·B’˜ìŒ Ò‚ÍA
-//	“Á’è–Ú“I‚Ö‚Ì“K‡«‚Ì•ÛØA¤•i«‚Ì•ÛØA‚Ü‚½‚»‚ê‚ÉŒÀ’è‚³‚ê‚È‚¢A‚¢‚©‚È‚é–¾¦
-//	“I‚à‚µ‚­‚ÍˆÃ–Ù‚È•ÛØÓ”C‚à•‰‚¢‚Ü‚¹‚ñB’˜ìŒ Ò‚ÍA–—R‚Ì‚¢‚©‚ñ‚ğ–â‚í‚¸A‘¹ŠQ
-//	”­¶‚ÌŒ´ˆö‚¢‚©‚ñ‚ğ–â‚í‚¸A‚©‚ÂÓ”C‚Ìª‹’‚ªŒ_–ñ‚Å‚ ‚é‚©ŒµŠiÓ”C‚Å‚ ‚é‚©i‰ß¸
-//	‚»‚Ì‘¼‚Ìj•s–@sˆ×‚Å‚ ‚é‚©‚ğ–â‚í‚¸A‰¼‚É‚»‚Ì‚æ‚¤‚È‘¹ŠQ‚ª”­¶‚·‚é‰Â”\«‚ğ’m‚ç
-//	‚³‚ê‚Ä‚¢‚½‚Æ‚µ‚Ä‚àA–{ƒ\ƒtƒgƒEƒFƒA‚Ìg—p‚É‚æ‚Á‚Ä”­¶‚µ‚½i‘ã‘Ö•i‚Ü‚½‚Í‘ã—pƒT
-//	[ƒrƒX‚Ì’²’BAg—p‚Ì‘r¸Aƒf[ƒ^‚Ì‘r¸A—˜‰v‚Ì‘r¸A‹Æ–±‚Ì’†’f‚àŠÜ‚ßA‚Ü‚½‚»
-//	‚ê‚ÉŒÀ’è‚³‚ê‚È‚¢j’¼Ú‘¹ŠQAŠÔÚ‘¹ŠQA‹ô”­“I‚È‘¹ŠQA“Á•Ê‘¹ŠQA’¦”±“I‘¹ŠQA‚Ü
-//	‚½‚ÍŒ‹‰Ê‘¹ŠQ‚É‚Â‚¢‚ÄAˆêØÓ”C‚ğ•‰‚í‚È‚¢‚à‚Ì‚Æ‚µ‚Ü‚·B
+//	æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯ã€è‘—ä½œæ¨©è€…ã«ã‚ˆã£ã¦ã€Œç¾çŠ¶ã®ã¾ã¾ã€æä¾›ã•ã‚Œã¦ã„ã¾ã™ã€‚è‘—ä½œæ¨©è€…ã¯ã€
+//	ç‰¹å®šç›®çš„ã¸ã®é©åˆæ€§ã®ä¿è¨¼ã€å•†å“æ€§ã®ä¿è¨¼ã€ã¾ãŸãã‚Œã«é™å®šã•ã‚Œãªã„ã€ã„ã‹ãªã‚‹æ˜ç¤º
+//	çš„ã‚‚ã—ãã¯æš—é»™ãªä¿è¨¼è²¬ä»»ã‚‚è² ã„ã¾ã›ã‚“ã€‚è‘—ä½œæ¨©è€…ã¯ã€äº‹ç”±ã®ã„ã‹ã‚“ã‚’å•ã‚ãšã€æå®³
+//	ç™ºç”Ÿã®åŸå› ã„ã‹ã‚“ã‚’å•ã‚ãšã€ã‹ã¤è²¬ä»»ã®æ ¹æ‹ ãŒå¥‘ç´„ã§ã‚ã‚‹ã‹å³æ ¼è²¬ä»»ã§ã‚ã‚‹ã‹ï¼ˆéå¤±
+//	ãã®ä»–ã®ï¼‰ä¸æ³•è¡Œç‚ºã§ã‚ã‚‹ã‹ã‚’å•ã‚ãšã€ä»®ã«ãã®ã‚ˆã†ãªæå®³ãŒç™ºç”Ÿã™ã‚‹å¯èƒ½æ€§ã‚’çŸ¥ã‚‰
+//	ã•ã‚Œã¦ã„ãŸã¨ã—ã¦ã‚‚ã€æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã®ä½¿ç”¨ã«ã‚ˆã£ã¦ç™ºç”Ÿã—ãŸï¼ˆä»£æ›¿å“ã¾ãŸã¯ä»£ç”¨ã‚µ
+//	ãƒ¼ãƒ“ã‚¹ã®èª¿é”ã€ä½¿ç”¨ã®å–ªå¤±ã€ãƒ‡ãƒ¼ã‚¿ã®å–ªå¤±ã€åˆ©ç›Šã®å–ªå¤±ã€æ¥­å‹™ã®ä¸­æ–­ã‚‚å«ã‚ã€ã¾ãŸã
+//	ã‚Œã«é™å®šã•ã‚Œãªã„ï¼‰ç›´æ¥æå®³ã€é–“æ¥æå®³ã€å¶ç™ºçš„ãªæå®³ã€ç‰¹åˆ¥æå®³ã€æ‡²ç½°çš„æå®³ã€ã¾
+//	ãŸã¯çµæœæå®³ã«ã¤ã„ã¦ã€ä¸€åˆ‡è²¬ä»»ã‚’è² ã‚ãªã„ã‚‚ã®ã¨ã—ã¾ã™ã€‚
 //
 //	Note that above Japanese version license is the formal document.
 //	The following translation is only for reference.
@@ -57,27 +57,41 @@ module tb ();
 	localparam		clk_base		= 1_000_000_000/85_909_080;	//	ps
 	localparam		cpu_clk_base	= 1_000_000_000/ 3_579_545;	//	ps
 	reg				clk;
-	reg				initial_busy;
 	reg				p_slot_clk;
-	reg				p_slot_reset_n;
+	reg				p_slot_reset;
+	reg				p_slot_sltsl_n;
+	reg				p_slot_memreq_n;
 	reg				p_slot_ioreq_n;
 	reg				p_slot_wr_n;
 	reg				p_slot_rd_n;
-	reg		[7:0]	p_slot_address;
+	reg		[15:0]	p_slot_address;
 	wire	[7:0]	p_slot_data;
 	reg		[7:0]	ff_slot_data;
 	wire			p_slot_int;
 	wire			p_slot_data_dir;
-	wire			busdir;
+	wire			reset_n;
 	reg				int_n;
+	wire	[15:0]	bus_address;
+	wire			bus_memreq;
 	wire			bus_ioreq;
-	wire	[7:0]	bus_address;
 	wire			bus_write;
 	wire			bus_valid;
-	wire			bus_ready;
 	wire	[7:0]	bus_wdata;
 	reg		[7:0]	bus_rdata;
 	reg				bus_rdata_en;
+	wire			bus_timer_cs;
+	wire			bus_opll_cs;
+	wire			bus_opl2_cs;
+	wire			bus_ssg_cs;
+	wire			bus_scc_cs;
+	wire			bus_dcsg_cs;
+	wire			bus_timer_ready;
+	wire			bus_opll_ready;
+	wire			bus_opl2_ready;
+	wire			bus_ssg_ready;
+	wire			bus_scc_ready;
+	wire			bus_dcsg_ready;
+	reg				memory_io_en;
 	string			s_state;
 
 	// --------------------------------------------------------------------
@@ -85,8 +99,10 @@ module tb ();
 	// --------------------------------------------------------------------
 	msx_slot u_msx_slot (
 		.clk					( clk					),
-		.initial_busy			( initial_busy			),
-		.p_slot_reset_n			( p_slot_reset_n		),
+		.reset_n				( reset_n				),
+		.p_slot_reset			( p_slot_reset			),
+		.p_slot_sltsl_n			( p_slot_sltsl_n		),
+		.p_slot_memreq_n		( p_slot_memreq_n		),
 		.p_slot_ioreq_n			( p_slot_ioreq_n		),
 		.p_slot_wr_n			( p_slot_wr_n			),
 		.p_slot_rd_n			( p_slot_rd_n			),
@@ -94,16 +110,28 @@ module tb ();
 		.p_slot_data			( p_slot_data			),
 		.p_slot_int				( p_slot_int			),
 		.p_slot_data_dir		( p_slot_data_dir		),
-		.busdir					( busdir				),
 		.int_n					( int_n					),
-		.bus_ioreq				( bus_ioreq				),
 		.bus_address			( bus_address			),
+		.bus_memreq				( bus_memreq			),
+		.bus_ioreq				( bus_ioreq				),
 		.bus_write				( bus_write				),
 		.bus_valid				( bus_valid				),
-		.bus_ready				( bus_ready				),
+		.bus_timer_ready		( bus_timer_ready		),
+		.bus_opll_ready			( bus_opll_ready		),
+		.bus_opl2_ready			( bus_opl2_ready		),
+		.bus_ssg_ready			( bus_ssg_ready			),
+		.bus_scc_ready			( bus_scc_ready			),
+		.bus_dcsg_ready			( bus_dcsg_ready		),
 		.bus_wdata				( bus_wdata				),
 		.bus_rdata				( bus_rdata				),
-		.bus_rdata_en			( bus_rdata_en			)
+		.bus_rdata_en			( bus_rdata_en			),
+		.bus_timer_cs			( bus_timer_cs			),
+		.bus_opll_cs			( bus_opll_cs			),
+		.bus_opl2_cs			( bus_opl2_cs			),
+		.bus_ssg_cs				( bus_ssg_cs			),
+		.bus_scc_cs				( bus_scc_cs			),
+		.bus_dcsg_cs			( bus_dcsg_cs			),
+		.memory_io_en			( memory_io_en			)
 	);
 
 	//	1: Read, 0: Write
@@ -125,7 +153,14 @@ module tb ();
 		ff_bus_valid = { bus_valid, ff_bus_valid[2:1] };
 	end
 
-	assign bus_ready = ff_bus_valid[0];
+	wire w_bus_ready;
+	assign w_bus_ready		= ff_bus_valid[0];
+	assign bus_timer_ready	= w_bus_ready;
+	assign bus_opll_ready	= w_bus_ready;
+	assign bus_opl2_ready	= w_bus_ready;
+	assign bus_ssg_ready	= w_bus_ready;
+	assign bus_scc_ready	= w_bus_ready;
+	assign bus_dcsg_ready	= w_bus_ready;
 
 	// --------------------------------------------------------------------
 	//	tasks
@@ -334,9 +369,10 @@ module tb ();
 		logic [7:0] rdata;
 
 		clk					= 0;			//	42.95454MHz
-		initial_busy		= 0;
 		p_slot_clk			= 0;
-		p_slot_reset_n		= 0;
+		p_slot_reset		= 1;
+		p_slot_sltsl_n		= 1;
+		p_slot_memreq_n		= 1;
 		p_slot_ioreq_n		= 1;
 		p_slot_wr_n			= 1;
 		p_slot_rd_n			= 1;
@@ -344,11 +380,12 @@ module tb ();
 		bus_rdata			= 0;
 		bus_rdata_en		= 0;
 		int_n				= 1;
+		memory_io_en		= 0;
 
 		@( negedge clk );
 		@( negedge clk );
 
-		p_slot_reset_n		= 1;
+		p_slot_reset		= 0;
 		@( posedge clk );
 		@( posedge clk );
 

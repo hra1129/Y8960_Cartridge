@@ -23,6 +23,14 @@ vlog ..\ikascc\src\IKASCC_modules\IKASCC_vrc_a.v
 vlog ..\ikascc\src\IKASCC_modules\IKASCC_vrc_s.v
 vlog ..\ikascc_patch\scc.v
 
+vlog ..\adpcm\src\jt10_adpcm_drvB.v
+vlog ..\adpcm\src\jt10_adpcmb.v
+vlog ..\adpcm\src\jt10_adpcmb_cnt.v
+vlog ..\adpcm\src\jt10_adpcmb_gain.v
+vlog ..\adpcm\src\jt10_adpcmb_interpol.v
+vlog ..\adpcm\src\jt10_adpcm_div.v
+vlog ..\adpcm_patch\adpcm.v
+
 vlog ..\opl2\src\jtopl.v
 vlog ..\opl2\src\jtopl2.v
 vlog ..\opl2\src\jtopl_acc.v
@@ -56,6 +64,9 @@ vlog ..\opl2\src\jtopl_slot_cnt.v
 vlog ..\opl2\src\jtopl_timers.v
 vlog ..\opl2_patch\opl2.v
 
+vcom ..\sn76489_audio\src\sn76489_audio.vhd
+vlog ..\sn76489_audio_patch\sn76489.v
+
 vlog ..\i2s_audio\i2s_audio.v
 if errorlevel 1 (
 	pause
@@ -82,6 +93,26 @@ if errorlevel 1 (
 	exit
 )
 vlog ..\ssg\dual_ssg.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog ..\sfrom\sfrom.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog ..\sfrom\sfrom_test_model.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog ..\ssram\ssram.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog ..\ssram\ssram_test_model.v
 if errorlevel 1 (
 	pause
 	exit

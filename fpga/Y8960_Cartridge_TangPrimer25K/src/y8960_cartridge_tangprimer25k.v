@@ -94,7 +94,12 @@ module y8960cartridge_tangprimer25k (
 	wire			w_bus_ioreq;
 	wire			w_bus_write;
 	wire			w_bus_valid;
-	wire			w_bus_ready;
+	wire			w_bus_timer_ready;
+	wire			w_bus_opl2_ready;
+	wire			w_bus_opll_ready;
+	wire			w_bus_ssg_ready;
+	wire			w_bus_scc_ready;
+	wire			w_bus_dcsg_ready;
 	wire	[7:0]	w_bus_wdata;
 	wire	[7:0]	w_bus_rdata;
 	wire			w_bus_rdata_en;
@@ -221,7 +226,12 @@ module y8960cartridge_tangprimer25k (
 		.bus_ioreq			( w_bus_ioreq				),
 		.bus_write			( w_bus_write				),
 		.bus_valid			( w_bus_valid				),
-		.bus_ready			( w_bus_ready				),
+		.bus_timer_ready	( w_bus_timer_ready			),
+		.bus_opll_ready		( w_bus_opll_ready			),
+		.bus_opl2_ready		( w_bus_opl2_ready			),
+		.bus_ssg_ready		( w_bus_ssg_ready			),
+		.bus_scc_ready		( w_bus_scc_ready			),
+		.bus_dcsg_ready		( w_bus_dcsg_ready			),
 		.bus_wdata			( w_bus_wdata				),
 		.bus_rdata			( w_bus_rdata				),
 		.bus_rdata_en		( w_bus_rdata_en			),
@@ -230,10 +240,10 @@ module y8960cartridge_tangprimer25k (
 		.bus_opll_cs		( w_bus_opll_cs				),
 		.bus_ssg_cs			( w_bus_ssg_cs				),
 		.bus_scc_cs			( w_bus_scc_cs				),
-		.bus_dcsg_cs		( w_bus_dcsg_cs				)
+		.bus_dcsg_cs		( w_bus_dcsg_cs				),
+		.memory_io_en		( ~w_scc_ma[5]				)
 	);
 
-	assign w_bus_ready		= w_bus_timer_ready | w_bus_ssg_ready | w_bus_opl2_ready | w_bus_opll_ready | w_bus_scc_ready | w_bus_dcsg_ready;
 	assign w_bus_rdata		= w_bus_timer_rdata & w_bus_opl2_rdata & w_bus_ssg_rdata & w_bus_scc_rdata;
 	assign w_bus_rdata_en	= w_bus_timer_rdata_en | w_bus_opl2_rdata_en | w_bus_ssg_rdata_en | w_bus_scc_rdata_en;
 	assign w_int_n			= w_timer_intr_n & w_opl2_intr_n;
@@ -272,7 +282,7 @@ module y8960cartridge_tangprimer25k (
 		.adpcm_sound_out_r0	( w_adpcm_sound_out_r0		),
 		.adpcm_sound_out_l1	( w_adpcm_sound_out_l1		),
 		.adpcm_sound_out_r1	( w_adpcm_sound_out_r1		),
-		.intr_n				( w_opl2_intr_n				)
+		.intr_n				( w_opl2_intr_n				),
 		.adpcm_oe_n			( w_adpcm_oe_n				),
 		.adpcm_we_n			( w_adpcm_we_n				),
 		.adpcm_address		( w_adpcm_address			),
@@ -287,7 +297,7 @@ module y8960cartridge_tangprimer25k (
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_opll_cs				),
-		.bus_address		( w_bus_address				),
+		.bus_address		( w_bus_address[1:0]		),
 		.bus_write			( w_bus_write				),
 		.bus_valid			( w_bus_valid				),
 		.bus_ready			( w_bus_opll_ready			),
@@ -303,14 +313,14 @@ module y8960cartridge_tangprimer25k (
 		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
-		.bus_ioreq			( bus_ioreq					),
-		.bus_valid			( bus_valid					),
-		.bus_write			( bus_write					),
-		.bus_address		( bus_address[7:0]			),
-		.bus_ready			( bus_ssg_ready				),
-		.bus_wdata			( bus_wdata					),
-		.bus_rdata			( bus_ssg_rdata				),
-		.bus_rdata_en		( bus_ssg_rdata_en			),
+		.bus_cs				( w_bus_ssg_cs				),
+		.bus_valid			( w_bus_valid				),
+		.bus_write			( w_bus_write				),
+		.bus_address		( w_bus_address[1:0]		),
+		.bus_ready			( w_bus_ssg_ready			),
+		.bus_wdata			( w_bus_wdata				),
+		.bus_rdata			( w_bus_ssg_rdata			),
+		.bus_rdata_en		( w_bus_ssg_rdata_en		),
 		.ssg_ioa0			( 8'd0						),
 		.ssg_iob0			( 							),
 		.ssg_ioa1			( { 6'd0, dipsw }			),
@@ -327,16 +337,16 @@ module y8960cartridge_tangprimer25k (
 		.reset_n			( reset_n					),
 		.clk				( clk_28m					),
 		.enable				( ff_enable					),
-		.bus_memreq			( bus_memreq				),
-		.bus_address		( bus_address				),
-		.bus_write			( bus_write					),
-		.bus_ready			( bus_scc_ready				),
-        .bus_valid          ( bus_valid					),
-		.bus_wdata			( bus_wdata					),
-		.bus_rdata			( bus_scc_rdata				),
-		.bus_rdata_en		( bus_scc_rdata_en			),
-		.scc_memory_cs		( scc_memory_cs				),
-		.scc_ma				( scc_ma					),
+		.bus_cs				( w_bus_scc_cs				),
+		.bus_address		( w_bus_address[1:0]		),
+		.bus_write			( w_bus_write				),
+		.bus_ready			( w_bus_scc_ready			),
+        .bus_valid          ( w_bus_valid				),
+		.bus_wdata			( w_bus_wdata				),
+		.bus_rdata			( w_bus_scc_rdata			),
+		.bus_rdata_en		( w_bus_scc_rdata_en		),
+		.scc_memory_cs		( w_scc_memory_cs			),
+		.scc_ma				( w_scc_ma					),
 		.sound_out			( w_scc_out					)
 	);
 
@@ -345,12 +355,12 @@ module y8960cartridge_tangprimer25k (
 		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
 		.enable				( ff_enable					),
-		.bus_ioreq			( bus_ioreq					),
-		.bus_address		( bus_address				),
-		.bus_write			( bus_write					),
-		.bus_valid			( bus_valid					),
-		.bus_ready			( bus_dcsg_ready			),
-		.bus_wdata			( bus_wdata					),
+		.bus_cs				( w_bus_dcsg_cs				),
+		.bus_address		( w_bus_address[1:0]		),
+		.bus_write			( w_bus_write				),
+		.bus_valid			( w_bus_valid				),
+		.bus_ready			( w_bus_dcsg_ready			),
+		.bus_wdata			( w_bus_wdata				),
 		.sound_out0			( w_dcsg_out_l				),
 		.sound_out1			( w_dcsg_out_r				)
 	);

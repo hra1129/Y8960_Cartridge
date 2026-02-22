@@ -51,14 +51,11 @@ module tb ();
 	//	flash ROM
 	wire			flash_spi_clk;
 	wire			flash_spi_cs_n;
-	wire			flash_spi_wp_n;
-	wire			flash_spi_hold_n;
-	reg				flash_spi_miso;
-	wire			flash_spi_mosi;
-	//	PSRAM
-	wire			psram_ce_n;
-	wire			psram_sclk;
-	wire	[3:0]	psram_sio;
+	wire	[3:0]	flash_spi_io;
+	//	SRAM
+	wire			sram_ce_n;
+	wire			sram_sclk;
+	wire	[3:0]	sram_sio;
 	//	DIP S/W
 	reg		[1:0]	dipsw;
 	//	LED
@@ -87,15 +84,30 @@ module tb ();
 		.audio_sdata			( audio_sdata			),
 		.flash_spi_clk			( flash_spi_clk			),
 		.flash_spi_cs_n			( flash_spi_cs_n		),
-		.flash_spi_wp_n			( flash_spi_wp_n		),
-		.flash_spi_hold_n		( flash_spi_hold_n		),
-		.flash_spi_miso			( flash_spi_miso		),
-		.flash_spi_mosi			( flash_spi_mosi		),
-		.psram_ce_n				( psram_ce_n			),
-		.psram_sclk				( psram_sclk			),
-		.psram_sio				( psram_sio				),
+		.flash_spi_io			( flash_spi_io			),
+		.sram_ce_n				( sram_ce_n				),
+		.sram_sclk				( sram_sclk				),
+		.sram_sio				( sram_sio				),
 		.dipsw					( dipsw					),
 		.led					( led					)
+	);
+
+	// --------------------------------------------------------------------
+	//	Serial Flash ROM test model
+	// --------------------------------------------------------------------
+	sfrom_test_model u_sfrom (
+		.spi_clk				( flash_spi_clk			),
+		.spi_cs_n				( flash_spi_cs_n		),
+		.spi_io					( flash_spi_io			)
+	);
+
+	// --------------------------------------------------------------------
+	//	Serial SRAM test model
+	// --------------------------------------------------------------------
+	ssram_test_model u_ssram (
+		.sclk					( sram_sclk				),
+		.cs_n					( sram_ce_n				),
+		.sio					( sram_sio				)
 	);
 
 	// --------------------------------------------------------------------
@@ -125,7 +137,6 @@ module tb ();
 		slot_ioreq_n = 0;
 		slot_wr_n = 0;
 		slot_rd_n = 0;
-		flash_spi_miso = 0;
 		dipsw = 0;
 
 		@( negedge clk );
