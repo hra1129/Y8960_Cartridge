@@ -144,6 +144,7 @@ generate
 				o_SCCREG_EN = ((bankreg2 == 6'h3F) & (i_ABHI == 5'b1001_1)) | (rammode & (bankreg1 == 6'h3F) & (i_ABHI == 5'b0111_1));
 			end
 		end
+    end
 	else begin : ramctrl_async
 		always @(*) begin
 			o_SCCREG_EN = (bankreg2 == 6'h3F) & (i_ABHI == 5'b1001_1);

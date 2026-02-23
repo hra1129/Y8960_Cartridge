@@ -265,14 +265,10 @@ module ssram (
 	// ---------------------------------------------------------
 	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
-			ff_address	<= 19'd0;
 			ff_wdata	<= 8'd0;
-			ff_write	<= 1'b0;
 		end
 		else if( w_valid ) begin
-			ff_address	<= address;
 			ff_wdata	<= wdata;
-			ff_write	<= write;
 		end
 	end
 
@@ -310,6 +306,8 @@ module ssram (
 			ff_ce_n		<= 1'b1;
 			ff_so		<= 4'b1zz0;
 			ff_read		<= 1'b0;
+			ff_address	<= 19'd0;
+			ff_write	<= 1'b0;
 			ff_burst_mode	<= 1'b0;
 			ff_burst_count	<= 17'd0;
 			ff_burst_active	<= 1'b0;
@@ -360,6 +358,8 @@ module ssram (
 					ff_state	<= c_state_start;
 					ff_ce_n		<= 1'b0;
 					ff_so		<= 4'd0;
+					ff_address	<= address;
+					ff_write	<= write;
 				end
 				else if( ff_burst_start_req ) begin
 					ff_state		<= c_state_start;

@@ -78,7 +78,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Sat Jan 24 16:59:19 2026
+<td>Mon Feb 23 18:32:23 2026
 </td>
 </tr>
 <tr>
@@ -111,7 +111,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td><b>Ctle</b></td>
 </tr>
 <tr>
-<td class="label">clk_14m</td>
+<td class="label">clk_28m</td>
 <td>-</td>
 <td>H5/1</td>
 <td>Y</td>
@@ -615,27 +615,6 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">flash_spi_miso</td>
-<td>-</td>
-<td>E5/4</td>
-<td>Y</td>
-<td>in</td>
-<td>IOB58[A]</td>
-<td>D00/DIN/MISO/MI1</td>
-<td>LVCMOS33</td>
-<td>OFF</td>
-<td>NONE</td>
-<td>OFF</td>
-<td>ON</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>3.3</td>
-<td>MEDIUM</td>
-<td>NONE</td>
-</tr>
-<tr>
 <td class="label">dipsw[0]</td>
 <td>-</td>
 <td>E8/4</td>
@@ -867,70 +846,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">flash_spi_wp_n</td>
-<td>-</td>
-<td>D5/4</td>
-<td>Y</td>
-<td>out</td>
-<td>IOB54[A]</td>
-<td>GCLKT_11B/D01/MI2</td>
-<td>LVCMOS33</td>
-<td>8</td>
-<td>NONE</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>3.3</td>
-<td>MEDIUM</td>
-<td>NONE</td>
-</tr>
-<tr>
-<td class="label">flash_spi_hold_n</td>
-<td>-</td>
-<td>E4/4</td>
-<td>Y</td>
-<td>out</td>
-<td>IOB54[B]</td>
-<td>GCLKC_11B/D02/MI3/BPLL_C_FB1</td>
-<td>LVCMOS33</td>
-<td>8</td>
-<td>NONE</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>3.3</td>
-<td>MEDIUM</td>
-<td>NONE</td>
-</tr>
-<tr>
-<td class="label">flash_spi_mosi</td>
-<td>-</td>
-<td>D6/4</td>
-<td>Y</td>
-<td>out</td>
-<td>IOB58[B]</td>
-<td>MOSI/MI0/CSI_B</td>
-<td>LVCMOS33</td>
-<td>8</td>
-<td>NONE</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-<td>3.3</td>
-<td>MEDIUM</td>
-<td>NONE</td>
-</tr>
-<tr>
-<td class="label">psram_ce_n</td>
+<td class="label">sram_ce_n</td>
 <td>-</td>
 <td>F2/5</td>
 <td>Y</td>
@@ -951,7 +867,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">psram_sclk</td>
+<td class="label">sram_sclk</td>
 <td>-</td>
 <td>F1/5</td>
 <td>Y</td>
@@ -1224,7 +1140,91 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">psram_sio[0]</td>
+<td class="label">flash_spi_io[0]</td>
+<td>-</td>
+<td>D6/4</td>
+<td>Y</td>
+<td>io</td>
+<td>IOB58[B]</td>
+<td>MOSI/MI0/CSI_B</td>
+<td>LVCMOS33</td>
+<td>8</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">flash_spi_io[1]</td>
+<td>-</td>
+<td>E5/4</td>
+<td>Y</td>
+<td>io</td>
+<td>IOB58[A]</td>
+<td>D00/DIN/MISO/MI1</td>
+<td>LVCMOS33</td>
+<td>8</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">flash_spi_io[2]</td>
+<td>-</td>
+<td>D5/4</td>
+<td>Y</td>
+<td>io</td>
+<td>IOB54[A]</td>
+<td>GCLKT_11B/D01/MI2</td>
+<td>LVCMOS33</td>
+<td>8</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">flash_spi_io[3]</td>
+<td>-</td>
+<td>E4/4</td>
+<td>Y</td>
+<td>io</td>
+<td>IOB54[B]</td>
+<td>GCLKC_11B/D02/MI3/BPLL_C_FB1</td>
+<td>LVCMOS33</td>
+<td>8</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">sram_sio[0]</td>
 <td>-</td>
 <td>A1/5</td>
 <td>Y</td>
@@ -1245,7 +1245,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">psram_sio[1]</td>
+<td class="label">sram_sio[1]</td>
 <td>-</td>
 <td>C2/5</td>
 <td>Y</td>
@@ -1266,7 +1266,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">psram_sio[2]</td>
+<td class="label">sram_sio[2]</td>
 <td>-</td>
 <td>E1/5</td>
 <td>Y</td>
@@ -1287,7 +1287,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
-<td class="label">psram_sio[3]</td>
+<td class="label">sram_sio[3]</td>
 <td>-</td>
 <td>D1/5</td>
 <td>Y</td>
@@ -1750,7 +1750,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">H5/1</td>
-<td>clk_14m</td>
+<td>clk_28m</td>
 <td>in</td>
 <td>IOT61[A]</td>
 <td>GCLKT_2/TPLL_T_IN0</td>
@@ -1978,7 +1978,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">C2/5</td>
-<td>psram_sio[1]</td>
+<td>sram_sio[1]</td>
 <td>out</td>
 <td>IOB4[B]</td>
 <td>D09/SCL/LPLL1_C_FB0</td>
@@ -2073,7 +2073,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">E1/5</td>
-<td>psram_sio[2]</td>
+<td>sram_sio[2]</td>
 <td>out</td>
 <td>IOB12[B]</td>
 <td>GCLKC_10B/RDWR_B/LPLL1_C_IN1</td>
@@ -2111,7 +2111,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">D1/5</td>
-<td>psram_sio[3]</td>
+<td>sram_sio[3]</td>
 <td>out</td>
 <td>IOB14[B]</td>
 <td>CLKHOLD_N/SSI3</td>
@@ -2130,7 +2130,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">A1/5</td>
-<td>psram_sio[0]</td>
+<td>sram_sio[0]</td>
 <td>out</td>
 <td>IOB24[A]</td>
 <td>-</td>
@@ -2149,7 +2149,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">F2/5</td>
-<td>psram_ce_n</td>
+<td>sram_ce_n</td>
 <td>out</td>
 <td>IOB26[A]</td>
 <td>GCLKT_9B</td>
@@ -2168,7 +2168,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">F1/5</td>
-<td>psram_sclk</td>
+<td>sram_sclk</td>
 <td>out</td>
 <td>IOB26[B]</td>
 <td>GCLKC_9B</td>
@@ -2225,8 +2225,8 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">D5/4</td>
-<td>flash_spi_wp_n</td>
-<td>out</td>
+<td>flash_spi_io[2]</td>
+<td>io</td>
 <td>IOB54[A]</td>
 <td>GCLKT_11B/D01/MI2</td>
 <td>LVCMOS33</td>
@@ -2244,8 +2244,8 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">E4/4</td>
-<td>flash_spi_hold_n</td>
-<td>out</td>
+<td>flash_spi_io[3]</td>
+<td>io</td>
 <td>IOB54[B]</td>
 <td>GCLKC_11B/D02/MI3/BPLL_C_FB1</td>
 <td>LVCMOS33</td>
@@ -2301,15 +2301,15 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">E5/4</td>
-<td>flash_spi_miso</td>
-<td>in</td>
+<td>flash_spi_io[1]</td>
+<td>io</td>
 <td>IOB58[A]</td>
 <td>D00/DIN/MISO/MI1</td>
 <td>LVCMOS33</td>
-<td>OFF</td>
+<td>8</td>
 <td>NONE</td>
 <td>OFF</td>
-<td>ON</td>
+<td>OFF</td>
 <td>OFF</td>
 <td>OFF</td>
 <td>OFF</td>
@@ -2320,8 +2320,8 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">D6/4</td>
-<td>flash_spi_mosi</td>
-<td>out</td>
+<td>flash_spi_io[0]</td>
+<td>io</td>
 <td>IOB58[B]</td>
 <td>MOSI/MI0/CSI_B</td>
 <td>LVCMOS33</td>
