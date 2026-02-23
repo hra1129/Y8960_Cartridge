@@ -15,6 +15,14 @@ module ssram (
 	input	[7:0]	wdata,
 	output	[7:0]	rdata,
 	output			rdata_en,
+	//	Burst write interface
+	input			burst_start,		//	Start burst write (clk domain pulse)
+	input	[18:0]	burst_address,		//	Start address
+	input	[16:0]	burst_length,		//	Number of bytes - 1
+	input	[7:0]	burst_wdata,		//	Write data (clk_258m domain)
+	input			burst_wdata_en,		//	Write data valid (clk_258m domain)
+	output			burst_active,		//	Burst in progress (clk domain)
+	//	SPI SRAM I/F
 	output			sram_sclk,
 	output			sram_ce_n,
 	inout	[3:0]	sram_sio
@@ -45,6 +53,9 @@ module ssram (
 	localparam		c_state_read0		= 5'd23;
 	localparam		c_state_read1		= 5'd24;
 	localparam		c_state_read2		= 5'd25;
+	localparam		c_state_burst_write0	= 5'd26;
+	localparam		c_state_burst_write1	= 5'd27;
+	localparam		c_state_burst_finish	= 5'd28;
 
 	reg				ff_ready;
 	reg				ff_valid_d0;
@@ -67,11 +78,65 @@ module ssram (
 	reg				ff_sclk_div;		//	258MHz -> 129MHz divider
 
 	// ---------------------------------------------------------
-	//	SCLK divider (258MHz -> 129MHz)
+	//	Burst write registers
 	// ---------------------------------------------------------
+	reg				ff_burst_mode;			// Burst write active (clk_258m domain)
+	reg	[16:0]		ff_burst_count;			// Remaining bytes to write
+	reg				ff_burst_active;		// Burst active flag (clk_258m domain)
+	reg				ff_burst_start_req;		// Burst start pending (held until consumed)
+
+	// Burst write FIFO (16 entries, 8 bits wide)
+	reg	[7:0]		burst_fifo [0:15];
+	reg	[4:0]		burst_fifo_wr_ptr;
+	reg	[4:0]		burst_fifo_rd_ptr;
+	wire			burst_fifo_empty;
+	wire	[7:0]	burst_fifo_rdata;
+
+	assign burst_fifo_empty = (burst_fifo_wr_ptr == burst_fifo_rd_ptr);
+	assign burst_fifo_rdata = burst_fifo[burst_fifo_rd_ptr[3:0]];
+
+	// CDC: burst_start (clk -> clk_258m)
+	reg	[2:0]		ff_burst_start_sync;
+	wire			w_burst_start_pulse;
+
+	always @( posedge clk_258m ) begin
+		if( !reset_n ) begin
+			ff_burst_start_sync <= 3'b000;
+		end
+		else begin
+			ff_burst_start_sync <= { ff_burst_start_sync[1:0], burst_start };
+		end
+	end
+
+	assign w_burst_start_pulse = ff_burst_start_sync[1] & ~ff_burst_start_sync[2];
+
+	// CDC: burst_active (clk_258m -> clk)
+	reg	[1:0]		ff_burst_active_sync;
+
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_burst_active_sync <= 2'b00;
+		end
+		else begin
+			ff_burst_active_sync <= { ff_burst_active_sync[0], ff_burst_active };
+		end
+	end
+
+	assign burst_active = ff_burst_active_sync[1];
+
+	// ---------------------------------------------------------
+	//	SCLK divider (258MHz -> 129MHz) with burst pause support
+	// ---------------------------------------------------------
+	wire w_burst_pause = ff_burst_mode &&
+						 (ff_state == c_state_burst_write0 || ff_state == c_state_address5) &&
+						 burst_fifo_empty;
+
 	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
 			ff_sclk_div <= 1'b0;
+		end
+		else if( w_burst_pause ) begin
+			ff_sclk_div <= ff_sclk_div;		// Hold SCLK (don't toggle)
 		end
 		else begin
 			ff_sclk_div <= ~ff_sclk_div;
@@ -80,6 +145,21 @@ module ssram (
 
 	wire w_sclk_timing = ~ff_sclk_div;	//	State machine timing enable (update on SCLK falling edge)
 	wire w_sclk_sample = ff_sclk_div;	//	Read data sample timing (sample on SCLK rising edge)
+
+	// ---------------------------------------------------------
+	//	Hold burst start request until state machine consumes it
+	// ---------------------------------------------------------
+	always @( posedge clk_258m ) begin
+		if( !reset_n ) begin
+			ff_burst_start_req <= 1'b0;
+		end
+		else if( w_burst_start_pulse ) begin
+			ff_burst_start_req <= 1'b1;
+		end
+		else if( w_sclk_timing && ff_state == c_state_idle && ff_burst_start_req ) begin
+			ff_burst_start_req <= 1'b0;
+		end
+	end
 
 	// ---------------------------------------------------------
 	//	Access timing pulse
@@ -178,7 +258,7 @@ module ssram (
 		end
 	end
 
-	assign ready		= ff_ready;
+	assign ready		= ff_ready & ~ff_burst_active_sync[1];
 
 	// ---------------------------------------------------------
 	//	Data latch
@@ -199,6 +279,28 @@ module ssram (
 	// ---------------------------------------------------------
 	//	State machine
 	// ---------------------------------------------------------
+
+	// Burst FIFO write logic (every clk_258m cycle)
+	always @( posedge clk_258m ) begin
+		if( !reset_n || !ff_burst_active ) begin
+			burst_fifo_wr_ptr <= 5'd0;
+		end
+		else if( burst_wdata_en ) begin
+			burst_fifo[burst_fifo_wr_ptr[3:0]] <= burst_wdata;
+			burst_fifo_wr_ptr <= burst_fifo_wr_ptr + 5'd1;
+		end
+	end
+
+	// Burst FIFO read pointer logic
+	always @( posedge clk_258m ) begin
+		if( !reset_n || !ff_burst_active ) begin
+			burst_fifo_rd_ptr <= 5'd0;
+		end
+		else if( w_sclk_timing && ff_state == c_state_burst_write1 ) begin
+			burst_fifo_rd_ptr <= burst_fifo_rd_ptr + 5'd1;
+		end
+	end
+
 	always @( posedge clk_258m ) begin
 		if( !reset_n ) begin
 			ff_state	<= c_state_init_w0;
@@ -208,6 +310,9 @@ module ssram (
 			ff_ce_n		<= 1'b1;
 			ff_so		<= 4'b1zz0;
 			ff_read		<= 1'b0;
+			ff_burst_mode	<= 1'b0;
+			ff_burst_count	<= 17'd0;
+			ff_burst_active	<= 1'b0;
 		end
 		else if( w_sclk_timing ) begin
 			case( ff_state )
@@ -256,6 +361,16 @@ module ssram (
 					ff_ce_n		<= 1'b0;
 					ff_so		<= 4'd0;
 				end
+				else if( ff_burst_start_req ) begin
+					ff_state		<= c_state_start;
+					ff_ce_n			<= 1'b0;
+					ff_so			<= 4'd0;
+					ff_burst_mode	<= 1'b1;
+					ff_burst_count	<= burst_length;
+					ff_burst_active	<= 1'b1;
+					ff_address		<= burst_address;
+					ff_write		<= 1'b1;
+				end
 			end
 			c_state_start: begin
 					if( ff_write ) begin
@@ -291,7 +406,15 @@ module ssram (
 				ff_state	<= c_state_address5;
 			end
 			c_state_address5: begin
-				if( ff_write ) begin
+				if( ff_burst_mode ) begin
+					if( !burst_fifo_empty ) begin
+						// Output first data high nibble directly
+						ff_so		<= burst_fifo_rdata[7:4];
+						ff_state	<= c_state_burst_write1;	// Skip burst_write0 for first byte
+					end
+					// else: stay in address5, SCLK held by w_burst_pause
+				end
+				else if( ff_write ) begin
 					ff_state	<= c_state_write0;
 					ff_so		<= ff_wdata[7:4];
 				end
@@ -332,6 +455,34 @@ module ssram (
 				ff_ce_n			<= 1'b1;
 				ff_read			<= 1'b0;
 				ff_read_complete <= ~ff_read_complete;	// Toggle on read complete
+			end
+			// --- Burst write: wait for FIFO data, output high nibble ---
+			c_state_burst_write0: begin
+				if( !burst_fifo_empty ) begin
+					ff_so		<= burst_fifo_rdata[7:4];
+					ff_state	<= c_state_burst_write1;
+				end
+				// else: stay in burst_write0, SCLK held by w_burst_pause
+			end
+			// --- Burst write: output low nibble ---
+			c_state_burst_write1: begin
+				ff_so		<= burst_fifo_rdata[3:0];
+				// FIFO read pointer advanced in separate always block
+				if( ff_burst_count == 17'd0 ) begin
+					ff_state	<= c_state_burst_finish;
+				end
+				else begin
+					ff_burst_count	<= ff_burst_count - 17'd1;
+					ff_state		<= c_state_burst_write0;
+				end
+			end
+			// --- Burst write: finish (CE deassert after last nibble sampled) ---
+			c_state_burst_finish: begin
+				ff_so			<= 4'bzzzz;
+				ff_ce_n			<= 1'b1;
+				ff_burst_mode	<= 1'b0;
+				ff_burst_active	<= 1'b0;
+				ff_state		<= c_state_idle;
 			end
 			endcase
 		end

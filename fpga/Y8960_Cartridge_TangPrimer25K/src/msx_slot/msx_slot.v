@@ -82,6 +82,7 @@ module msx_slot(
 	input			bus_ssg_ready,
 	input			bus_scc_ready,
 	input			bus_dcsg_ready,
+	input			bus_sysctrl_ready,
 	output	[7:0]	bus_wdata,
 	input	[7:0]	bus_rdata,
 	input			bus_rdata_en,
@@ -92,6 +93,7 @@ module msx_slot(
 	output			bus_ssg_cs,
 	output			bus_scc_cs,
 	output			bus_dcsg_cs,
+	output			bus_sysctrl_cs,
 	//	Memory Mapped I/O enabler
 	input			memory_io_en
 );
@@ -105,6 +107,7 @@ module msx_slot(
 	localparam		c_opl2_1_io				= 8'hC0;	//	MSX-AUDIO: C0h-C1h
 	localparam		c_opl2_2_io				= 8'hC2;	//	MSX-AUDIO: C2h-C3h
 	localparam		c_dcsg_io				= 8'h7E;	//	DCSG     : 7Eh-7Fh
+	localparam		c_sysctrl_io			= 4'h4;		//	SYSCTRL  : 40h-4Fh
 	//	Memory interface is always connect.
 	localparam		c_ssg_mio				= 5'h0A;	//	SSG         : 7FFAh-7FFBh (Mirror 3FFAh-3FFBh)
 	localparam		c_opll1_mio				= 5'h12;	//	MSX-MUSIC   : 7FF2h-7FF3h (Mirror 3FF2h-3FF3h)
@@ -139,6 +142,7 @@ module msx_slot(
 	reg				ff_bus_ssg_cs		= 1'b0;
 	reg				ff_bus_scc_cs		= 1'b0;
 	reg				ff_bus_dcsg_cs		= 1'b0;
+	reg				ff_bus_sysctrl_cs	= 1'b0;
 	reg 			ff_bus_io_en_cs		= 1'b0;
 	reg		[7:0]	ff_rdata			= 8'd0;
 	reg 			ff_timer_io_en		= 1'b0;
@@ -211,6 +215,7 @@ module msx_slot(
 						| (ff_bus_ssg_cs & bus_ssg_ready) 
 						| (ff_bus_scc_cs & bus_scc_ready) 
 						| (ff_bus_dcsg_cs & bus_dcsg_ready)
+						| (ff_bus_sysctrl_cs & bus_sysctrl_ready)
 						| ff_bus_io_en_cs;
 
 	always @( posedge clk ) begin
@@ -221,6 +226,7 @@ module msx_slot(
 			ff_bus_ssg_cs		<= 1'b0;
 			ff_bus_scc_cs		<= 1'b0;
 			ff_bus_dcsg_cs		<= 1'b0;
+			ff_bus_sysctrl_cs	<= 1'b0;
 			ff_bus_io_en_cs		<= 1'b0;
 			ff_valid			<= 1'b0;
 			ff_write			<= 1'b1;
@@ -235,6 +241,7 @@ module msx_slot(
 					ff_bus_ssg_cs		<= 1'b0;
 					ff_bus_scc_cs		<= 1'b0;
 					ff_bus_dcsg_cs		<= 1'b0;
+					ff_bus_sysctrl_cs	<= 1'b0;
 					ff_bus_io_en_cs		<= 1'b0;
 				end
 			end
@@ -246,6 +253,7 @@ module msx_slot(
 			ff_bus_ssg_cs		<= 1'b0;
 			ff_bus_scc_cs		<= 1'b0;
 			ff_bus_dcsg_cs		<= 1'b0;
+			ff_bus_sysctrl_cs	<= 1'b0;
 			ff_bus_io_en_cs		<= 1'b0;
 		end
 		else if( !ff_active && w_active ) begin
@@ -298,6 +306,13 @@ module msx_slot(
 						ff_write		<= ff_slot_wr;
 						ff_valid		<= 1'b1;
 						ff_bus_timer_cs	<= 1'b1;
+					end
+				end
+				default: begin
+					if( ff_slot_address[7:4] == c_sysctrl_io ) begin
+						ff_write			<= ff_slot_wr;
+						ff_valid			<= 1'b1;
+						ff_bus_sysctrl_cs	<= 1'b1;
 					end
 				end
 				endcase
@@ -413,6 +428,7 @@ module msx_slot(
 	assign bus_ssg_cs		= ff_bus_ssg_cs;
 	assign bus_scc_cs		= ff_bus_scc_cs;
 	assign bus_dcsg_cs		= ff_bus_dcsg_cs;
+	assign bus_sysctrl_cs	= ff_bus_sysctrl_cs;
 	assign bus_address		= ff_slot_address;
 	assign bus_wdata		= ff_slot_data;
 	assign bus_write		= ff_write;

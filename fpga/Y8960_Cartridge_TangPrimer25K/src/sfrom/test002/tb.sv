@@ -71,6 +71,12 @@ module tb ();
 		.wdata					( wdata					),
 		.rdata					( rdata					),
 		.rdata_en				( rdata_en				),
+		.burst_start			( 1'b0					),
+		.burst_address			( 23'd0					),
+		.burst_length			( 17'd0					),
+		.burst_rdata			(						),
+		.burst_rdata_en			(						),
+		.burst_active			(						),
 		.flash_spi_clk			( flash_spi_clk			),
 		.flash_spi_cs_n			( flash_spi_cs_n		),
 		.flash_spi_io			( flash_spi_io			)

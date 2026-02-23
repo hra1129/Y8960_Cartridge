@@ -119,6 +119,11 @@ if errorlevel 1 (
 	pause
 	exit
 )
+vlog ..\system_controller\system_controller.v
+if errorlevel 1 (
+	pause
+	exit
+)
 vlog ..\y8960_cartridge_tangprimer25k.v
 if errorlevel 1 (
 	pause

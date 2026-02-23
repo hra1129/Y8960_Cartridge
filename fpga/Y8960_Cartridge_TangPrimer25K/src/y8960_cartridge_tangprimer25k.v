@@ -175,7 +175,27 @@ module y8960cartridge_tangprimer25k (
 	wire	[7:0]	w_sram_rdata;
 	wire			w_sram_rdata_en;
 
-	assign slot_wait = 1'b0;
+	wire			w_bus_sysctrl_cs;
+	wire			w_bus_sysctrl_ready;
+	wire	[7:0]	w_bus_sysctrl_rdata;
+	wire			w_bus_sysctrl_rdata_en;
+	wire			w_wait_n;
+
+	// ---------------------------------------------------------
+	//	Burst interface wires
+	// ---------------------------------------------------------
+	wire			w_burst_rom_start;
+	wire	[22:0]	w_burst_rom_address;
+	wire	[16:0]	w_burst_rom_length;
+	wire			w_burst_rom_active;
+	wire			w_burst_sram_start;
+	wire	[18:0]	w_burst_sram_address;
+	wire	[16:0]	w_burst_sram_length;
+	wire			w_burst_sram_active;
+	wire	[7:0]	w_burst_data;				// sfrom burst_rdata -> ssram burst_wdata
+	wire			w_burst_data_en;			// sfrom burst_rdata_en -> ssram burst_wdata_en
+
+	assign slot_wait = w_wait_n;
 
 	// ---------------------------------------------------------
 	always @( posedge clk_28m ) begin
@@ -226,6 +246,7 @@ module y8960cartridge_tangprimer25k (
 		.bus_ssg_ready		( w_bus_ssg_ready			),
 		.bus_scc_ready		( w_bus_scc_ready			),
 		.bus_dcsg_ready		( w_bus_dcsg_ready			),
+		.bus_sysctrl_ready	( w_bus_sysctrl_ready		),
 		.bus_wdata			( w_bus_wdata				),
 		.bus_rdata			( w_bus_rdata				),
 		.bus_rdata_en		( w_bus_rdata_en			),
@@ -235,11 +256,12 @@ module y8960cartridge_tangprimer25k (
 		.bus_ssg_cs			( w_bus_ssg_cs				),
 		.bus_scc_cs			( w_bus_scc_cs				),
 		.bus_dcsg_cs		( w_bus_dcsg_cs				),
+		.bus_sysctrl_cs		( w_bus_sysctrl_cs			),
 		.memory_io_en		( ~w_scc_ma[5]				)
 	);
 
-	assign w_bus_rdata		= w_bus_timer_rdata & w_bus_opl2_rdata & w_bus_ssg_rdata & w_bus_scc_rdata;
-	assign w_bus_rdata_en	= w_bus_timer_rdata_en | w_bus_opl2_rdata_en | w_bus_ssg_rdata_en | w_bus_scc_rdata_en;
+	assign w_bus_rdata		= w_bus_timer_rdata & w_bus_opl2_rdata & w_bus_ssg_rdata & w_bus_scc_rdata & w_bus_sysctrl_rdata;
+	assign w_bus_rdata_en	= w_bus_timer_rdata_en | w_bus_opl2_rdata_en | w_bus_ssg_rdata_en | w_bus_scc_rdata_en | w_bus_sysctrl_rdata_en;
 	assign w_int_n			= w_timer_intr_n & w_opl2_intr_n;
 
 	// ---------------------------------------------------------
@@ -360,6 +382,47 @@ module y8960cartridge_tangprimer25k (
 	);
 
 	// ---------------------------------------------------------
+	//	System Controller
+	// ---------------------------------------------------------
+	system_controller #(
+		.device_id		( 8'h61						)
+	) u_system_controller (
+		.clk			( clk_28m					),
+		.reset_n		( w_reset_n					),
+		.bus_cs			( w_bus_sysctrl_cs			),
+		.bus_address	( w_bus_address[3:0]		),
+		.bus_valid		( w_bus_valid				),
+		.bus_ready		( w_bus_sysctrl_ready		),
+		.bus_write		( w_bus_write				),
+		.bus_wdata		( w_bus_wdata				),
+		.bus_rdata		( w_bus_sysctrl_rdata		),
+		.bus_rdata_en	( w_bus_sysctrl_rdata_en	),
+		.rom_address	( w_rom_address				),
+		.rom_valid		( w_rom_valid				),
+		.rom_ready		( w_rom_ready				),
+		.rom_command	( w_rom_command				),
+		.rom_wdata		( w_rom_wdata				),
+		.rom_rdata		( w_rom_rdata				),
+		.rom_rdata_en	( w_rom_rdata_en			),
+		.sram_address	( w_sram_address			),
+		.sram_valid		( w_sram_valid				),
+		.sram_ready		( w_sram_ready				),
+		.sram_write		( w_sram_write				),
+		.sram_wdata		( w_sram_wdata				),
+		.sram_rdata		( w_sram_rdata				),
+		.sram_rdata_en	( w_sram_rdata_en			),
+		.burst_rom_start	( w_burst_rom_start		),
+		.burst_rom_address	( w_burst_rom_address	),
+		.burst_rom_length	( w_burst_rom_length	),
+		.burst_rom_active	( w_burst_rom_active	),
+		.burst_sram_start	( w_burst_sram_start	),
+		.burst_sram_address	( w_burst_sram_address	),
+		.burst_sram_length	( w_burst_sram_length	),
+		.burst_sram_active	( w_burst_sram_active	),
+		.wait_n			( w_wait_n					)
+	);
+
+	// ---------------------------------------------------------
 	//	Serial Flash ROM
 	// ---------------------------------------------------------
 	sfrom u_sfrom (
@@ -373,6 +436,12 @@ module y8960cartridge_tangprimer25k (
 		.wdata				( w_rom_wdata				),
 		.rdata				( w_rom_rdata				),
 		.rdata_en			( w_rom_rdata_en			),
+		.burst_start		( w_burst_rom_start			),
+		.burst_address		( w_burst_rom_address		),
+		.burst_length		( w_burst_rom_length		),
+		.burst_rdata		( w_burst_data				),
+		.burst_rdata_en		( w_burst_data_en			),
+		.burst_active		( w_burst_rom_active		),
 		.flash_spi_clk		( flash_spi_clk				),
 		.flash_spi_cs_n		( flash_spi_cs_n			),
 		.flash_spi_io		( flash_spi_io				)
@@ -392,6 +461,12 @@ module y8960cartridge_tangprimer25k (
 		.wdata				( w_sram_wdata				),
 		.rdata				( w_sram_rdata				),
 		.rdata_en			( w_sram_rdata_en			),
+		.burst_start		( w_burst_sram_start		),
+		.burst_address		( w_burst_sram_address		),
+		.burst_length		( w_burst_sram_length		),
+		.burst_wdata		( w_burst_data				),
+		.burst_wdata_en		( w_burst_data_en			),
+		.burst_active		( w_burst_sram_active		),
 		.sram_ce_n			( sram_ce_n					),
 		.sram_sclk			( sram_sclk					),
 		.sram_sio			( sram_sio					)

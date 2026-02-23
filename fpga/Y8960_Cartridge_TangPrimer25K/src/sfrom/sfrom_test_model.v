@@ -379,14 +379,14 @@ module sfrom_test_model #(
 							// Quad I/O Data Read (2 nibbles per byte)
 							// ------------------------------------------------
 							ST_QUAD_DATA: begin
-								if (quad_cnt == 3'd0) begin
-									// Low nibble was output, move to next byte
+								if (quad_cnt == 3'd1) begin
+									// Low nibble was just output, prepare next byte
 									addr_reg <= addr_reg + 24'd1;
 									shift_out <= memory[addr_reg + 24'd1];
-									quad_cnt <= 3'd1;
+									quad_cnt <= 3'd0;
 								end
 								else begin
-									quad_cnt <= 3'd0;
+									quad_cnt <= 3'd1;
 								end
 							end
 
@@ -471,12 +471,11 @@ module sfrom_test_model #(
 				ST_QUAD_DATA: begin
 					quad_output_en <= 1'b1;
 					if (quad_cnt == 3'd1) begin
-						// Output low nibble (DUT will sample high nibble on next rising edge, 
-						// then this low nibble on the following rising edge)
+						// Output low nibble
 						io_out_reg <= shift_out[3:0];
 					end
 					else begin
-						// Output next byte's high nibble
+						// Output high nibble of current byte
 						io_out_reg <= shift_out[7:4];
 					end
 				end

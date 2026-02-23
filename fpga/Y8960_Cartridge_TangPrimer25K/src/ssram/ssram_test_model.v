@@ -89,12 +89,7 @@ module ssram_test_model (
 		end
 		else begin
 			// ------ Quad mode: finalize transaction ------
-			if( cmd == 8'h02 && count >= 10 ) begin
-				// Write transaction completed -- commit data to memory
-				mem[addr] <= wr_data;
-				$display( "[SRAM Model] Write: addr=0x%05X data=0x%02X", addr, wr_data );
-			end
-			else if( cmd == 8'h0B && driving ) begin
+			if( cmd == 8'h0B && driving ) begin
 				$display( "[SRAM Model] Read complete: addr=0x%05X data=0x%02X", addr, rd_data );
 			end
 		end
@@ -151,15 +146,21 @@ module ssram_test_model (
 						rd_data			<= mem[addr];
 					end
 				end
-				9: begin
-					if( cmd == 8'h02 ) begin
-						// Write command: capture data lower nibble
-						wr_data[3:0]	<= sio;
+				default: begin
+					if( cmd == 8'h02 && count > 8 ) begin
+						// Sequential write support
+						if( count[0] == 1'b0 ) begin
+							// Even count (10, 12, ...): capture upper nibble
+							wr_data[7:4]	<= sio;
+						end
+						else begin
+							// Odd count (9, 11, 13, ...): capture lower nibble & commit
+							mem[addr]		<= { wr_data[7:4], sio };
+							$display( "[SRAM Model] Write: addr=0x%05X data=0x%02X", addr, { wr_data[7:4], sio } );
+							addr			<= addr + 19'd1;
+						end
 					end
-					// Read command: dummy cycle 2 (nothing to do)
 				end
-				// 10: Read dummy cycle 3
-				// 11, 12: Read data phase (driven on falling edge)
 				endcase
 				count <= count + 1;
 			end

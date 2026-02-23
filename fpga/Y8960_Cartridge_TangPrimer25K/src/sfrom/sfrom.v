@@ -15,6 +15,13 @@ module sfrom (
 	input	[7:0]	wdata,
 	output	[7:0]	rdata,
 	output			rdata_en,
+	//	Burst read interface
+	input			burst_start,		//	Start burst read (clk domain pulse)
+	input	[22:0]	burst_address,		//	Start address
+	input	[16:0]	burst_length,		//	Number of bytes - 1
+	output	[7:0]	burst_rdata,		//	Read data (clk_258m domain)
+	output			burst_rdata_en,		//	Read data valid (clk_258m domain)
+	output			burst_active,		//	Burst in progress (clk domain)
 	//	Serial FlashROM I/F
 	output			flash_spi_clk,
 	output			flash_spi_cs_n,
@@ -86,6 +93,14 @@ module sfrom (
 	reg [3:0]	ff_io_out;				// IO output data for Quad mode
 	reg [2:0]	ff_dummy_cnt;			// Dummy cycle counter
 	reg			ff_quad_read_mode;		// Quad I/O Read in progress (IO[2:3] should be Hi-Z)
+
+	// ----------------------------------------------------------------
+	//	Burst read registers
+	// ----------------------------------------------------------------
+	reg				ff_burst_mode;			// Burst read active (clk_258m domain)
+	reg	[16:0]		ff_burst_count;			// Remaining bytes to read
+	reg	[7:0]		ff_burst_rdata;			// Burst read data (clk_258m domain)
+	reg				ff_burst_rdata_en;		// Burst read data valid (clk_258m domain)
 
 	// ----------------------------------------------------------------
 	//	SPI clock generation (clk_258m speed)
@@ -199,7 +214,42 @@ module sfrom (
 		end
 	end
 
-	assign ready = ff_ready_clk;
+	// ----------------------------------------------------------------
+	//	CDC: burst_start (clk -> clk_258m)
+	// ----------------------------------------------------------------
+	reg [2:0]	ff_burst_start_sync;
+	wire		w_burst_start_pulse;
+
+	always @(posedge clk_258m or negedge reset_n) begin
+		if(!reset_n) begin
+			ff_burst_start_sync <= 3'b000;
+		end
+		else begin
+			ff_burst_start_sync <= {ff_burst_start_sync[1:0], burst_start};
+		end
+	end
+
+	assign w_burst_start_pulse = ff_burst_start_sync[1] && !ff_burst_start_sync[2];
+
+	// ----------------------------------------------------------------
+	//	CDC: burst_active (clk_258m -> clk)
+	// ----------------------------------------------------------------
+	reg [1:0]	ff_burst_active_sync;
+
+	always @(posedge clk or negedge reset_n) begin
+		if(!reset_n) begin
+			ff_burst_active_sync <= 2'b00;
+		end
+		else begin
+			ff_burst_active_sync <= {ff_burst_active_sync[0], ff_burst_mode};
+		end
+	end
+
+	assign burst_active = ff_burst_active_sync[1];
+	assign burst_rdata = ff_burst_rdata;
+	assign burst_rdata_en = ff_burst_rdata_en;
+
+	assign ready = ff_ready_clk & ~ff_burst_active_sync[1];
 	assign rdata = ff_rdata_clk;
 	assign rdata_en = ff_rdata_en_clk;
 
@@ -262,10 +312,15 @@ module sfrom (
 			ff_io_out <= 4'd0;
 			ff_dummy_cnt <= 3'd0;
 			ff_quad_read_mode <= 1'b0;
+			ff_burst_mode <= 1'b0;
+			ff_burst_count <= 17'd0;
+			ff_burst_rdata <= 8'd0;
+			ff_burst_rdata_en <= 1'b0;
 		end
 		else begin
-			// Default: clear ff_rdata_en_reg after one cycle
+			// Default: clear data-valid pulses after one cycle
 			ff_rdata_en_reg <= 1'b0;
+			ff_burst_rdata_en <= 1'b0;
 
 			case(ff_state)
 				// ----------------------------------------------------
@@ -294,6 +349,8 @@ module sfrom (
 								// ff_quad_read_mode is set later in ST_DUMMY_CYCLES
 							end
 
+							default: ;
+
 							c_command_write: begin
 								// Write: Need WREN first
 								ff_spi_cmd_reg <= SPI_CMD_PAGE_PROGRAM;
@@ -315,6 +372,18 @@ module sfrom (
 								ff_return_state <= ST_WAIT_BUSY;
 							end
 						endcase
+					end
+					else if(w_burst_start_pulse) begin
+						// Burst read mode
+						ff_ready_reg <= 1'b0;
+						ff_burst_mode <= 1'b1;
+						ff_burst_count <= burst_length;
+						ff_addr_reg <= burst_address;
+						ff_io_out <= 4'd0;
+						ff_spi_cmd_reg <= SPI_CMD_QUAD_IO_READ;
+						ff_state <= ST_SEND_CMD;
+						ff_next_state <= ST_SEND_ADDR2;
+						ff_return_state <= ST_READ_DATA;
 					end
 				end
 
@@ -522,11 +591,29 @@ module sfrom (
 						ff_shift_in <= {ff_shift_in[3:0], w_spi_io_in};
 
 						if(ff_bit_cnt == 3'd0) begin
-							// Read complete (2 clocks = 8 bits in Quad mode)
-							ff_rdata_reg <= {ff_shift_in[3:0], w_spi_io_in};
-							ff_rdata_en_reg <= 1'b1;
-							ff_io_quad_out <= 1'b0;
-							ff_state <= ST_FINISH;
+							if(ff_burst_mode) begin
+								// Burst read: output byte and continue
+								ff_burst_rdata <= {ff_shift_in[3:0], w_spi_io_in};
+								ff_burst_rdata_en <= 1'b1;
+								if(ff_burst_count == 17'd0) begin
+									// Last byte of burst
+									ff_burst_mode <= 1'b0;
+									ff_io_quad_out <= 1'b0;
+									ff_state <= ST_FINISH;
+								end
+								else begin
+									ff_burst_count <= ff_burst_count - 17'd1;
+									ff_bit_cnt <= 3'd1;		// Read next byte (2 clocks)
+									// Stay in ST_READ_DATA
+								end
+							end
+							else begin
+								// Single read: output and finish
+								ff_rdata_reg <= {ff_shift_in[3:0], w_spi_io_in};
+								ff_rdata_en_reg <= 1'b1;
+								ff_io_quad_out <= 1'b0;
+								ff_state <= ST_FINISH;
+							end
 						end
 						else begin
 							ff_bit_cnt <= ff_bit_cnt - 3'd1;

@@ -61,6 +61,12 @@ module tb ();
 		.wdata				( wdata				),
 		.rdata				( rdata				),
 		.rdata_en			( rdata_en			),
+		.burst_start		( 1'b0				),
+		.burst_address		( 19'd0				),
+		.burst_length		( 17'd0				),
+		.burst_wdata		( 8'd0				),
+		.burst_wdata_en		( 1'b0				),
+		.burst_active		(					),
 		.sram_sclk			( sram_sclk			),
 		.sram_cs_n			( sram_cs_n			),
 		.sram_sio			( sram_sio			)
