@@ -25,7 +25,7 @@
 // -----------------------------------------------------------------------------
 
 module tb ();
-	localparam	clk_base	= 1_000_000_000/85.90908;	//	ps
+	localparam	clk_base	= 1_000_000_000_000./28_636_360;	//	ps
 	int				test_no;
 	int				i, j;
 	reg				clk;
@@ -120,6 +120,202 @@ module tb ();
 	// --------------------------------------------------------------------
 	//	Task
 	// --------------------------------------------------------------------
+	task write_io(
+		input	[7:0]	address,
+		input	[7:0]	wdata
+	);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/IORQ
+			begin
+				p_slot_ioreq_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns p_slot_ioreq_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns p_slot_ioreq_n = 1'b1;
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#125ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#120ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+	endtask
+
+	// --------------------------------------------------------------------
+	task write_io_ex(
+		input	[7:0]	address,
+		input	[7:0]	wdata
+	);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/IORQ
+			begin
+				p_slot_ioreq_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#175ns p_slot_ioreq_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#185ns p_slot_ioreq_n = 1'b1;
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#165ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#150ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+	endtask
+
+	// --------------------------------------------------------------------
+	task read_io(
+		input	[7:0]	address,
+		output	[7:0]	rdata
+	);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/IORQ
+			begin
+				p_slot_ioreq_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns p_slot_ioreq_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns p_slot_ioreq_n = 1'b1;
+			end
+			//	/RD
+			begin
+				p_slot_rd_n = 1'b1;
+				//	T1
+				@( negedge p_slot_ioreq_n );
+				#10ns p_slot_rd_n = 1'b0;
+				@( posedge p_slot_ioreq_n );
+				rdata = p_slot_data;
+				p_slot_rd_n = 1'b1;
+			end
+		join
+	endtask
 
 	// --------------------------------------------------------------------
 	//	Test bench

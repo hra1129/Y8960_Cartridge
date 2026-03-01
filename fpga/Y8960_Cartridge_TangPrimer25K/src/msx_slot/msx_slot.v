@@ -72,8 +72,6 @@ module msx_slot(
 	//	Local BUS
 	input			int_n,
 	output	[15:0]	bus_address,
-	output			bus_memreq,
-	output			bus_ioreq,
 	output			bus_write,
 	output			bus_valid,
 	input			bus_timer_ready,
@@ -109,12 +107,12 @@ module msx_slot(
 	localparam		c_dcsg_io				= 8'h7E;	//	DCSG     : 7Eh-7Fh
 	localparam		c_sysctrl_io			= 4'h4;		//	SYSCTRL  : 40h-4Fh
 	//	Memory interface is always connect.
-	localparam		c_ssg_mio				= 5'h0A;	//	SSG         : 7FFAh-7FFBh (Mirror 3FFAh-3FFBh)
-	localparam		c_opll1_mio				= 5'h12;	//	MSX-MUSIC   : 7FF2h-7FF3h (Mirror 3FF2h-3FF3h)
-	localparam		c_opll2_mio				= 5'h14;	//	MSX-MUSIC   : 7FF4h-7FF5h (Mirror 3FF4h-3FF5h)
+	localparam		c_ssg_mio				= 5'h0A;	//	SSG         : 7FEAh-7FEBh (Mirror 3FFAh-3FFBh)
 	localparam		c_opl2_1_mio			= 5'h0C;	//	MSX-AUDIO   : 7FECh-7FEDh (Mirror 3FECh-3FEDh)
 	localparam		c_opl2_2_mio			= 5'h0E;	//	MSX-AUDIO   : 7FEEh-7FEFh (Mirror 3FEEh-3FEFh)
 	localparam		c_dcsg_mio				= 5'h10;	//	DCSG        : 7FF0h-7FF1h (Mirror 3FF0h-3FF1h)
+	localparam		c_opll1_mio				= 5'h12;	//	MSX-MUSIC   : 7FF2h-7FF3h (Mirror 3FF2h-3FF3h)
+	localparam		c_opll2_mio				= 5'h14;	//	MSX-MUSIC   : 7FF4h-7FF5h (Mirror 3FF4h-3FF5h)
 	localparam		c_io_en1				= 5'h16;	//	I/O Enabler1: 7FF6h (Mirror 3FF6h)
 	localparam		c_io_en2				= 5'h1F;	//	I/O Enabler2: 7FFFh (Mirror 3FFFh)
 
@@ -317,8 +315,8 @@ module msx_slot(
 				end
 				endcase
 			end
-			else if( memory_io_en && ff_slot_memreq && ff_slot_wr && ff_slot_address[15] == 1'b0 && ff_slot_address[13:8] == 6'b11_1111 ) begin
-				case( { ff_slot_address[7:1], 1'b0 } )
+			else if( memory_io_en && ff_slot_memreq && ff_slot_wr && ff_slot_address[15] == 1'b0 && ff_slot_address[13:5] == 9'b11_1111_111 ) begin
+				case( { ff_slot_address[4:1], 1'b0 } )
 				c_ssg_mio: begin
 					ff_write		<= 1'b1;
 					ff_valid		<= 1'b1;

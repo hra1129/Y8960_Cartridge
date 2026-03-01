@@ -24,8 +24,9 @@ module dual_opl2 (
 	output	[15:0]	adpcm_sound_out_r1,			//	signed
 	output			intr_n,
 	//	ADPCM Memory I/F
-	output			adpcm_oe_n,
-	output			adpcm_we_n,
+	output			adpcm_write,
+	output			adpcm_valid,
+	input			adpcm_ready,
 	output	[17:0]	adpcm_address,				//	256KB
 	output	[7:0]	adpcm_wdata,
 	input	[7:0]	adpcm_rdata,
@@ -64,10 +65,12 @@ module dual_opl2 (
 	reg		[9:0]	ff_clk50_cnt;
 	wire			w_cen50_0;
 	wire			w_cen50_1;
-	wire			w_adpcm_oe_n0;
-	wire			w_adpcm_oe_n1;
-	wire			w_adpcm_we_n0;
-	wire			w_adpcm_we_n1;
+	wire			w_adpcm_write0;
+	wire			w_adpcm_write1;
+	wire			w_adpcm_valid0;
+	wire			w_adpcm_valid1;
+	wire			w_adpcm_ready0;
+	wire			w_adpcm_ready1;
 	wire	[23:0]	w_adpcm_address0;
 	wire	[23:0]	w_adpcm_address1;
 	wire	[7:0]	w_adpcm_wdata0;
@@ -148,8 +151,9 @@ module dual_opl2 (
 		.opl2_status		( w_opl_rdata0			),
 		.adpcm_sound_out_l	( w_adpcm_sound_out_l0	),
 		.adpcm_sound_out_r	( w_adpcm_sound_out_r0	),
-		.adpcm_oe_n			( w_adpcm_oe_n0			),
-		.adpcm_we_n			( w_adpcm_we_n0			),
+		.adpcm_write		( w_adpcm_write0		),
+		.adpcm_valid		( w_adpcm_valid0		),
+		.adpcm_ready		( w_adpcm_ready0		),
 		.adpcm_address		( w_adpcm_address0		),
 		.adpcm_wdata		( w_adpcm_wdata0		),
 		.adpcm_rdata		( adpcm_rdata			),
@@ -171,8 +175,9 @@ module dual_opl2 (
 		.opl2_status		( w_opl_rdata1			),
 		.adpcm_sound_out_l	( w_adpcm_sound_out_l1	),
 		.adpcm_sound_out_r	( w_adpcm_sound_out_r1	),
-		.adpcm_oe_n			( w_adpcm_oe_n1			),
-		.adpcm_we_n			( w_adpcm_we_n1			),
+		.adpcm_write		( w_adpcm_write1		),
+		.adpcm_valid		( w_adpcm_valid1		),
+		.adpcm_ready		( w_adpcm_ready1		),
 		.adpcm_address		( w_adpcm_address1		),
 		.adpcm_wdata		( w_adpcm_wdata1		),
 		.adpcm_rdata		( adpcm_rdata			),
@@ -254,9 +259,11 @@ module dual_opl2 (
 	assign adpcm_sound_out_r0	= ff_adpcm_sound_out_r0;
 	assign adpcm_sound_out_l1	= ff_adpcm_sound_out_l1;
 	assign adpcm_sound_out_r1	= ff_adpcm_sound_out_r1;
-	assign adpcm_address		= ( !(w_adpcm_we_n0 & w_adpcm_oe_n0) ) ? w_adpcm_address0: w_adpcm_address1;
-	assign adpcm_wdata			= ( !w_adpcm_we_n0 ) ? w_adpcm_wdata0: w_adpcm_wdata1;
-	assign adpcm_we_n			= w_adpcm_we_n0 & w_adpcm_we_n1;
-	assign adpcm_oe_n			= w_adpcm_oe_n0 & w_adpcm_oe_n1;
+	assign adpcm_address		= w_adpcm_valid0 ? w_adpcm_address0: w_adpcm_address1;
+	assign adpcm_wdata			= w_adpcm_valid0 ? w_adpcm_wdata0: w_adpcm_wdata1;
+	assign adpcm_write			= w_adpcm_write0 | w_adpcm_write1;
+	assign adpcm_valid			= w_adpcm_valid0 | w_adpcm_valid1;
+	assign w_adpcm_ready0		= adpcm_ready;
+	assign w_adpcm_ready1		= adpcm_ready;
 	assign intr_n				= w_intr_n0 & w_intr_n1;
 endmodule

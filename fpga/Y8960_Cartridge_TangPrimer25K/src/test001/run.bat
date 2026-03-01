@@ -22,6 +22,7 @@ vlog ..\ikascc\src\IKASCC_modules\IKASCC_primitives.v
 vlog ..\ikascc\src\IKASCC_modules\IKASCC_vrc_a.v
 vlog ..\ikascc\src\IKASCC_modules\IKASCC_vrc_s.v
 vlog ..\ikascc_patch\scc.v
+vlog ..\ikascc_patch\scc_bank.v
 
 vlog ..\adpcm\src\jt10_adpcm_drvB.v
 vlog ..\adpcm\src\jt10_adpcmb.v
@@ -70,65 +71,26 @@ vlog ..\sn76489_audio_patch\sn76489.v
 vlog gowin_pll_dummy.v
 
 vlog ..\i2s_audio\i2s_audio.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog ..\msx_slot\msx_slot.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog ..\timer\msx_timer_core.v
-if errorlevel 1 (
-	pause
-	exit
-)
 vlog ..\timer\msx_timer.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog ..\ssg\ssg_core.v
-if errorlevel 1 (
-	pause
-	exit
-)
 vlog ..\ssg\dual_ssg.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog ..\sfrom\sfrom.v
-if errorlevel 1 (
-	pause
-	exit
-)
 vlog ..\sfrom\sfrom_test_model.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog ..\ssram\ssram.v
-if errorlevel 1 (
-	pause
-	exit
-)
 vlog ..\ssram\ssram_test_model.v
-if errorlevel 1 (
-	pause
-	exit
-)
+vlog ..\ssram\sram_arbiter.v
+
 vlog ..\system_controller\system_controller.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog ..\y8960_cartridge_tangprimer25k.v
-if errorlevel 1 (
-	pause
-	exit
-)
+
 vlog tb.sv
 if errorlevel 1 (
 	pause

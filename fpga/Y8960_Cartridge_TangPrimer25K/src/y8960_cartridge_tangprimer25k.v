@@ -133,8 +133,9 @@ module y8960cartridge_tangprimer25k (
 	wire	[15:0]	w_adpcm_sound_out_r0;
 	wire	[15:0]	w_adpcm_sound_out_l1;
 	wire	[15:0]	w_adpcm_sound_out_r1;
-	wire			w_adpcm_oe_n;
-	wire			w_adpcm_we_n;
+	wire			w_adpcm_write;
+	wire			w_adpcm_valid;
+	wire			w_adpcm_ready;
 	wire	[17:0]	w_adpcm_address;
 	wire	[7:0]	w_adpcm_wdata;
 	wire	[7:0]	w_adpcm_rdata;
@@ -158,6 +159,14 @@ module y8960cartridge_tangprimer25k (
 	wire			w_opl2_intr_n;
 	wire	[7:0]	w_led;
 	wire	[15:0]	w_sound_out;
+
+	wire	[17:0]	w_cpu_address;
+	wire			w_cpu_valid;
+	wire			w_cpu_ready;
+	wire			w_cpu_write;
+	wire	[7:0]	w_cpu_wdata;
+	wire	[7:0]	w_cpu_rdata;
+	wire			w_cpu_rdata_en;
 
 	wire	[22:0]	w_rom_address;
 	wire			w_rom_valid;
@@ -236,8 +245,6 @@ module y8960cartridge_tangprimer25k (
 		.p_slot_data_dir	( slot_busdir				),
 		.int_n				( w_int_n					),
 		.bus_address		( w_bus_address				),
-		.bus_memreq			( w_bus_memreq				),
-		.bus_ioreq			( w_bus_ioreq				),
 		.bus_write			( w_bus_write				),
 		.bus_valid			( w_bus_valid				),
 		.bus_timer_ready	( w_bus_timer_ready			),
@@ -263,6 +270,28 @@ module y8960cartridge_tangprimer25k (
 	assign w_bus_rdata		= w_bus_timer_rdata & w_bus_opl2_rdata & w_bus_ssg_rdata & w_bus_scc_rdata & w_bus_sysctrl_rdata;
 	assign w_bus_rdata_en	= w_bus_timer_rdata_en | w_bus_opl2_rdata_en | w_bus_ssg_rdata_en | w_bus_scc_rdata_en | w_bus_sysctrl_rdata_en;
 	assign w_int_n			= w_timer_intr_n & w_opl2_intr_n;
+
+	scc_bank u_scc_bank (
+		.clk				( clk_28m					),
+		.reset_n			( w_reset_n					),
+		.bus_cs				( w_bus_scc_cs				),
+		.bus_address		( w_bus_address				),
+		.bus_valid			( w_bus_valid				),
+		.bus_ready			( w_bus_ready				),
+		.bus_write			( w_bus_write				),
+		.bus_wdata			( w_bus_wdata				),
+		.bus_rdata			( w_bus_rdata				),
+		.bus_rdata_en		( w_bus_rdata_en			),
+		.scc_memory_cs		( w_scc_memory_cs			),
+		.scc_ma				( w_scc_ma					),
+		.cpu_address		( w_cpu_address				),
+		.cpu_valid			( w_cpu_valid				),
+		.cpu_ready			( w_cpu_ready				),
+		.cpu_write			( w_cpu_write				),
+		.cpu_wdata			( w_cpu_wdata				),
+		.cpu_rdata			( w_cpu_rdata				),
+		.cpu_rdata_en		( w_cpu_rdata_en			)
+	);
 
 	// ---------------------------------------------------------
 	msx_timer u_msx_timer (
@@ -299,8 +328,9 @@ module y8960cartridge_tangprimer25k (
 		.adpcm_sound_out_l1	( w_adpcm_sound_out_l1		),
 		.adpcm_sound_out_r1	( w_adpcm_sound_out_r1		),
 		.intr_n				( w_opl2_intr_n				),
-		.adpcm_oe_n			( w_adpcm_oe_n				),
-		.adpcm_we_n			( w_adpcm_we_n				),
+		.adpcm_write		( w_adpcm_write				),
+		.adpcm_valid		( w_adpcm_valid				),
+		.adpcm_ready		( w_adpcm_ready				),
 		.adpcm_address		( w_adpcm_address			),
 		.adpcm_wdata		( w_adpcm_wdata				),
 		.adpcm_rdata		( w_adpcm_rdata				),
@@ -420,6 +450,35 @@ module y8960cartridge_tangprimer25k (
 		.burst_sram_length	( w_burst_sram_length		),
 		.burst_sram_active	( w_burst_sram_active		),
 		.wait_n				( w_wait_n					)
+	);
+
+	// ---------------------------------------------------------
+	//	SRAM Arbiter
+	// ---------------------------------------------------------
+	sram_arbiter u_sram_arbiter (
+		.clk				( clk_28m					),
+		.reset_n			( w_reset_n					),
+		.cpu_address		( w_cpu_address				),
+		.cpu_valid			( w_cpu_valid				),
+		.cpu_ready			( w_cpu_ready				),
+		.cpu_write			( w_cpu_write				),
+		.cpu_wdata			( w_cpu_wdata				),
+		.cpu_rdata			( w_cpu_rdata				),
+		.cpu_rdata_en		( w_cpu_rdata_en			),
+		.adpcm_address		( w_adpcm_address			),
+		.adpcm_valid		( w_adpcm_valid				),
+		.adpcm_ready		( w_adpcm_ready				),
+		.adpcm_write		( w_adpcm_write				),
+		.adpcm_wdata		( w_adpcm_wdata				),
+		.adpcm_rdata		( w_adpcm_rdata				),
+		.adpcm_rdata_en		( w_adpcm_rdata_en			),
+		.ssram_address		( w_sram_address			),
+		.ssram_valid		( w_sram_valid				),
+		.ssram_ready		( w_sram_ready				),
+		.ssram_write		( w_sram_write				),
+		.ssram_wdata		( w_sram_wdata				),
+		.ssram_rdata		( w_sram_rdata				),
+		.ssram_rdata_en		( w_sram_rdata_en			)
 	);
 
 	// ---------------------------------------------------------

@@ -54,8 +54,8 @@
 // --------------------------------------------------------------------
 
 module tb ();
-	localparam		clk_base		= 1_000_000_000/85_909_080;	//	ps
-	localparam		cpu_clk_base	= 1_000_000_000/ 3_579_545;	//	ps
+	localparam		clk_base		= 1_000_000_000_000.0/28_636_360;	//	ps
+	localparam		cpu_clk_base	= 1_000_000_000_000.0/ 3_579_545;	//	ps
 	reg				clk;
 	reg				p_slot_clk;
 	reg				p_slot_reset;
@@ -73,8 +73,6 @@ module tb ();
 	reg				int_n;
 	wire	[15:0]	bus_address;
 	wire			bus_memreq;
-	wire			bus_ioreq;
-	wire			bus_write;
 	wire			bus_valid;
 	wire	[7:0]	bus_wdata;
 	reg		[7:0]	bus_rdata;
@@ -85,12 +83,14 @@ module tb ();
 	wire			bus_ssg_cs;
 	wire			bus_scc_cs;
 	wire			bus_dcsg_cs;
+	wire			bus_sysctrl_cs;
 	wire			bus_timer_ready;
 	wire			bus_opll_ready;
 	wire			bus_opl2_ready;
 	wire			bus_ssg_ready;
 	wire			bus_scc_ready;
 	wire			bus_dcsg_ready;
+	wire			bus_sysctrl_ready;
 	reg				memory_io_en;
 	string			s_state;
 
@@ -112,8 +112,6 @@ module tb ();
 		.p_slot_data_dir		( p_slot_data_dir		),
 		.int_n					( int_n					),
 		.bus_address			( bus_address			),
-		.bus_memreq				( bus_memreq			),
-		.bus_ioreq				( bus_ioreq				),
 		.bus_write				( bus_write				),
 		.bus_valid				( bus_valid				),
 		.bus_timer_ready		( bus_timer_ready		),
@@ -122,6 +120,7 @@ module tb ();
 		.bus_ssg_ready			( bus_ssg_ready			),
 		.bus_scc_ready			( bus_scc_ready			),
 		.bus_dcsg_ready			( bus_dcsg_ready		),
+		.bus_sysctrl_ready		( bus_sysctrl_ready		),
 		.bus_wdata				( bus_wdata				),
 		.bus_rdata				( bus_rdata				),
 		.bus_rdata_en			( bus_rdata_en			),
@@ -130,6 +129,7 @@ module tb ();
 		.bus_opl2_cs			( bus_opl2_cs			),
 		.bus_ssg_cs				( bus_ssg_cs			),
 		.bus_scc_cs				( bus_scc_cs			),
+		.bus_sysctrl_cs			( bus_sysctrl_cs		),
 		.bus_dcsg_cs			( bus_dcsg_cs			),
 		.memory_io_en			( memory_io_en			)
 	);
@@ -154,13 +154,14 @@ module tb ();
 	end
 
 	wire w_bus_ready;
-	assign w_bus_ready		= ff_bus_valid[0];
-	assign bus_timer_ready	= w_bus_ready;
-	assign bus_opll_ready	= w_bus_ready;
-	assign bus_opl2_ready	= w_bus_ready;
-	assign bus_ssg_ready	= w_bus_ready;
-	assign bus_scc_ready	= w_bus_ready;
-	assign bus_dcsg_ready	= w_bus_ready;
+	assign w_bus_ready			= ff_bus_valid[0];
+	assign bus_timer_ready		= w_bus_ready;
+	assign bus_opll_ready		= w_bus_ready;
+	assign bus_opl2_ready		= w_bus_ready;
+	assign bus_ssg_ready		= w_bus_ready;
+	assign bus_scc_ready		= w_bus_ready;
+	assign bus_dcsg_ready		= w_bus_ready;
+	assign bus_sysctrl_ready	= w_bus_ready;
 
 	// --------------------------------------------------------------------
 	//	tasks
