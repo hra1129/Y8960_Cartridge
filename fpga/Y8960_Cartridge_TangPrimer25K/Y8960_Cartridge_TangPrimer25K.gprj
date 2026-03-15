@@ -30,6 +30,7 @@
         <File path="src/ikascc/src/IKASCC_modules/IKASCC_primitives.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc_patch/IKASCC_vrc_s.v" type="file.verilog" enable="1"/>
         <File path="src/ikascc_patch/scc.v" type="file.verilog" enable="1"/>
+        <File path="src/ikascc_patch/scc_bank.v" type="file.verilog" enable="1"/>
         <File path="src/msx_slot/msx_slot.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl2.v" type="file.verilog" enable="1"/>
@@ -68,6 +69,7 @@
         <File path="src/sn76489_audio_patch/sn76489.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/dual_ssg.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/ssg_core.v" type="file.verilog" enable="1"/>
+        <File path="src/ssram/sram_arbiter.v" type="file.verilog" enable="1"/>
         <File path="src/ssram/ssram.v" type="file.verilog" enable="1"/>
         <File path="src/system_controller/system_controller.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer.v" type="file.verilog" enable="1"/>

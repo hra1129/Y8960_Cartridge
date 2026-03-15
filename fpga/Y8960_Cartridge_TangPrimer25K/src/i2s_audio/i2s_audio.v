@@ -4,25 +4,25 @@
 //
 //	Copyright (C) 2025 Takayuki Hara
 //
-//	�{�\�t�g�E�F�A����і{�\�t�g�E�F�A�Ɋ�Â��č쐬���ꂽ�h�����́A�ȉ��̏�����
-//	�������ꍇ�Ɍ���A�ĔЕz����юg�p��������܂��B
+//	本ソフトウェアおよび本ソフトウェアに基づいて作成された派生物は、以下の条件を
+//	満たす場合に限り、再頒布および使用が許可されます。
 //
-//	1.�\�[�X�R�[�h�`���ōĔЕz����ꍇ�A��L�̒��쌠�\���A�{�����ꗗ�A����щ��L
-//	  �Ɛӏ��������̂܂܂̌`�ŕێ����邱�ƁB
-//	2.�o�C�i���`���ōĔЕz����ꍇ�A�Еz���ɕt���̃h�L�������g���̎����ɁA��L��
-//	  ���쌠�\���A�{�����ꗗ�A����щ��L�Ɛӏ������܂߂邱�ƁB
-//	3.���ʂɂ�鎖�O�̋��Ȃ��ɁA�{�\�t�g�E�F�A��̔��A����я��ƓI�Ȑ��i�⊈��
-//	  �Ɏg�p���Ȃ����ƁB
+//	1.ソースコード形式で再頒布する場合、上記の著作権表示、本条件一覧、および下記
+//	  免責条項をそのままの形で保持すること。
+//	2.バイナリ形式で再頒布する場合、頒布物に付属のドキュメント等の資料に、上記の
+//	  著作権表示、本条件一覧、および下記免責条項を含めること。
+//	3.書面による事前の許可なしに、本ソフトウェアを販売、および商業的な製品や活動
+//	  に使用しないこと。
 //
-//	�{�\�t�g�E�F�A�́A���쌠�҂ɂ���āu����̂܂܁v�񋟂���Ă��܂��B���쌠�҂́A
-//	����ړI�ւ̓K�����̕ۏ؁A���i���̕ۏ؁A�܂�����Ɍ��肳��Ȃ��A�����Ȃ閾��
-//	�I�������͈ÖقȕۏؐӔC�������܂���B���쌠�҂́A���R�̂�������킸�A���Q
-//	�����̌�����������킸�A���ӔC�̍������_��ł��邩���i�ӔC�ł��邩�i�ߎ�
-//	���̑��́j�s�@�s�ׂł��邩���킸�A���ɂ��̂悤�ȑ��Q����������\����m��
-//	����Ă����Ƃ��Ă��A�{�\�t�g�E�F�A�̎g�p�ɂ���Ĕ��������i��֕i�܂��͑�p�T
-//	�[�r�X�̒��B�A�g�p�̑r���A�f�[�^�̑r���A���v�̑r���A�Ɩ��̒��f���܂߁A�܂���
-//	��Ɍ��肳��Ȃ��j���ڑ��Q�A�Ԑڑ��Q�A�����I�ȑ��Q�A���ʑ��Q�A�����I���Q�A��
-//	���͌��ʑ��Q�ɂ��āA��ؐӔC�𕉂�Ȃ����̂Ƃ��܂��B
+//	本ソフトウェアは、著作権者によって「現状のまま」提供されています。著作権者は、
+//	特定目的への適合性の保証、商品性の保証、またそれに限定されない、いかなる明示
+//	的もしくは暗黙な保証責任も負いません。著作権者は、事由のいかんを問わず、損害
+//	発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失
+//	その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知ら
+//	されていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サ
+//	ービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそ
+//	れに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、ま
+//	たは結果損害について、一切責任を負わないものとします。
 //
 //	Note that above Japanese version license is the formal document.
 //	The following translation is only for reference.
@@ -58,22 +58,24 @@
 module i2s_audio(
 	input			clk,				//	42.95454MHz
 	input			reset_n,
-	input	[15:0]	sound_in,
+	input	[23:0]	sound_l_in,
+	input	[23:0]	sound_r_in,
 	output			i2s_audio_en,
 	output			i2s_audio_din,
 	output			i2s_audio_lrclk,
 	output			i2s_audio_bclk
 );
-	localparam		test_mode	= 0;		// 0: sound_in ���g��, 1: �e�X�g�M�����g�� 
+	localparam		test_mode	= 0;		// 0: sound_l_in/sound_r_in を使う, 1: テスト信号を使う 
 	localparam		c_96khz		= 3'd6;
 	reg		[2:0]	ff_divider;
 	wire			w_96khz_pulse;
 	reg				ff_clk_en;
 	reg				ff_bclk;
 	reg				ff_lrclk;
-	reg		[3:0]	ff_bit_count;
-	reg		[15:0]	ff_shift_reg;
-	wire	[15:0]	w_sound_in;
+	reg		[4:0]	ff_bit_count;
+	reg		[23:0]	ff_shift_reg;
+	wire	[23:0]	w_sound_l;
+	wire	[23:0]	w_sound_r;
 
 	generate
 		if( test_mode == 1 ) begin
@@ -105,10 +107,12 @@ module i2s_audio(
 				end
 			end
 
-			assign w_sound_in	= { 16 { ff_440hz } };
+			assign w_sound_l	= { 24 { ff_440hz } };
+			assign w_sound_r	= { 24 { ff_440hz } };
 		end
 		else begin
-			assign w_sound_in	= sound_in;
+			assign w_sound_l	= sound_l_in;
+			assign w_sound_r	= sound_r_in;
 		end
 	endgenerate
 
@@ -143,7 +147,7 @@ module i2s_audio(
 		if( !reset_n ) begin
 			ff_lrclk <= 1'b1;
 		end
-		else if( ff_bclk && w_96khz_pulse && (ff_bit_count == 4'd15) ) begin
+		else if( ff_bclk && w_96khz_pulse && (ff_bit_count == 5'd23) ) begin
 			ff_lrclk <= ~ff_lrclk;
 		end
 	end
@@ -155,7 +159,7 @@ module i2s_audio(
 		else if( ff_clk_en ) begin
 			//	hold
 		end
-		else if( ff_bclk && w_96khz_pulse && (ff_bit_count == 4'd14) && !ff_lrclk ) begin
+		else if( ff_bclk && w_96khz_pulse && (ff_bit_count == 5'd22) && !ff_lrclk ) begin
 			ff_clk_en <= 1'b1;
 		end
 	end
@@ -165,26 +169,31 @@ module i2s_audio(
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_bit_count <= 4'd15;
+			ff_bit_count <= 5'd23;
 		end
 		else if( w_96khz_pulse && ff_bclk ) begin
-			ff_bit_count <= ff_bit_count + 4'd1;
+			if( ff_bit_count == 5'd23 ) begin
+				ff_bit_count <= 5'd0;
+			end
+			else begin
+				ff_bit_count <= ff_bit_count + 5'd1;
+			end
 		end
 	end
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_shift_reg <= 16'd0;
+			ff_shift_reg <= 24'd0;
 		end
 		else if( w_96khz_pulse && ff_bclk ) begin
-			if( ff_bit_count == 4'd0 ) begin
-				ff_shift_reg <= w_sound_in;
+			if( ff_bit_count == 5'd0 ) begin
+				ff_shift_reg <= ff_lrclk ? w_sound_r : w_sound_l;
 			end
 			else begin
-				ff_shift_reg <= { ff_shift_reg[14:0], 1'b0 };
+				ff_shift_reg <= { ff_shift_reg[22:0], 1'b0 };
 			end
 		end
 	end
 
-	assign i2s_audio_din	= ff_shift_reg[15];
+	assign i2s_audio_din	= ff_shift_reg[23];
 endmodule

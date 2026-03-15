@@ -257,7 +257,7 @@ module tb ();
 		if( timeout >= 100000 ) begin
 			$display( "[TIMEOUT] bus_io_write addr=0x%01X data=0x%02X", addr, data );
 		end
-		// bus_ready=1 → next cycle bus_valid goes to 0
+		// bus_ready=1 竊・next cycle bus_valid goes to 0
 		bus_valid	<= 1'b0;
 		bus_cs		<= 1'b0;
 		@( posedge clk );

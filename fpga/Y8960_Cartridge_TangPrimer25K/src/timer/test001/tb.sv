@@ -175,7 +175,7 @@ module tb ();
 		$display( "******************************************************" );
 
 		// ---------------------------------------------------------
-		//	ƒŠƒZƒbƒg’¼Œã‚ÌŠeƒŒƒWƒXƒ^‚Ì’l‚ğƒ`ƒFƒbƒN
+		//	ãƒªã‚»ãƒƒãƒˆç›´å¾Œã®å„ãƒ¬ã‚¸ã‚¹ã‚¿ã®å€¤ã‚’ãƒã‚§ãƒƒã‚¯
 		// ---------------------------------------------------------
 		test_no=1;
 		$display( "Check MODE Register is 0 (test_no=1)" );
@@ -202,7 +202,7 @@ module tb ();
 		assert( data == 8'd0 );
 
 		// ---------------------------------------------------------
-		//	ƒƒ“ƒVƒ‡ƒbƒg‚ÌƒJƒEƒ“ƒ^[“®ì
+		//	ãƒ¯ãƒ³ã‚·ãƒ§ãƒƒãƒˆã®ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼å‹•ä½œ
 		// ---------------------------------------------------------
 		test_no=4;
 		$display( "Run one shot counter without interrupt (test_no=4)" );
@@ -230,31 +230,31 @@ module tb ();
 				break;
 			end
 		end
-		//	IE=0 ‚È‚Ì‚ÅŠ„‚è‚İ‚Í‚ ‚ª‚ç‚È‚¢
+		//	IE=0 ãªã®ã§å‰²ã‚Šè¾¼ã¿ã¯ã‚ãŒã‚‰ãªã„
 		assert( intr_n == 1'b1 );
-		//	ƒJƒEƒ“ƒg’l‚ª’â~‚µ‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	ã‚«ã‚¦ãƒ³ãƒˆå€¤ãŒåœæ­¢ã—ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		write_io( 8'hB3, { 6'd0, core_number }, time_out );
 		assert( time_out == 1'b0 );
 		read_io( 8'hB3, data, time_out );
 		assert( time_out == 1'b0 );
 		assert( data == 8'd10 );
-		//	ƒ^ƒCƒ}[’â~
+		//	ã‚¿ã‚¤ãƒãƒ¼åœæ­¢
 		write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
 		assert( time_out == 1'b0 );
 		write_io( 8'hB1, 8'd2, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA
+		//	è¦å› ã‚¯ãƒªã‚¢
 		write_io( 8'hB2, 1 << core_number, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	è¦å› ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		read_io( 8'hB2, data, time_out );
 		assert( time_out == 1'b0 );
 		assert( data[core_number] == 1'b0 );
-		//	—vˆöƒNƒŠƒAŒã‚É‚àŠ„‚è‚İ‚Í‚ ‚ª‚ç‚È‚¢
+		//	è¦å› ã‚¯ãƒªã‚¢å¾Œã«ã‚‚å‰²ã‚Šè¾¼ã¿ã¯ã‚ãŒã‚‰ãªã„
 		assert( intr_n == 1'b1 );
 
 		// ---------------------------------------------------------
-		//	ƒƒ“ƒVƒ‡ƒbƒg‚Ìƒ^ƒCƒ}[Š„‚İ“®ì
+		//	ãƒ¯ãƒ³ã‚·ãƒ§ãƒƒãƒˆã®ã‚¿ã‚¤ãƒãƒ¼å‰²è¾¼ã¿å‹•ä½œ
 		// ---------------------------------------------------------
 		test_no=5;
 		$display( "Run one shot counter with interrupt (test_no=5)" );
@@ -282,31 +282,31 @@ module tb ();
 				break;
 			end
 		end
-		//	IE=1 ‚È‚Ì‚ÅŠ„‚è‚İ‚ª‚ ‚ª‚é
+		//	IE=1 ãªã®ã§å‰²ã‚Šè¾¼ã¿ãŒã‚ãŒã‚‹
 		assert( intr_n == 1'b0 );
-		//	ƒJƒEƒ“ƒg’l‚ª’â~‚µ‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	ã‚«ã‚¦ãƒ³ãƒˆå€¤ãŒåœæ­¢ã—ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		write_io( 8'hB3, { 6'd0, core_number }, time_out );
 		assert( time_out == 1'b0 );
 		read_io( 8'hB3, data, time_out );
 		assert( time_out == 1'b0 );
 		assert( data == 8'd10 );
-		//	ƒ^ƒCƒ}[’â~
+		//	ã‚¿ã‚¤ãƒãƒ¼åœæ­¢
 		write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
 		assert( time_out == 1'b0 );
 		write_io( 8'hB1, 8'd2, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA
+		//	è¦å› ã‚¯ãƒªã‚¢
 		write_io( 8'hB2, 1 << core_number, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	è¦å› ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		read_io( 8'hB2, data, time_out );
 		assert( time_out == 1'b0 );
 		assert( data[core_number] == 1'b0 );
-		//	—vˆöƒNƒŠƒAŒã‚ÉŠ„‚è‚ÉM†‚àƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	è¦å› ã‚¯ãƒªã‚¢å¾Œã«å‰²ã‚Šè¾¼ã«ä¿¡å·ã‚‚ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		assert( intr_n == 1'b1 );
 
 		// ---------------------------------------------------------
-		//	ƒŠƒs[ƒg‚ÌƒJƒEƒ“ƒ^[“®ì
+		//	ãƒªãƒ”ãƒ¼ãƒˆã®ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼å‹•ä½œ
 		// ---------------------------------------------------------
 		test_no=6;
 		$display( "Run repeat counter without interrupt (test_no=6)" );
@@ -336,29 +336,29 @@ module tb ();
 					break;
 				end
 			end
-			//	IE=0 ‚È‚Ì‚ÅŠ„‚è‚İ‚Í‚ ‚ª‚ç‚È‚¢
+			//	IE=0 ãªã®ã§å‰²ã‚Šè¾¼ã¿ã¯ã‚ãŒã‚‰ãªã„
 			assert( intr_n == 1'b1 );
-			//	—vˆöƒNƒŠƒA
+			//	è¦å› ã‚¯ãƒªã‚¢
 			write_io( 8'hB2, 1 << core_number, time_out );
 			assert( time_out == 1'b0 );
 		end
-		//	ƒ^ƒCƒ}[’â~
+		//	ã‚¿ã‚¤ãƒãƒ¼åœæ­¢
 		write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
 		assert( time_out == 1'b0 );
 		write_io( 8'hB1, 8'd2, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA
+		//	è¦å› ã‚¯ãƒªã‚¢
 		write_io( 8'hB2, 1 << core_number, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	è¦å› ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		read_io( 8'hB2, data, time_out );
 		assert( time_out == 1'b0 );
 		assert( data[core_number] == 1'b0 );
-		//	—vˆöƒNƒŠƒAŒã‚É‚àŠ„‚è‚İ‚Í‚ ‚ª‚ç‚È‚¢
+		//	è¦å› ã‚¯ãƒªã‚¢å¾Œã«ã‚‚å‰²ã‚Šè¾¼ã¿ã¯ã‚ãŒã‚‰ãªã„
 		assert( intr_n == 1'b1 );
 
 		// ---------------------------------------------------------
-		//	ƒŠƒs[ƒg‚Ìƒ^ƒCƒ}[Š„‚İ“®ì
+		//	ãƒªãƒ”ãƒ¼ãƒˆã®ã‚¿ã‚¤ãƒãƒ¼å‰²è¾¼ã¿å‹•ä½œ
 		// ---------------------------------------------------------
 		test_no=7;
 		$display( "Run repeat counter with interrupt (test_no=7)" );
@@ -388,33 +388,33 @@ module tb ();
 					break;
 				end
 			end
-			//	IE=1 ‚È‚Ì‚ÅŠ„‚è‚İ‚ª‚ ‚ª‚é
+			//	IE=1 ãªã®ã§å‰²ã‚Šè¾¼ã¿ãŒã‚ãŒã‚‹
 			assert( intr_n == 1'b0 );
-			//	—vˆöƒNƒŠƒA
+			//	è¦å› ã‚¯ãƒªã‚¢
 			write_io( 8'hB2, 1 << core_number, time_out );
 			assert( time_out == 1'b0 );
 			@( posedge clk );
 			@( posedge clk );
-			//	Š„‚è‚İ‚ªƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+			//	å‰²ã‚Šè¾¼ã¿ãŒã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 			assert( intr_n == 1'b1 );
 		end
-		//	ƒ^ƒCƒ}[’â~
+		//	ã‚¿ã‚¤ãƒãƒ¼åœæ­¢
 		write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
 		assert( time_out == 1'b0 );
 		write_io( 8'hB1, 8'd2, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA
+		//	è¦å› ã‚¯ãƒªã‚¢
 		write_io( 8'hB2, 1 << core_number, time_out );
 		assert( time_out == 1'b0 );
-		//	—vˆöƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	è¦å› ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		read_io( 8'hB2, data, time_out );
 		assert( time_out == 1'b0 );
 		assert( data[core_number] == 1'b0 );
-		//	—vˆöƒNƒŠƒAŒã‚ÉŠ„‚è‚ÉM†‚àƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+		//	è¦å› ã‚¯ãƒªã‚¢å¾Œã«å‰²ã‚Šè¾¼ã«ä¿¡å·ã‚‚ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 		assert( intr_n == 1'b1 );
 
 		// ---------------------------------------------------------
-		//	ƒƒ“ƒVƒ‡ƒbƒg‚ÌƒJƒEƒ“ƒ^[“®ì‚É‚æ‚é resoU‚è
+		//	ãƒ¯ãƒ³ã‚·ãƒ§ãƒƒãƒˆã®ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼å‹•ä½œã«ã‚ˆã‚‹ resoæŒ¯ã‚Š
 		// ---------------------------------------------------------
 		test_no=8;
 		if( core_number == 0 ) begin
@@ -450,30 +450,30 @@ module tb ();
 					break;
 				end
 			end
-			//	IE=0 ‚È‚Ì‚ÅŠ„‚è‚İ‚Í‚ ‚ª‚ç‚È‚¢
+			//	IE=0 ãªã®ã§å‰²ã‚Šè¾¼ã¿ã¯ã‚ãŒã‚‰ãªã„
 			assert( intr_n == 1'b1 );
 			end_time = ff_counter;
-			//	ƒJƒEƒ“ƒg’l‚ª’â~‚µ‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+			//	ã‚«ã‚¦ãƒ³ãƒˆå€¤ãŒåœæ­¢ã—ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 			write_io( 8'hB3, { 6'd0, core_number }, time_out );
 			assert( time_out == 1'b0 );
 			read_io( 8'hB3, data, time_out );
 			assert( time_out == 1'b0 );
 			assert( data == 8'd5 );
-			//	ƒ^ƒCƒ}[’â~
+			//	ã‚¿ã‚¤ãƒãƒ¼åœæ­¢
 			write_io( 8'hB0, { 4'd0, core_number, 2'd2 }, time_out );
 			assert( time_out == 1'b0 );
 			write_io( 8'hB1, 8'd2, time_out );
 			assert( time_out == 1'b0 );
-			//	—vˆöƒNƒŠƒA
+			//	è¦å› ã‚¯ãƒªã‚¢
 			write_io( 8'hB2, 1 << core_number, time_out );
 			assert( time_out == 1'b0 );
-			//	—vˆöƒNƒŠƒA‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+			//	è¦å› ã‚¯ãƒªã‚¢ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
 			read_io( 8'hB2, data, time_out );
 			assert( time_out == 1'b0 );
 			assert( data[core_number] == 1'b0 );
-			//	—vˆöƒNƒŠƒAŒã‚É‚àŠ„‚è‚İ‚Í‚ ‚ª‚ç‚È‚¢
+			//	è¦å› ã‚¯ãƒªã‚¢å¾Œã«ã‚‚å‰²ã‚Šè¾¼ã¿ã¯ã‚ãŒã‚‰ãªã„
 			assert( intr_n == 1'b1 );
-			//	Œo‰ßŠÔ‚ğŠm”F
+			//	çµŒéæ™‚é–“ã‚’ç¢ºèª
 			count_time	= end_time - start_time;
 			low_limit	= (5 << (i * 2 + 10));
 			high_limit	= (6 << (i * 2 + 10)) + 10;

@@ -68,7 +68,7 @@ module msx_slot(
 	input	[15:0]	p_slot_address,
 	inout	[7:0]	p_slot_data,
 	output			p_slot_int,				//	0 or HiZ: Normal, 1: Interrupt
-	output			p_slot_data_dir,		//	0: MSX→Cartridge (Write), 1: Cartridge→MSX (Read)
+	output			p_slot_data_dir,		//	0: MSX竊辰artridge (Write), 1: Cartridge竊樽SX (Read)
 	//	Local BUS
 	input			int_n,
 	output	[15:0]	bus_address,
@@ -162,7 +162,7 @@ module msx_slot(
 	assign reset_n		= ff_reset_n;
 
 	// --------------------------------------------------------------------
-	//	非同期載せ替えのために 2回叩いておく
+	//	髱槫酔譛溯ｼ峨○譖ｿ縺医・縺溘ａ縺ｫ 2蝗槫娼縺・※縺翫￥
 	//	Pass through FF twice for asynchronous replacement.
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
@@ -181,8 +181,7 @@ module msx_slot(
 	end
 
 	// --------------------------------------------------------------------
-	//	ff_slot_ioreq_n == 0 のタイミングでは、
-	//	アドレスと書き込み時のデータは確定済み
+	//	ff_slot_ioreq_n == 0 縺ｮ繧ｿ繧､繝溘Φ繧ｰ縺ｧ縺ｯ縲・	//	繧｢繝峨Ξ繧ｹ縺ｨ譖ｸ縺崎ｾｼ縺ｿ譎ゅ・繝・・繧ｿ縺ｯ遒ｺ螳壽ｸ医∩
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( ff_slot_wr ) begin

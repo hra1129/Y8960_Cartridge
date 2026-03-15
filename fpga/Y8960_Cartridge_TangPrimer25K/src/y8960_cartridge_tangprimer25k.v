@@ -125,6 +125,9 @@ module y8960cartridge_tangprimer25k (
 	wire			w_scc_memory_cs;
 	wire	[5:0]	w_scc_ma;
 
+	wire	[7:0]	w_bus_scc_bank_rdata;
+	wire			w_bus_scc_bank_rdata_en;
+
 	wire			w_bus_dcsg_ready;
 
 	wire	[15:0]	w_opl2_sound_out0;
@@ -158,7 +161,8 @@ module y8960cartridge_tangprimer25k (
 	wire			w_timer_intr_n;
 	wire			w_opl2_intr_n;
 	wire	[7:0]	w_led;
-	wire	[15:0]	w_sound_out;
+	wire	[23:0]	w_sound_l;
+	wire	[23:0]	w_sound_r;
 
 	wire	[17:0]	w_cpu_address;
 	wire			w_cpu_valid;
@@ -267,8 +271,8 @@ module y8960cartridge_tangprimer25k (
 		.memory_io_en		( ~w_scc_ma[5]				)
 	);
 
-	assign w_bus_rdata		= w_bus_timer_rdata & w_bus_opl2_rdata & w_bus_ssg_rdata & w_bus_scc_rdata & w_bus_sysctrl_rdata;
-	assign w_bus_rdata_en	= w_bus_timer_rdata_en | w_bus_opl2_rdata_en | w_bus_ssg_rdata_en | w_bus_scc_rdata_en | w_bus_sysctrl_rdata_en;
+	assign w_bus_rdata		= w_bus_timer_rdata & w_bus_opl2_rdata & w_bus_ssg_rdata & w_bus_scc_rdata & w_bus_sysctrl_rdata & w_bus_scc_bank_rdata;
+	assign w_bus_rdata_en	= w_bus_timer_rdata_en | w_bus_opl2_rdata_en | w_bus_ssg_rdata_en | w_bus_scc_rdata_en | w_bus_sysctrl_rdata_en | w_bus_scc_bank_rdata_en;
 	assign w_int_n			= w_timer_intr_n & w_opl2_intr_n;
 
 	scc_bank u_scc_bank (
@@ -280,8 +284,8 @@ module y8960cartridge_tangprimer25k (
 		.bus_ready			( w_bus_ready				),
 		.bus_write			( w_bus_write				),
 		.bus_wdata			( w_bus_wdata				),
-		.bus_rdata			( w_bus_rdata				),
-		.bus_rdata_en		( w_bus_rdata_en			),
+		.bus_rdata			( w_bus_scc_bank_rdata		),
+		.bus_rdata_en		( w_bus_scc_bank_rdata_en	),
 		.scc_memory_cs		( w_scc_memory_cs			),
 		.scc_ma				( w_scc_ma					),
 		.cpu_address		( w_cpu_address				),
@@ -532,7 +536,16 @@ module y8960cartridge_tangprimer25k (
 	);
 
 	// ---------------------------------------------------------
-	assign w_sound_out	= 
+	assign w_sound_l	= 
+			{ 4'd0, w_ssg_sound_out0 } + { 4'd0, w_ssg_sound_out1 } + 
+			w_opll_sound_out0 + w_opll_sound_out1 + 
+			w_opl2_sound_out0 + w_opl2_sound_out1 + 
+			w_adpcm_sound_out_l0 + w_adpcm_sound_out_l1 +
+			w_adpcm_sound_out_r0 + w_adpcm_sound_out_r1 +
+			w_dcsg_sound_out0 + w_dcsg_sound_out1 + 
+			{ 3'd0, w_scc_sound_out, 2'd0 };
+
+	assign w_sound_r	= 
 			{ 4'd0, w_ssg_sound_out0 } + { 4'd0, w_ssg_sound_out1 } + 
 			w_opll_sound_out0 + w_opll_sound_out1 + 
 			w_opl2_sound_out0 + w_opl2_sound_out1 + 
@@ -544,7 +557,8 @@ module y8960cartridge_tangprimer25k (
 	i2s_audio u_i2s (
 		.clk				( clk_28m					),
 		.reset_n			( reset_n					),
-		.sound_in			( w_sound_out				),
+		.sound_l_in			( w_sound_l					),
+		.sound_r_in			( w_sound_r					),
 		.i2s_audio_en		( audio_mclk				),
 		.i2s_audio_din		( audio_sdata				),
 		.i2s_audio_lrclk	( audio_lrclk				),

@@ -106,7 +106,7 @@ module sfrom (
 	//	SPI clock generation (clk_258m speed)
 	// ----------------------------------------------------------------
 	// SPI clock toggles every clk_258m cycle when enabled
-	// Effective SPI clock frequency: clk_258m / 2 ≈ 128.86MHz
+	// Effective SPI clock frequency: clk_258m / 2 竕・128.86MHz
 	reg			ff_spi_clk;				// SPI clock register
 	reg			ff_spi_clk_d;			// Delayed SPI clock for edge detection
 	reg			ff_spi_clk_en_sync;		// Synchronized clock enable (1 cycle delayed)
@@ -138,7 +138,7 @@ module sfrom (
 		end
 	end
 
-	// SPI clock: clk_258m / 2 ≈ 128.86MHz
+	// SPI clock: clk_258m / 2 竕・128.86MHz
 	// Detect edges using synchronized enable to match clock generation timing
 	assign w_spi_rising_edge = ff_spi_clk_en_sync && !ff_spi_clk_d && ff_spi_clk;
 	assign w_spi_falling_edge = ff_spi_clk_en_sync && ff_spi_clk_d && !ff_spi_clk;

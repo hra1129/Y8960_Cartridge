@@ -1,17 +1,17 @@
-ƒXƒe[ƒgƒ}ƒVƒ“\¬
-ƒXƒe[ƒg	à–¾
-ST_IDLE	‘Ò‹@ó‘ÔAready=1‚ðo—Í
-ST_SEND_WREN	Write Enable ƒRƒ}ƒ“ƒh‘—MŠJŽn
-ST_WREN_WAIT	WREN ƒoƒCƒg‘—M
-ST_CS_HIGH	CS# High ŠúŠÔiƒRƒ}ƒ“ƒhŠÔ‚Ì‘Ò‹@j
-ST_SEND_CMD	SPIƒRƒ}ƒ“ƒh‘—MŠJŽn
-ST_SEND_ADDR2	ƒRƒ}ƒ“ƒhƒoƒCƒg‘—M ¨ ƒAƒhƒŒƒXƒoƒCƒg2ŠJŽn
-ST_SEND_ADDR1	ƒAƒhƒŒƒXƒoƒCƒg2‘—M ¨ ƒAƒhƒŒƒXƒoƒCƒg1ŠJŽn
-ST_SEND_ADDR0	ƒAƒhƒŒƒXƒoƒCƒg1‘—M ¨ ƒAƒhƒŒƒXƒoƒCƒg0ŠJŽn
-ST_SEND_ADDR_LAST	ƒAƒhƒŒƒXƒoƒCƒg0‘—M ¨ ƒf[ƒ^ƒtƒF[ƒY
-ST_READ_DATA	ƒf[ƒ^“Ç‚Ýo‚µ
-ST_WRITE_DATA	ƒf[ƒ^‘‚«ž‚Ý
-ST_WAIT_BUSY	ƒrƒW[ó‘Ôƒ`ƒFƒbƒNŠJŽn
-ST_READ_STATUS	ƒXƒe[ƒ^ƒXƒŒƒWƒXƒ^“Ç‚Ýo‚µƒRƒ}ƒ“ƒh‘—M
-ST_CHECK_STATUS	WIP ƒrƒbƒgŠm”F
-ST_FINISH	‘€ìŠ®—¹
+ã‚¹ãƒ†ãƒ¼ãƒˆãƒžã‚·ãƒ³æ§‹æˆ
+ã‚¹ãƒ†ãƒ¼ãƒˆ	èª¬æ˜Ž
+ST_IDLE	å¾…æ©ŸçŠ¶æ…‹ã€ready=1ã‚’å‡ºåŠ›
+ST_SEND_WREN	Write Enable ã‚³ãƒžãƒ³ãƒ‰é€ä¿¡é–‹å§‹
+ST_WREN_WAIT	WREN ãƒã‚¤ãƒˆé€ä¿¡
+ST_CS_HIGH	CS# High æœŸé–“ï¼ˆã‚³ãƒžãƒ³ãƒ‰é–“ã®å¾…æ©Ÿï¼‰
+ST_SEND_CMD	SPIã‚³ãƒžãƒ³ãƒ‰é€ä¿¡é–‹å§‹
+ST_SEND_ADDR2	ã‚³ãƒžãƒ³ãƒ‰ãƒã‚¤ãƒˆé€ä¿¡ â†’ ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒã‚¤ãƒˆ2é–‹å§‹
+ST_SEND_ADDR1	ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒã‚¤ãƒˆ2é€ä¿¡ â†’ ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒã‚¤ãƒˆ1é–‹å§‹
+ST_SEND_ADDR0	ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒã‚¤ãƒˆ1é€ä¿¡ â†’ ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒã‚¤ãƒˆ0é–‹å§‹
+ST_SEND_ADDR_LAST	ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒã‚¤ãƒˆ0é€ä¿¡ â†’ ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚§ãƒ¼ã‚º
+ST_READ_DATA	ãƒ‡ãƒ¼ã‚¿èª­ã¿å‡ºã—
+ST_WRITE_DATA	ãƒ‡ãƒ¼ã‚¿æ›¸ãè¾¼ã¿
+ST_WAIT_BUSY	ãƒ“ã‚¸ãƒ¼çŠ¶æ…‹ãƒã‚§ãƒƒã‚¯é–‹å§‹
+ST_READ_STATUS	ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿èª­ã¿å‡ºã—ã‚³ãƒžãƒ³ãƒ‰é€ä¿¡
+ST_CHECK_STATUS	WIP ãƒ“ãƒƒãƒˆç¢ºèª
+ST_FINISH	æ“ä½œå®Œäº†

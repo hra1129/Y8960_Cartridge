@@ -274,6 +274,14 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc_bank.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssram/sram_arbiter.v",
+   "Type" : "verilog"
+  },
+  {
    "Library" : "work",
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio/src/sn76489_audio.vhd",
    "Type" : "vhdl"
