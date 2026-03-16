@@ -102,6 +102,10 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc_bank.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/msx_slot/msx_slot.v",
    "Type" : "verilog"
   },
@@ -254,6 +258,10 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssram/sram_arbiter.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssram/ssram.v",
    "Type" : "verilog"
   },
@@ -271,14 +279,6 @@
   },
   {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc_bank.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "D:/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssram/sram_arbiter.v",
    "Type" : "verilog"
   },
   {
