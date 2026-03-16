@@ -77,15 +77,8 @@ module system_controller#(
 	output	[7:0]	rom_wdata,
 	input	[7:0]	rom_rdata,
 	input			rom_rdata_en,
-	//	SerialSRAM I/F
-	output	[18:0]	sram_address,		//	512KB
-	output			sram_valid,
-	input			sram_ready,
-	output			sram_write,
-	output	[7:0]	sram_wdata,
-	input	[7:0]	sram_rdata,
-	input			sram_rdata_en,
 	//	Burst copy control
+	input			sram_ready,
 	output			burst_rom_start,
 	output	[22:0]	burst_rom_address,
 	output	[16:0]	burst_rom_length,
@@ -412,11 +405,6 @@ module system_controller#(
 	assign rom_valid	= ff_rom_valid;
 	assign rom_command	= ff_rom_command;
 	assign rom_wdata	= ff_data;
-
-	assign sram_address	= 19'd0;
-	assign sram_valid	= 1'b0;
-	assign sram_write	= 1'b0;
-	assign sram_wdata	= 8'd0;
 
 	assign burst_rom_start		= ff_burst_start;
 	assign burst_rom_address	= c_boot_rom_base;

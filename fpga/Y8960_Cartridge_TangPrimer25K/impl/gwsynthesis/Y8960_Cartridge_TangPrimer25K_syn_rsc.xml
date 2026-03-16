@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="y8960cartridge_tangprimer25k" Register="4" Lut="6" T_Register="401(4)" T_Lut="931(6)">
+<Module name="y8960cartridge_tangprimer25k" Register="4" Lut="6" T_Register="401(4)" T_Lut="923(6)">
  <SubModule name="u_msx_slot" Register="52" Lut="75" T_Register="52(52)" T_Lut="75(75)"/>
- <SubModule name="u_msx_timer" Register="21" Lut="21" T_Register="213(21)" T_Lut="686(21)">
-  <SubModule name="u_msx_timer_core0" Register="48" Lut="170" T_Register="48(48)" T_Lut="170(170)"/>
-  <SubModule name="u_msx_timer_core1" Register="48" Lut="176" T_Register="48(48)" T_Lut="176(176)"/>
+ <SubModule name="u_msx_timer" Register="21" Lut="22" T_Register="213(21)" T_Lut="680(22)">
+  <SubModule name="u_msx_timer_core0" Register="48" Lut="171" T_Register="48(48)" T_Lut="171(171)"/>
+  <SubModule name="u_msx_timer_core1" Register="48" Lut="162" T_Register="48(48)" T_Lut="162(162)"/>
   <SubModule name="u_msx_timer_core2" Register="48" Lut="164" T_Register="48(48)" T_Lut="164(164)"/>
-  <SubModule name="u_msx_timer_core3" Register="48" Lut="155" T_Register="48(48)" T_Lut="155(155)"/>
+  <SubModule name="u_msx_timer_core3" Register="48" Lut="161" T_Register="48(48)" T_Lut="161(161)"/>
  </SubModule>
- <SubModule name="u_dual_opl2" T_Register="123(0)" T_Lut="139(0)">
-  <SubModule name="u_opl2_0" T_Register="63(0)" T_Lut="71(0)">
-   <SubModule name="u_base" T_Register="63(0)" T_Lut="71(0)">
-    <SubModule name="u_mmr" Register="30" Lut="17" T_Register="39(30)" T_Lut="28(17)">
+ <SubModule name="u_dual_opl2" T_Register="123(0)" T_Lut="136(0)">
+  <SubModule name="u_opl2_0" T_Register="63(0)" T_Lut="70(0)">
+   <SubModule name="u_base" T_Register="63(0)" T_Lut="70(0)">
+    <SubModule name="u_mmr" Register="30" Lut="16" T_Register="39(30)" T_Lut="27(16)">
      <SubModule name="u_div" Register="3" Lut="2" T_Register="3(3)" T_Lut="2(2)"/>
      <SubModule name="u_reg" T_Register="6(0)" T_Lut="9(0)">
       <SubModule name="u_slot_cnt" Register="6" Lut="9" T_Register="6(6)" T_Lut="9(9)"/>
@@ -22,9 +22,9 @@
     </SubModule>
    </SubModule>
   </SubModule>
-  <SubModule name="u_opl2_1" T_Register="60(0)" T_Lut="68(0)">
-   <SubModule name="u_base" T_Register="60(0)" T_Lut="68(0)">
-    <SubModule name="u_mmr" Register="30" Lut="14" T_Register="36(30)" T_Lut="25(14)">
+  <SubModule name="u_opl2_1" T_Register="60(0)" T_Lut="66(0)">
+   <SubModule name="u_base" T_Register="60(0)" T_Lut="66(0)">
+    <SubModule name="u_mmr" Register="30" Lut="12" T_Register="36(30)" T_Lut="23(12)">
      <SubModule name="u_div" Lut="2" T_Lut="2(2)"/>
      <SubModule name="u_reg" T_Register="6(0)" T_Lut="9(0)">
       <SubModule name="u_slot_cnt" Register="6" Lut="9" T_Register="6(6)" T_Lut="9(9)"/>
@@ -37,5 +37,5 @@
    </SubModule>
   </SubModule>
  </SubModule>
- <SubModule name="u_system_controller" Register="9" Lut="25" T_Register="9(9)" T_Lut="25(25)"/>
+ <SubModule name="u_system_controller" Register="9" Lut="26" T_Register="9(9)" T_Lut="26(26)"/>
 </Module>

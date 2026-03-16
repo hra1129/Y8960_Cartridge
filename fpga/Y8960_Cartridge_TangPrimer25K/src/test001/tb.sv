@@ -25,7 +25,7 @@
 // -----------------------------------------------------------------------------
 
 module tb ();
-	localparam	clk_base	= 1_000_000_000_000./28_636_360;	//	ps
+	localparam	clk_base	= 1_000_000_000_000.0/28_636_360;	//	ps
 	int				test_no;
 	int				i, j;
 	reg				clk;
@@ -60,6 +60,14 @@ module tb ();
 	reg		[1:0]	dipsw;
 	//	LED
 	wire	[3:0]	led;
+
+	//	task signals
+	localparam	cpu_clk_base	= 1_000_000_000_000.0/3_579_545;	//	ps
+	string			s_state;
+	reg				p_slot_clk;
+	reg		[7:0]	ff_slot_data;
+
+	assign slot_d = !slot_wr_n ? ff_slot_data : 8'hZZ;
 
 	// --------------------------------------------------------------------
 	//	DUT
@@ -154,31 +162,31 @@ module tb ();
 			end
 			//	Address
 			begin
-				#170ns p_slot_address = address;
+				#170ns slot_a = address;
 			end
 			//	/IORQ
 			begin
-				p_slot_ioreq_n = 1'b1;
+				slot_ioreq_n = 1'b1;
 				//	T1
 				@( negedge p_slot_clk );
 				@( posedge p_slot_clk );
-				#135ns p_slot_ioreq_n = 1'b0;
+				#135ns slot_ioreq_n = 1'b0;
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
-				#145ns p_slot_ioreq_n = 1'b1;
+				#145ns slot_ioreq_n = 1'b1;
 			end
 			//	/WR
 			begin
-				p_slot_wr_n = 1'b1;
+				slot_wr_n = 1'b1;
 				//	T1
 				@( negedge p_slot_clk );
 				@( posedge p_slot_clk );
-				#125ns p_slot_wr_n = 1'b0;
+				#125ns slot_wr_n = 1'b0;
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
-				#120ns p_slot_wr_n = 1'b1;
+				#120ns slot_wr_n = 1'b1;
 			end
 			//	others
 			begin
@@ -222,31 +230,31 @@ module tb ();
 			end
 			//	Address
 			begin
-				#170ns p_slot_address = address;
+				#170ns slot_a = address;
 			end
 			//	/IORQ
 			begin
-				p_slot_ioreq_n = 1'b1;
+				slot_ioreq_n = 1'b1;
 				//	T1
 				@( negedge p_slot_clk );
 				@( posedge p_slot_clk );
-				#175ns p_slot_ioreq_n = 1'b0;
+				#175ns slot_ioreq_n = 1'b0;
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
-				#185ns p_slot_ioreq_n = 1'b1;
+				#185ns slot_ioreq_n = 1'b1;
 			end
 			//	/WR
 			begin
-				p_slot_wr_n = 1'b1;
+				slot_wr_n = 1'b1;
 				//	T1
 				@( negedge p_slot_clk );
 				@( posedge p_slot_clk );
-				#165ns p_slot_wr_n = 1'b0;
+				#165ns slot_wr_n = 1'b0;
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
-				#150ns p_slot_wr_n = 1'b1;
+				#150ns slot_wr_n = 1'b1;
 			end
 			//	others
 			begin
@@ -290,29 +298,29 @@ module tb ();
 			end
 			//	Address
 			begin
-				#170ns p_slot_address = address;
+				#170ns slot_a = address;
 			end
 			//	/IORQ
 			begin
-				p_slot_ioreq_n = 1'b1;
+				slot_ioreq_n = 1'b1;
 				//	T1
 				@( negedge p_slot_clk );
 				@( posedge p_slot_clk );
-				#135ns p_slot_ioreq_n = 1'b0;
+				#135ns slot_ioreq_n = 1'b0;
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
 				@( negedge p_slot_clk );
-				#145ns p_slot_ioreq_n = 1'b1;
+				#145ns slot_ioreq_n = 1'b1;
 			end
 			//	/RD
 			begin
-				p_slot_rd_n = 1'b1;
+				slot_rd_n = 1'b1;
 				//	T1
-				@( negedge p_slot_ioreq_n );
-				#10ns p_slot_rd_n = 1'b0;
-				@( posedge p_slot_ioreq_n );
-				rdata = p_slot_data;
-				p_slot_rd_n = 1'b1;
+				@( negedge slot_ioreq_n );
+				#10ns slot_rd_n = 1'b0;
+				@( posedge slot_ioreq_n );
+				rdata = slot_d;
+				slot_rd_n = 1'b1;
 			end
 		join
 	endtask

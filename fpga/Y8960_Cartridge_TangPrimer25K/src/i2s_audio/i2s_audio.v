@@ -56,42 +56,42 @@
 //-----------------------------------------------------------------------------
 
 module i2s_audio(
-	input			clk,				//	42.95454MHz
+	input			clk,				//	24.576MHz
 	input			reset_n,
 	input	[23:0]	sound_l_in,
 	input	[23:0]	sound_r_in,
-	output			i2s_audio_en,
 	output			i2s_audio_din,
 	output			i2s_audio_lrclk,
 	output			i2s_audio_bclk
 );
 	localparam		test_mode	= 0;		// 0: sound_l_in/sound_r_in を使う, 1: テスト信号を使う 
-	localparam		c_96khz		= 3'd6;
-	reg		[2:0]	ff_divider;
-	wire			w_96khz_pulse;
-	reg				ff_clk_en;
-	reg				ff_bclk;
-	reg				ff_lrclk;
-	reg		[4:0]	ff_bit_count;
-	reg		[23:0]	ff_shift_reg;
+	//	clk = 24.576MHz
+	//	BCLK = clk / 4 = 6.144MHz
+	//	LRCLK = BCLK / 64 = 96kHz (32bit x 2ch)
+	//	PCM5102A: I2S format, MSB first
+	reg		[1:0]	ff_bclk_count;
+	wire			w_bclk_fall;
+	wire			w_frame_start;
+	reg		[5:0]	ff_bit_count;
+	reg		[31:0]	ff_shift_reg;
 	wire	[23:0]	w_sound_l;
 	wire	[23:0]	w_sound_r;
 
 	generate
 		if( test_mode == 1 ) begin
-			reg		[12:0]	ff_880hz_counter;
+			reg		[6:0]	ff_880hz_counter;
 			reg				ff_440hz;
 
 			always @( posedge clk ) begin
 				if( !reset_n ) begin
-					ff_880hz_counter <= 13'd0;
+					ff_880hz_counter <= 7'd0;
 				end
-				else if( w_96khz_pulse ) begin
-					if( ff_880hz_counter == 13'd6972 ) begin
-						ff_880hz_counter <= 13'd0;
+				else if( w_frame_start ) begin
+					if( ff_880hz_counter == 7'd108 ) begin
+						ff_880hz_counter <= 7'd0;
 					end
 					else begin
-						ff_880hz_counter <= ff_880hz_counter + 13'd1;
+						ff_880hz_counter <= ff_880hz_counter + 7'd1;
 					end
 				end
 			end
@@ -100,8 +100,8 @@ module i2s_audio(
 				if( !reset_n ) begin
 					ff_440hz <= 1'b0;
 				end
-				else if( w_96khz_pulse ) begin
-					if( ff_880hz_counter == 13'd6972 ) begin
+				else if( w_frame_start ) begin
+					if( ff_880hz_counter == 7'd108 ) begin
 						ff_440hz <= ~ff_440hz;
 					end
 				end
@@ -117,83 +117,69 @@ module i2s_audio(
 	endgenerate
 
 	// --------------------------------------------------------------------
-	assign i2s_audio_en		= reset_n;
-
+	//	BCLK divider : clk(24.576MHz) / 4 = 6.144MHz
+	//	  ff_bclk_count : 0 → 1 → 2 → 3 → 0 ...
+	//	  BCLK(~count[1]): H   H   L   L   H ...
+	//	  BCLK falls at count 1→2, rises at count 3→0
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_divider <= 3'd0;
-		end
-		else if( w_96khz_pulse ) begin
-			ff_divider <= 3'd0;
+			ff_bclk_count <= 2'd0;
 		end
 		else begin
-			ff_divider <= ff_divider + 3'd1;
+			ff_bclk_count <= ff_bclk_count + 2'd1;
 		end
 	end
 
-	assign w_96khz_pulse	= (ff_divider == c_96khz);
+	assign w_bclk_fall		= (ff_bclk_count == 2'd1);
 
+	// --------------------------------------------------------------------
+	//	Bit counter : 0〜63 (32bit x 2ch)
+	//	  increments on BCLK falling edge
+	//	  bit_count[5] = LRCLK (0:Left, 1:Right)
+	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_bclk <= 1'b0;
+			ff_bit_count <= 6'd0;
 		end
-		else if( w_96khz_pulse ) begin
-			ff_bclk <= ~ff_bclk;
-		end
-	end
-
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_lrclk <= 1'b1;
-		end
-		else if( ff_bclk && w_96khz_pulse && (ff_bit_count == 5'd23) ) begin
-			ff_lrclk <= ~ff_lrclk;
-		end
-	end
-
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_clk_en <= 1'b0;
-		end
-		else if( ff_clk_en ) begin
-			//	hold
-		end
-		else if( ff_bclk && w_96khz_pulse && (ff_bit_count == 5'd22) && !ff_lrclk ) begin
-			ff_clk_en <= 1'b1;
-		end
-	end
-
-	assign i2s_audio_bclk	= ff_clk_en & ff_bclk;
-	assign i2s_audio_lrclk	= ff_clk_en & ff_lrclk;
-
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_bit_count <= 5'd23;
-		end
-		else if( w_96khz_pulse && ff_bclk ) begin
-			if( ff_bit_count == 5'd23 ) begin
-				ff_bit_count <= 5'd0;
+		else if( w_bclk_fall ) begin
+			if( ff_bit_count == 6'd63 ) begin
+				ff_bit_count <= 6'd0;
 			end
 			else begin
-				ff_bit_count <= ff_bit_count + 5'd1;
+				ff_bit_count <= ff_bit_count + 6'd1;
 			end
 		end
 	end
 
+	assign w_frame_start	= w_bclk_fall && (ff_bit_count == 6'd63);
+
+	// --------------------------------------------------------------------
+	//	Shift register
+	//	  I2S format: 1bit lead(0) + 24bit data(MSB first) + 7bit padding(0)
+	//	  Load at bit_count 63→0 (left) and 31→32 (right)
+	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_shift_reg <= 24'd0;
+			ff_shift_reg <= 32'd0;
 		end
-		else if( w_96khz_pulse && ff_bclk ) begin
-			if( ff_bit_count == 5'd0 ) begin
-				ff_shift_reg <= ff_lrclk ? w_sound_r : w_sound_l;
+		else if( w_bclk_fall ) begin
+			if( ff_bit_count == 6'd63 ) begin
+				ff_shift_reg <= { 1'b0, w_sound_l, 7'd0 };
+			end
+			else if( ff_bit_count == 6'd31 ) begin
+				ff_shift_reg <= { 1'b0, w_sound_r, 7'd0 };
 			end
 			else begin
-				ff_shift_reg <= { ff_shift_reg[22:0], 1'b0 };
+				ff_shift_reg <= { ff_shift_reg[30:0], 1'b0 };
 			end
 		end
 	end
 
-	assign i2s_audio_din	= ff_shift_reg[23];
+	// --------------------------------------------------------------------
+	//	Output
+	// --------------------------------------------------------------------
+	assign i2s_audio_bclk	= ~ff_bclk_count[1];
+	assign i2s_audio_lrclk	= ff_bit_count[5];
+	assign i2s_audio_din	= ff_shift_reg[31];
 endmodule

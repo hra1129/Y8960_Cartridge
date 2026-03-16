@@ -80,6 +80,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ika
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc\src\IKASCC_modules\IKASCC_primitives.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc_patch\IKASCC_vrc_s.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc_patch\scc.v<br>
+D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc_patch\scc_bank.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\msx_slot\msx_slot.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\opl2\src\jtopl.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\opl2\src\jtopl2.v<br>
@@ -118,6 +119,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sfr
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn76489_audio_patch\sn76489.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\dual_ssg.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\ssg_core.v<br>
+D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssram\sram_arbiter.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssram\ssram.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\system_controller\system_controller.v<br>
 D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\timer\msx_timer.v<br>
@@ -148,7 +150,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Mon Feb 23 18:30:14 2026
+<td>Mon Mar 16 18:51:59 2026
 </td>
 </tr>
 <tr>
@@ -164,11 +166,11 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">Synthesis Process</td>
-<td>Running parser:<br/>&nbsp;&nbsp;&nbsp;&nbsp;CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s, Peak memory usage = 306.156MB<br/>Running netlist conversion:<br/>&nbsp;&nbsp;&nbsp;&nbsp;CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s, Peak memory usage = 0MB<br/>Running device independent optimization:<br/>&nbsp;&nbsp;&nbsp;&nbsp;Optimizing Phase 0: CPU time = 0h 0m 0.906s, Elapsed time = 0h 0m 0.879s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Optimizing Phase 1: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.018s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Optimizing Phase 2: CPU time = 0h 0m 0.078s, Elapsed time = 0h 0m 0.049s, Peak memory usage = 306.156MB<br/>Running inference:<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 0: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0.012s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 1: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.018s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 2: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0.003s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 3: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0.005s, Peak memory usage = 306.156MB<br/>Running technical mapping:<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 0: CPU time = 0h 0m 0.062s, Elapsed time = 0h 0m 0.056s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 1: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.022s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 2: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.019s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 3: CPU time = 0h 0m 5s, Elapsed time = 0h 0m 5s, Peak memory usage = 306.156MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 4: CPU time = 0h 0m 0.171s, Elapsed time = 0h 0m 0.151s, Peak memory usage = 306.156MB<br/>Generate output files:<br/>&nbsp;&nbsp;&nbsp;&nbsp;CPU time = 0h 0m 0.171s, Elapsed time = 0h 0m 0.116s, Peak memory usage = 306.156MB<br/></td>
+<td>Running parser:<br/>&nbsp;&nbsp;&nbsp;&nbsp;CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s, Peak memory usage = 531.766MB<br/>Running netlist conversion:<br/>&nbsp;&nbsp;&nbsp;&nbsp;CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s, Peak memory usage = 0MB<br/>Running device independent optimization:<br/>&nbsp;&nbsp;&nbsp;&nbsp;Optimizing Phase 0: CPU time = 0h 0m 0.812s, Elapsed time = 0h 0m 0.811s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Optimizing Phase 1: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0.018s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Optimizing Phase 2: CPU time = 0h 0m 0.078s, Elapsed time = 0h 0m 0.066s, Peak memory usage = 531.766MB<br/>Running inference:<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 0: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.017s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 1: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.027s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 2: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.004s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Inferring Phase 3: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0.005s, Peak memory usage = 531.766MB<br/>Running technical mapping:<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 0: CPU time = 0h 0m 0.078s, Elapsed time = 0h 0m 0.072s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 1: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.024s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 2: CPU time = 0h 0m 0.015s, Elapsed time = 0h 0m 0.02s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 3: CPU time = 0h 0m 5s, Elapsed time = 0h 0m 6s, Peak memory usage = 531.766MB<br/>&nbsp;&nbsp;&nbsp;&nbsp;Tech-Mapping Phase 4: CPU time = 0h 0m 0.14s, Elapsed time = 0h 0m 0.215s, Peak memory usage = 531.766MB<br/>Generate output files:<br/>&nbsp;&nbsp;&nbsp;&nbsp;CPU time = 0h 0m 0.109s, Elapsed time = 0h 0m 0.083s, Peak memory usage = 531.766MB<br/></td>
 </tr>
 <tr>
 <td class="label">Total Time and Memory Usage</td>
-<td>CPU time = 0h 0m 7s, Elapsed time = 0h 0m 7s, Peak memory usage = 306.156MB</td>
+<td>CPU time = 0h 0m 7s, Elapsed time = 0h 0m 8s, Peak memory usage = 531.766MB</td>
 </tr>
 </table>
 <h1><a name="resource">Resource</a></h1>
@@ -196,11 +198,11 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">&nbsp&nbsp&nbsp&nbspTBUF</td>
-<td>5</td>
+<td>1</td>
 </tr>
 <tr>
 <td class="label">&nbsp&nbsp&nbsp&nbspIOBUF</td>
-<td>12</td>
+<td>16</td>
 </tr>
 <tr>
 <td class="label"><b>Register </b></td>
@@ -216,7 +218,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label"><b>LUT </b></td>
-<td>913</td>
+<td>905</td>
 </tr>
 <tr>
 <td class="label">&nbsp&nbsp&nbsp&nbspLUT2</td>
@@ -224,11 +226,11 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">&nbsp&nbsp&nbsp&nbspLUT3</td>
-<td>220</td>
+<td>280</td>
 </tr>
 <tr>
 <td class="label">&nbsp&nbsp&nbsp&nbspLUT4</td>
-<td>584</td>
+<td>516</td>
 </tr>
 <tr>
 <td class="label"><b>INV </b></td>
@@ -248,7 +250,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">Logic</td>
-<td>931(931 LUT, 0 ALU) / 23040</td>
+<td>923(923 LUT, 0 ALU) / 23040</td>
 <td>5%</td>
 </tr>
 <tr>
@@ -337,7 +339,527 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">From</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0</td>
+</tr>
+<tr>
+<td class="label">To</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_enable_s1</td>
+</tr>
+<tr>
+<td class="label">Launch Clk</td>
+<td>clk_28m[R]</td>
+</tr>
+<tr>
+<td class="label">Latch Clk</td>
+<td>clk_28m[R]</td>
+</tr>
+</table>
+<b>Data Arrival Path:</b>
+<table class="summary_table">
+<tr>
+<th>AT</th>
+<th>DELAY</th>
+<th>TYPE</th>
+<th>RF</th>
+<th>FANOUT</th>
+<th>NODE</th>
+</tr>
+<tr>
+<td>0.000</td>
+<td>0.000</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td>clk_28m</td>
+</tr>
+<tr>
+<td>0.000</td>
+<td>0.000</td>
+<td>tCL</td>
+<td>RR</td>
+<td>1</td>
+<td>clk_28m_ibuf/I</td>
+</tr>
+<tr>
+<td>0.000</td>
+<td>0.000</td>
+<td>tINS</td>
+<td>RR</td>
+<td>401</td>
+<td>clk_28m_ibuf/O</td>
+</tr>
+<tr>
+<td>0.375</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0/CLK</td>
+</tr>
+<tr>
+<td>0.757</td>
+<td>0.382</td>
+<td>tC2Q</td>
+<td>RR</td>
+<td>6</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0/Q</td>
+</tr>
+<tr>
+<td>1.132</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s46/I0</td>
+</tr>
+<tr>
+<td>1.659</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s46/F</td>
+</tr>
+<tr>
+<td>2.034</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s35/I0</td>
+</tr>
+<tr>
+<td>2.560</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s35/F</td>
+</tr>
+<tr>
+<td>2.935</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s14/I1</td>
+</tr>
+<tr>
+<td>3.451</td>
+<td>0.516</td>
+<td>tINS</td>
+<td>RR</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s14/F</td>
+</tr>
+<tr>
+<td>3.826</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s4/I0</td>
+</tr>
+<tr>
+<td>4.352</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s4/F</td>
+</tr>
+<tr>
+<td>4.727</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s1/I0</td>
+</tr>
+<tr>
+<td>5.254</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>25</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s1/F</td>
+</tr>
+<tr>
+<td>5.629</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_enable_s3/I0</td>
+</tr>
+<tr>
+<td>6.155</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_enable_s3/F</td>
+</tr>
+<tr>
+<td>6.530</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_enable_s1/CE</td>
+</tr>
+</table>
+<b>Data Required Path:</b>
+<table class="summary_table">
+<tr>
+<th>AT</th>
+<th>DELAY</th>
+<th>TYPE</th>
+<th>RF</th>
+<th>FANOUT</th>
+<th>NODE</th>
+</tr>
+<tr>
+<td>34.921</td>
+<td>0.000</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td>clk_28m</td>
+</tr>
+<tr>
+<td>34.921</td>
+<td>0.000</td>
+<td>tCL</td>
+<td>RR</td>
+<td>1</td>
+<td>clk_28m_ibuf/I</td>
+</tr>
+<tr>
+<td>34.921</td>
+<td>0.000</td>
+<td>tINS</td>
+<td>RR</td>
+<td>401</td>
+<td>clk_28m_ibuf/O</td>
+</tr>
+<tr>
+<td>35.296</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_enable_s1/CLK</td>
+</tr>
+<tr>
+<td>34.985</td>
+<td>-0.311</td>
+<td>tSu</td>
+<td> </td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_enable_s1</td>
+</tr>
+</table>
+<b>Path Statistics:</b>
+<table class="summary_table">
+<tr>
+<td class="label">Clock Skew:</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td class="label">Setup Relationship:</td>
+<td>34.921</td>
+</tr>
+<tr>
+<td class="label">Logic Level:</td>
+<td>7</td>
+</tr>
+<tr>
+<td class="label">Arrival Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
+<tr>
+<td class="label">Arrival Data Path Delay:</td><td> cell: 3.148, 51.138%; route: 2.625, 42.648%; tC2Q: 0.382, 6.214%</td></tr>
+<tr>
+<td class="label">Required Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
+</table>
+<br/>
+<h3>Path&nbsp2</h3>
+<b>Path Summary:</b></br>
+<table class="summary_table">
+<tr>
+<td class="label">Slack</td>
+<td>28.455</td>
+</tr>
+<tr>
+<td class="label">Data Arrival Time</td>
+<td>6.530</td>
+</tr>
+<tr>
+<td class="label">Data Required Time</td>
+<td>34.985</td>
+</tr>
+<tr>
+<td class="label">From</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_counter_12_s0</td>
+</tr>
+<tr>
+<td class="label">To</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_count_enable_s1</td>
+</tr>
+<tr>
+<td class="label">Launch Clk</td>
+<td>clk_28m[R]</td>
+</tr>
+<tr>
+<td class="label">Latch Clk</td>
+<td>clk_28m[R]</td>
+</tr>
+</table>
+<b>Data Arrival Path:</b>
+<table class="summary_table">
+<tr>
+<th>AT</th>
+<th>DELAY</th>
+<th>TYPE</th>
+<th>RF</th>
+<th>FANOUT</th>
+<th>NODE</th>
+</tr>
+<tr>
+<td>0.000</td>
+<td>0.000</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td>clk_28m</td>
+</tr>
+<tr>
+<td>0.000</td>
+<td>0.000</td>
+<td>tCL</td>
+<td>RR</td>
+<td>1</td>
+<td>clk_28m_ibuf/I</td>
+</tr>
+<tr>
+<td>0.000</td>
+<td>0.000</td>
+<td>tINS</td>
+<td>RR</td>
+<td>401</td>
+<td>clk_28m_ibuf/O</td>
+</tr>
+<tr>
+<td>0.375</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_counter_12_s0/CLK</td>
+</tr>
+<tr>
+<td>0.757</td>
+<td>0.382</td>
+<td>tC2Q</td>
+<td>RR</td>
+<td>6</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_counter_12_s0/Q</td>
+</tr>
+<tr>
+<td>1.132</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s72/I0</td>
+</tr>
+<tr>
+<td>1.659</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s72/F</td>
+</tr>
+<tr>
+<td>2.034</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s40/I0</td>
+</tr>
+<tr>
+<td>2.560</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s40/F</td>
+</tr>
+<tr>
+<td>2.935</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s16/I0</td>
+</tr>
+<tr>
+<td>3.461</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s16/F</td>
+</tr>
+<tr>
+<td>3.836</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s5/I0</td>
+</tr>
+<tr>
+<td>4.362</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s5/F</td>
+</tr>
+<tr>
+<td>4.737</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s1/I1</td>
+</tr>
+<tr>
+<td>5.254</td>
+<td>0.516</td>
+<td>tINS</td>
+<td>RR</td>
+<td>25</td>
+<td>u_msx_timer/u_msx_timer_core2/n612_s1/F</td>
+</tr>
+<tr>
+<td>5.629</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_count_enable_s3/I0</td>
+</tr>
+<tr>
+<td>6.155</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_count_enable_s3/F</td>
+</tr>
+<tr>
+<td>6.530</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_count_enable_s1/CE</td>
+</tr>
+</table>
+<b>Data Required Path:</b>
+<table class="summary_table">
+<tr>
+<th>AT</th>
+<th>DELAY</th>
+<th>TYPE</th>
+<th>RF</th>
+<th>FANOUT</th>
+<th>NODE</th>
+</tr>
+<tr>
+<td>34.921</td>
+<td>0.000</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td>clk_28m</td>
+</tr>
+<tr>
+<td>34.921</td>
+<td>0.000</td>
+<td>tCL</td>
+<td>RR</td>
+<td>1</td>
+<td>clk_28m_ibuf/I</td>
+</tr>
+<tr>
+<td>34.921</td>
+<td>0.000</td>
+<td>tINS</td>
+<td>RR</td>
+<td>401</td>
+<td>clk_28m_ibuf/O</td>
+</tr>
+<tr>
+<td>35.296</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_count_enable_s1/CLK</td>
+</tr>
+<tr>
+<td>34.985</td>
+<td>-0.311</td>
+<td>tSu</td>
+<td> </td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core2/ff_count_enable_s1</td>
+</tr>
+</table>
+<b>Path Statistics:</b>
+<table class="summary_table">
+<tr>
+<td class="label">Clock Skew:</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td class="label">Setup Relationship:</td>
+<td>34.921</td>
+</tr>
+<tr>
+<td class="label">Logic Level:</td>
+<td>7</td>
+</tr>
+<tr>
+<td class="label">Arrival Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
+<tr>
+<td class="label">Arrival Data Path Delay:</td><td> cell: 3.148, 51.138%; route: 2.625, 42.648%; tC2Q: 0.382, 6.214%</td></tr>
+<tr>
+<td class="label">Required Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
+</table>
+<br/>
+<h3>Path&nbsp3</h3>
+<b>Path Summary:</b></br>
+<table class="summary_table">
+<tr>
+<td class="label">Slack</td>
+<td>28.455</td>
+</tr>
+<tr>
+<td class="label">Data Arrival Time</td>
+<td>6.530</td>
+</tr>
+<tr>
+<td class="label">Data Required Time</td>
+<td>34.985</td>
+</tr>
+<tr>
+<td class="label">From</td>
+<td>u_msx_timer/u_msx_timer_core0/ff_counter_19_s0</td>
 </tr>
 <tr>
 <td class="label">To</td>
@@ -392,7 +914,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/CLK</td>
+<td>u_msx_timer/u_msx_timer_core0/ff_counter_19_s0/CLK</td>
 </tr>
 <tr>
 <td>0.757</td>
@@ -400,7 +922,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tC2Q</td>
 <td>RR</td>
 <td>6</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/Q</td>
+<td>u_msx_timer/u_msx_timer_core0/ff_counter_19_s0/Q</td>
 </tr>
 <tr>
 <td>1.132</td>
@@ -408,15 +930,15 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/I0</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s68/I0</td>
 </tr>
 <tr>
 <td>1.659</td>
 <td>0.526</td>
 <td>tINS</td>
 <td>RR</td>
-<td>2</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/F</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s68/F</td>
 </tr>
 <tr>
 <td>2.034</td>
@@ -424,47 +946,47 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/I0</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s35/I1</td>
 </tr>
 <tr>
-<td>2.560</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/F</td>
-</tr>
-<tr>
-<td>2.935</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/I0</td>
-</tr>
-<tr>
-<td>3.461</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/F</td>
-</tr>
-<tr>
-<td>3.836</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/I1</td>
-</tr>
-<tr>
-<td>4.352</td>
+<td>2.550</td>
 <td>0.516</td>
 <td>tINS</td>
 <td>RR</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s35/F</td>
+</tr>
+<tr>
+<td>2.925</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/F</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s12/I0</td>
+</tr>
+<tr>
+<td>3.451</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s12/F</td>
+</tr>
+<tr>
+<td>3.826</td>
+<td>0.375</td>
+<td>tNET</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s4/I0</td>
+</tr>
+<tr>
+<td>4.352</td>
+<td>0.526</td>
+<td>tINS</td>
+<td>RR</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core0/n612_s4/F</td>
 </tr>
 <tr>
 <td>4.727</td>
@@ -580,526 +1102,6 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td class="label">Required Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
 </table>
 <br/>
-<h3>Path&nbsp2</h3>
-<b>Path Summary:</b></br>
-<table class="summary_table">
-<tr>
-<td class="label">Slack</td>
-<td>28.455</td>
-</tr>
-<tr>
-<td class="label">Data Arrival Time</td>
-<td>6.530</td>
-</tr>
-<tr>
-<td class="label">Data Required Time</td>
-<td>34.985</td>
-</tr>
-<tr>
-<td class="label">From</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0</td>
-</tr>
-<tr>
-<td class="label">To</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_count_end_s0</td>
-</tr>
-<tr>
-<td class="label">Launch Clk</td>
-<td>clk_28m[R]</td>
-</tr>
-<tr>
-<td class="label">Latch Clk</td>
-<td>clk_28m[R]</td>
-</tr>
-</table>
-<b>Data Arrival Path:</b>
-<table class="summary_table">
-<tr>
-<th>AT</th>
-<th>DELAY</th>
-<th>TYPE</th>
-<th>RF</th>
-<th>FANOUT</th>
-<th>NODE</th>
-</tr>
-<tr>
-<td>0.000</td>
-<td>0.000</td>
-<td> </td>
-<td> </td>
-<td> </td>
-<td>clk_28m</td>
-</tr>
-<tr>
-<td>0.000</td>
-<td>0.000</td>
-<td>tCL</td>
-<td>RR</td>
-<td>1</td>
-<td>clk_28m_ibuf/I</td>
-</tr>
-<tr>
-<td>0.000</td>
-<td>0.000</td>
-<td>tINS</td>
-<td>RR</td>
-<td>401</td>
-<td>clk_28m_ibuf/O</td>
-</tr>
-<tr>
-<td>0.375</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/CLK</td>
-</tr>
-<tr>
-<td>0.757</td>
-<td>0.382</td>
-<td>tC2Q</td>
-<td>RR</td>
-<td>6</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/Q</td>
-</tr>
-<tr>
-<td>1.132</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/I0</td>
-</tr>
-<tr>
-<td>1.659</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>2</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/F</td>
-</tr>
-<tr>
-<td>2.034</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/I0</td>
-</tr>
-<tr>
-<td>2.560</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/F</td>
-</tr>
-<tr>
-<td>2.935</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/I0</td>
-</tr>
-<tr>
-<td>3.461</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/F</td>
-</tr>
-<tr>
-<td>3.836</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/I1</td>
-</tr>
-<tr>
-<td>4.352</td>
-<td>0.516</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/F</td>
-</tr>
-<tr>
-<td>4.727</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/I0</td>
-</tr>
-<tr>
-<td>5.254</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>25</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/F</td>
-</tr>
-<tr>
-<td>5.629</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s0/I0</td>
-</tr>
-<tr>
-<td>6.155</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s0/F</td>
-</tr>
-<tr>
-<td>6.530</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_count_end_s0/CE</td>
-</tr>
-</table>
-<b>Data Required Path:</b>
-<table class="summary_table">
-<tr>
-<th>AT</th>
-<th>DELAY</th>
-<th>TYPE</th>
-<th>RF</th>
-<th>FANOUT</th>
-<th>NODE</th>
-</tr>
-<tr>
-<td>34.921</td>
-<td>0.000</td>
-<td> </td>
-<td> </td>
-<td> </td>
-<td>clk_28m</td>
-</tr>
-<tr>
-<td>34.921</td>
-<td>0.000</td>
-<td>tCL</td>
-<td>RR</td>
-<td>1</td>
-<td>clk_28m_ibuf/I</td>
-</tr>
-<tr>
-<td>34.921</td>
-<td>0.000</td>
-<td>tINS</td>
-<td>RR</td>
-<td>401</td>
-<td>clk_28m_ibuf/O</td>
-</tr>
-<tr>
-<td>35.296</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_count_end_s0/CLK</td>
-</tr>
-<tr>
-<td>34.985</td>
-<td>-0.311</td>
-<td>tSu</td>
-<td> </td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_count_end_s0</td>
-</tr>
-</table>
-<b>Path Statistics:</b>
-<table class="summary_table">
-<tr>
-<td class="label">Clock Skew:</td>
-<td>0.000</td>
-</tr>
-<tr>
-<td class="label">Setup Relationship:</td>
-<td>34.921</td>
-</tr>
-<tr>
-<td class="label">Logic Level:</td>
-<td>7</td>
-</tr>
-<tr>
-<td class="label">Arrival Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
-<tr>
-<td class="label">Arrival Data Path Delay:</td><td> cell: 3.148, 51.138%; route: 2.625, 42.648%; tC2Q: 0.382, 6.214%</td></tr>
-<tr>
-<td class="label">Required Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
-</table>
-<br/>
-<h3>Path&nbsp3</h3>
-<b>Path Summary:</b></br>
-<table class="summary_table">
-<tr>
-<td class="label">Slack</td>
-<td>28.455</td>
-</tr>
-<tr>
-<td class="label">Data Arrival Time</td>
-<td>6.530</td>
-</tr>
-<tr>
-<td class="label">Data Required Time</td>
-<td>34.985</td>
-</tr>
-<tr>
-<td class="label">From</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0</td>
-</tr>
-<tr>
-<td class="label">To</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_0_s0</td>
-</tr>
-<tr>
-<td class="label">Launch Clk</td>
-<td>clk_28m[R]</td>
-</tr>
-<tr>
-<td class="label">Latch Clk</td>
-<td>clk_28m[R]</td>
-</tr>
-</table>
-<b>Data Arrival Path:</b>
-<table class="summary_table">
-<tr>
-<th>AT</th>
-<th>DELAY</th>
-<th>TYPE</th>
-<th>RF</th>
-<th>FANOUT</th>
-<th>NODE</th>
-</tr>
-<tr>
-<td>0.000</td>
-<td>0.000</td>
-<td> </td>
-<td> </td>
-<td> </td>
-<td>clk_28m</td>
-</tr>
-<tr>
-<td>0.000</td>
-<td>0.000</td>
-<td>tCL</td>
-<td>RR</td>
-<td>1</td>
-<td>clk_28m_ibuf/I</td>
-</tr>
-<tr>
-<td>0.000</td>
-<td>0.000</td>
-<td>tINS</td>
-<td>RR</td>
-<td>401</td>
-<td>clk_28m_ibuf/O</td>
-</tr>
-<tr>
-<td>0.375</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/CLK</td>
-</tr>
-<tr>
-<td>0.757</td>
-<td>0.382</td>
-<td>tC2Q</td>
-<td>RR</td>
-<td>6</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/Q</td>
-</tr>
-<tr>
-<td>1.132</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/I0</td>
-</tr>
-<tr>
-<td>1.659</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>2</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/F</td>
-</tr>
-<tr>
-<td>2.034</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/I0</td>
-</tr>
-<tr>
-<td>2.560</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/F</td>
-</tr>
-<tr>
-<td>2.935</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/I0</td>
-</tr>
-<tr>
-<td>3.461</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/F</td>
-</tr>
-<tr>
-<td>3.836</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/I1</td>
-</tr>
-<tr>
-<td>4.352</td>
-<td>0.516</td>
-<td>tINS</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/F</td>
-</tr>
-<tr>
-<td>4.727</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/I0</td>
-</tr>
-<tr>
-<td>5.254</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>25</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/F</td>
-</tr>
-<tr>
-<td>5.629</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_31_s3/I0</td>
-</tr>
-<tr>
-<td>6.155</td>
-<td>0.526</td>
-<td>tINS</td>
-<td>RR</td>
-<td>32</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_31_s3/F</td>
-</tr>
-<tr>
-<td>6.530</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_0_s0/CE</td>
-</tr>
-</table>
-<b>Data Required Path:</b>
-<table class="summary_table">
-<tr>
-<th>AT</th>
-<th>DELAY</th>
-<th>TYPE</th>
-<th>RF</th>
-<th>FANOUT</th>
-<th>NODE</th>
-</tr>
-<tr>
-<td>34.921</td>
-<td>0.000</td>
-<td> </td>
-<td> </td>
-<td> </td>
-<td>clk_28m</td>
-</tr>
-<tr>
-<td>34.921</td>
-<td>0.000</td>
-<td>tCL</td>
-<td>RR</td>
-<td>1</td>
-<td>clk_28m_ibuf/I</td>
-</tr>
-<tr>
-<td>34.921</td>
-<td>0.000</td>
-<td>tINS</td>
-<td>RR</td>
-<td>401</td>
-<td>clk_28m_ibuf/O</td>
-</tr>
-<tr>
-<td>35.296</td>
-<td>0.375</td>
-<td>tNET</td>
-<td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_0_s0/CLK</td>
-</tr>
-<tr>
-<td>34.985</td>
-<td>-0.311</td>
-<td>tSu</td>
-<td> </td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_0_s0</td>
-</tr>
-</table>
-<b>Path Statistics:</b>
-<table class="summary_table">
-<tr>
-<td class="label">Clock Skew:</td>
-<td>0.000</td>
-</tr>
-<tr>
-<td class="label">Setup Relationship:</td>
-<td>34.921</td>
-</tr>
-<tr>
-<td class="label">Logic Level:</td>
-<td>7</td>
-</tr>
-<tr>
-<td class="label">Arrival Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
-<tr>
-<td class="label">Arrival Data Path Delay:</td><td> cell: 3.148, 51.138%; route: 2.625, 42.648%; tC2Q: 0.382, 6.214%</td></tr>
-<tr>
-<td class="label">Required Clock Path Delay:</td><td> cell: 0.000, 0.000%; route: 0.375, 100.000%</td></tr>
-</table>
-<br/>
 <h3>Path&nbsp4</h3>
 <b>Path Summary:</b></br>
 <table class="summary_table">
@@ -1117,11 +1119,11 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">From</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0</td>
 </tr>
 <tr>
 <td class="label">To</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_1_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_end_s0</td>
 </tr>
 <tr>
 <td class="label">Launch Clk</td>
@@ -1172,7 +1174,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/CLK</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0/CLK</td>
 </tr>
 <tr>
 <td>0.757</td>
@@ -1180,7 +1182,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tC2Q</td>
 <td>RR</td>
 <td>6</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/Q</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0/Q</td>
 </tr>
 <tr>
 <td>1.132</td>
@@ -1188,7 +1190,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s46/I0</td>
 </tr>
 <tr>
 <td>1.659</td>
@@ -1196,7 +1198,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tINS</td>
 <td>RR</td>
 <td>2</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/F</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s46/F</td>
 </tr>
 <tr>
 <td>2.034</td>
@@ -1204,15 +1206,15 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s35/I0</td>
 </tr>
 <tr>
 <td>2.560</td>
 <td>0.526</td>
 <td>tINS</td>
 <td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/F</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s35/F</td>
 </tr>
 <tr>
 <td>2.935</td>
@@ -1220,31 +1222,31 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s14/I1</td>
 </tr>
 <tr>
-<td>3.461</td>
-<td>0.526</td>
+<td>3.451</td>
+<td>0.516</td>
 <td>tINS</td>
 <td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/F</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s14/F</td>
 </tr>
 <tr>
-<td>3.836</td>
+<td>3.826</td>
 <td>0.375</td>
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/I1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s4/I0</td>
 </tr>
 <tr>
 <td>4.352</td>
-<td>0.516</td>
+<td>0.526</td>
 <td>tINS</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/F</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s4/F</td>
 </tr>
 <tr>
 <td>4.727</td>
@@ -1252,7 +1254,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s1/I0</td>
 </tr>
 <tr>
 <td>5.254</td>
@@ -1260,7 +1262,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tINS</td>
 <td>RR</td>
 <td>25</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/F</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s1/F</td>
 </tr>
 <tr>
 <td>5.629</td>
@@ -1268,15 +1270,15 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_31_s3/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s0/I0</td>
 </tr>
 <tr>
 <td>6.155</td>
 <td>0.526</td>
 <td>tINS</td>
 <td>RR</td>
-<td>32</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_31_s3/F</td>
+<td>1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s0/F</td>
 </tr>
 <tr>
 <td>6.530</td>
@@ -1284,7 +1286,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_1_s0/CE</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_end_s0/CE</td>
 </tr>
 </table>
 <b>Data Required Path:</b>
@@ -1327,7 +1329,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_1_s0/CLK</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_end_s0/CLK</td>
 </tr>
 <tr>
 <td>34.985</td>
@@ -1335,7 +1337,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tSu</td>
 <td> </td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_1_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_count_end_s0</td>
 </tr>
 </table>
 <b>Path Statistics:</b>
@@ -1377,11 +1379,11 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 </tr>
 <tr>
 <td class="label">From</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0</td>
 </tr>
 <tr>
 <td class="label">To</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_2_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_0_s0</td>
 </tr>
 <tr>
 <td class="label">Launch Clk</td>
@@ -1432,7 +1434,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/CLK</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0/CLK</td>
 </tr>
 <tr>
 <td>0.757</td>
@@ -1440,7 +1442,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tC2Q</td>
 <td>RR</td>
 <td>6</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_18_s0/Q</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_23_s0/Q</td>
 </tr>
 <tr>
 <td>1.132</td>
@@ -1448,7 +1450,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s46/I0</td>
 </tr>
 <tr>
 <td>1.659</td>
@@ -1456,7 +1458,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tINS</td>
 <td>RR</td>
 <td>2</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s63/F</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s46/F</td>
 </tr>
 <tr>
 <td>2.034</td>
@@ -1464,15 +1466,15 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s35/I0</td>
 </tr>
 <tr>
 <td>2.560</td>
 <td>0.526</td>
 <td>tINS</td>
 <td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s36/F</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s35/F</td>
 </tr>
 <tr>
 <td>2.935</td>
@@ -1480,31 +1482,31 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s14/I1</td>
 </tr>
 <tr>
-<td>3.461</td>
-<td>0.526</td>
+<td>3.451</td>
+<td>0.516</td>
 <td>tINS</td>
 <td>RR</td>
-<td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s17/F</td>
+<td>2</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s14/F</td>
 </tr>
 <tr>
-<td>3.836</td>
+<td>3.826</td>
 <td>0.375</td>
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/I1</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s4/I0</td>
 </tr>
 <tr>
 <td>4.352</td>
-<td>0.516</td>
+<td>0.526</td>
 <td>tINS</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s5/F</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s4/F</td>
 </tr>
 <tr>
 <td>4.727</td>
@@ -1512,7 +1514,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s1/I0</td>
 </tr>
 <tr>
 <td>5.254</td>
@@ -1520,7 +1522,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tINS</td>
 <td>RR</td>
 <td>25</td>
-<td>u_msx_timer/u_msx_timer_core0/n612_s1/F</td>
+<td>u_msx_timer/u_msx_timer_core3/n612_s1/F</td>
 </tr>
 <tr>
 <td>5.629</td>
@@ -1528,7 +1530,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_31_s3/I0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_31_s3/I0</td>
 </tr>
 <tr>
 <td>6.155</td>
@@ -1536,7 +1538,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tINS</td>
 <td>RR</td>
 <td>32</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_31_s3/F</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_31_s3/F</td>
 </tr>
 <tr>
 <td>6.530</td>
@@ -1544,7 +1546,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_2_s0/CE</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_0_s0/CE</td>
 </tr>
 </table>
 <b>Data Required Path:</b>
@@ -1587,7 +1589,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tNET</td>
 <td>RR</td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_2_s0/CLK</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_0_s0/CLK</td>
 </tr>
 <tr>
 <td>34.985</td>
@@ -1595,7 +1597,7 @@ D:\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\sn7
 <td>tSu</td>
 <td> </td>
 <td>1</td>
-<td>u_msx_timer/u_msx_timer_core0/ff_counter_2_s0</td>
+<td>u_msx_timer/u_msx_timer_core3/ff_counter_0_s0</td>
 </tr>
 </table>
 <b>Path Statistics:</b>

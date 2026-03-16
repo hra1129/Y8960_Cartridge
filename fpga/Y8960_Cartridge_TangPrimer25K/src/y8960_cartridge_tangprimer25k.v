@@ -88,10 +88,10 @@ module y8960cartridge_tangprimer25k (
 	//	LED
 	output	[3:0]	led						//	B10,B11,C10,C11
 );
+	wire 			clk_258m;				//	257.72724MHz for internal timing (for 3.579545MHz)
+	wire 			clk_25m;				//	24.576MHz for I2S audio
 	wire			w_reset_n;
 	wire	[15:0]	w_bus_address;
-	wire			w_bus_memreq;
-	wire			w_bus_ioreq;
 	wire			w_bus_write;
 	wire			w_bus_valid;
 	wire	[7:0]	w_bus_wdata;
@@ -315,7 +315,7 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	dual_opl2 u_dual_opl2 (
 		.clk				( clk_28m					),
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_opl2_cs				),
 		.bus_address		( w_bus_address[1:0]		),
@@ -344,7 +344,7 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	dual_opll u_dual_opll (
 		.clk				( clk_28m					),
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_opll_cs				),
 		.bus_address		( w_bus_address[1:0]		),
@@ -361,7 +361,7 @@ module y8960cartridge_tangprimer25k (
 		.BUILTIN			( 0							)
 	) u_dual_ssg (
 		.clk				( clk_28m					),
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_ssg_cs				),
 		.bus_valid			( w_bus_valid				),
@@ -384,7 +384,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	scc u_scc (
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.clk				( clk_28m					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_scc_cs				),
@@ -403,7 +403,7 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	dual_dcsg u_dcsg (
 		.clk				( clk_28m					),
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.enable				( ff_enable					),
 		.bus_cs				( w_bus_dcsg_cs				),
 		.bus_address		( w_bus_address[0]			),
@@ -438,13 +438,7 @@ module y8960cartridge_tangprimer25k (
 		.rom_wdata			( w_rom_wdata				),
 		.rom_rdata			( w_rom_rdata				),
 		.rom_rdata_en		( w_rom_rdata_en			),
-		.sram_address		( w_sram_address			),
-		.sram_valid			( w_sram_valid				),
 		.sram_ready			( w_sram_ready				),
-		.sram_write			( w_sram_write				),
-		.sram_wdata			( w_sram_wdata				),
-		.sram_rdata			( w_sram_rdata				),
-		.sram_rdata_en		( w_sram_rdata_en			),
 		.burst_rom_start	( w_burst_rom_start			),
 		.burst_rom_address	( w_burst_rom_address		),
 		.burst_rom_length	( w_burst_rom_length		),
@@ -491,7 +485,7 @@ module y8960cartridge_tangprimer25k (
 	sfrom u_sfrom (
 		.clk				( clk_28m					),
 		.clk_258m			( clk_258m					),
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.address			( w_rom_address				),
 		.valid				( w_rom_valid				),
 		.ready				( w_rom_ready				),
@@ -516,7 +510,7 @@ module y8960cartridge_tangprimer25k (
 	ssram u_ssram (
 		.clk				( clk_28m					),
 		.clk_258m			( clk_258m					),
-		.reset_n			( reset_n					),
+		.reset_n			( w_reset_n					),
 		.address			( w_sram_address			),
 		.valid				( w_sram_valid				),
 		.ready				( w_sram_ready				),
@@ -555,14 +549,15 @@ module y8960cartridge_tangprimer25k (
 			{ 3'd0, w_scc_sound_out, 2'd0 };
 
 	i2s_audio u_i2s (
-		.clk				( clk_28m					),
-		.reset_n			( reset_n					),
+		.clk				( clk_25m					),
+		.reset_n			( w_reset_n					),
 		.sound_l_in			( w_sound_l					),
 		.sound_r_in			( w_sound_r					),
-		.i2s_audio_en		( audio_mclk				),
 		.i2s_audio_din		( audio_sdata				),
 		.i2s_audio_lrclk	( audio_lrclk				),
 		.i2s_audio_bclk		( audio_bclk				)
 	);
+
+	assign audio_mclk	= 1'bz;
 
 endmodule
