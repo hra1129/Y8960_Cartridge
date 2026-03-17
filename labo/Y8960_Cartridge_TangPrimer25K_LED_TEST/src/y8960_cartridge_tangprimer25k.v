@@ -63,23 +63,67 @@ module y8960cartridge_tangprimer25k (
 	//	LED
 	output	[3:0]	led						//	B10,B11,C10,C11
 );
-	reg		[3:0]	ff_led = 4'b0001;
-	reg		[24:0]	ff_count = 25'd0;
-	wire			w_trigger;
+    wire            clk_129m;               // 128.86362MHz
+    wire            clk_25m;                // 24.576MHz 
+	reg		[3:0]	ff_led = 4'b0000;
+	reg		[24:0]	ff_cnt25	= 25'd0;
+	reg		[24:0]	ff_cnt28	= 25'd0;
+	reg		[25:0]	ff_cnt50	= 26'd0;
+	reg		[26:0]	ff_cnt129	= 27'd0;
+	wire			w_trig25;
+	wire			w_trig28;
+	wire			w_trig50;
+	wire			w_trig129;
 
-	always @( posedge clk_28m ) begin
-		if( w_trigger ) begin
-			ff_count <= 25'd0;
+	Gowin_PLL u_pll (
+		.clkin		( clk_28m	),	//	input		 28.63636MHz
+		.clkout0	( clk_129m	),	//	output		128.86362MHz
+		.clkout1	( clk_25m	),	//	output		 24.57600MHz 
+		.mdclk		( clk_50m	)	//	input		 50.00000MHz
+	);
+
+	assign w_trig25  = (ff_cnt25 == 25'd24576000 );
+	assign w_trig28  = (ff_cnt28 == 25'd28636362 );
+	assign w_trig50  = (ff_cnt50 == 26'd50000000 );
+	assign w_trig129 = (ff_cnt129 == 27'd128863620 );
+
+	always @( posedge clk_25m ) begin
+		if( w_trig25 ) begin
+			ff_cnt25 <= 25'd0;
+			ff_led[0] <= ~ff_led[0];
 		end
 		else begin
-			ff_count <= ff_count + 25'd1;
+			ff_cnt25 <= ff_cnt25 + 25'd1;
 		end
 	end
-	assign w_trigger = (ff_count == 25'd28636362 );
 
 	always @( posedge clk_28m ) begin
-		if( w_trigger ) begin
-			ff_led <= { ff_led[2:0], ff_led[3] };
+		if( w_trig28 ) begin
+			ff_cnt28 <= 25'd0;
+			ff_led[1] <= ~ff_led[1];
+		end
+		else begin
+			ff_cnt28 <= ff_cnt28 + 25'd1;
+		end
+	end
+
+	always @( posedge clk_50m ) begin
+		if( w_trig50 ) begin
+			ff_cnt50 <= 26'd0;
+			ff_led[2] <= ~ff_led[2];
+		end
+		else begin
+			ff_cnt50 <= ff_cnt50 + 26'd1;
+		end
+	end
+
+	always @( posedge clk_129m ) begin
+		if( w_trig129 ) begin
+			ff_cnt129 <= 27'd0;
+			ff_led[3] <= ~ff_led[3];
+		end
+		else begin
+			ff_cnt129 <= ff_cnt129 + 27'd1;
 		end
 	end
 

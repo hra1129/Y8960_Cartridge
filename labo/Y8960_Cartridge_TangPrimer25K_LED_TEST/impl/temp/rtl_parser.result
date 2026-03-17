@@ -5,6 +5,34 @@
   "InstName" : "y8960cartridge_tangprimer25k",
   "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/y8960_cartridge_tangprimer25k.v",
   "ModuleLine" : 58,
-  "ModuleName" : "y8960cartridge_tangprimer25k"
+  "ModuleName" : "y8960cartridge_tangprimer25k",
+  "SubInsts" : [
+   {
+    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/y8960_cartridge_tangprimer25k.v",
+    "InstLine" : 78,
+    "InstName" : "u_pll",
+    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/gowin_pll/gowin_pll.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "Gowin_PLL",
+    "SubInsts" : [
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/gowin_pll/gowin_pll.v",
+      "InstLine" : 23,
+      "InstName" : "u_pll",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/gowin_pll/gowin_pll_mod.v",
+      "ModuleLine" : 10,
+      "ModuleName" : "Gowin_PLL_MOD"
+     },
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/gowin_pll/gowin_pll.v",
+      "InstLine" : 37,
+      "InstName" : "u_pll_init",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_LED_TEST/src/pll_init.v",
+      "ModuleLine" : 4,
+      "ModuleName" : "PLL_INIT"
+     }
+    ]
+   }
+  ]
  }
 ]

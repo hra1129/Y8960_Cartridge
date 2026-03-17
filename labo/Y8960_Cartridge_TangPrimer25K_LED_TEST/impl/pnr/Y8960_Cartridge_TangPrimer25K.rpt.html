@@ -83,7 +83,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Sun Mar 15 18:18:20 2026
+<td>Tue Mar 17 21:01:45 2026
 </td>
 </tr>
 <tr>
@@ -97,24 +97,24 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <tr>
 <td class="label">Place & Route Process</td>
 <td>Running placement:
-   Placement Phase 0: CPU time = 0h 0m 0.008s, Elapsed time = 0h 0m 0.008s
-   Placement Phase 1: CPU time = 0h 0m 0.236s, Elapsed time = 0h 0m 0.236s
-   Placement Phase 2: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
-   Placement Phase 3: CPU time = 0h 0m 0.46s, Elapsed time = 0h 0m 0.46s
-   Total Placement: CPU time = 0h 0m 0.704s, Elapsed time = 0h 0m 0.704s
+   Placement Phase 0: CPU time = 0h 0m 0.024s, Elapsed time = 0h 0m 0.024s
+   Placement Phase 1: CPU time = 0h 0m 0.259s, Elapsed time = 0h 0m 0.259s
+   Placement Phase 2: CPU time = 0h 0m 0.04s, Elapsed time = 0h 0m 0.04s
+   Placement Phase 3: CPU time = 0h 0m 0.481s, Elapsed time = 0h 0m 0.481s
+   Total Placement: CPU time = 0h 0m 0.804s, Elapsed time = 0h 0m 0.804s
 Running routing:
    Routing Phase 0: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
-   Routing Phase 1: CPU time = 0h 0m 0.699s, Elapsed time = 0h 0m 0.698s
-   Routing Phase 2: CPU time = 0h 0m 0.022s, Elapsed time = 0h 0m 0.022s
+   Routing Phase 1: CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s
+   Routing Phase 2: CPU time = 0h 0m 0.03s, Elapsed time = 0h 0m 0.03s
    Routing Phase 3: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
-   Total Routing: CPU time = 0h 0m 0.721s, Elapsed time = 0h 0m 0.72s
+   Total Routing: CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s
 Generate output files:
-   CPU time = 0h 0m 4s, Elapsed time = 0h 0m 4s
+   CPU time = 0h 0m 5s, Elapsed time = 0h 0m 5s
 </td>
 </tr>
 <tr>
 <td class="label">Total Time and Memory Usage</td>
-<td>CPU time = 0h 0m 5s, Elapsed time = 0h 0m 5s, Peak memory usage = 517MB</td>
+<td>CPU time = 0h 0m 7s, Elapsed time = 0h 0m 7s, Peak memory usage = 542MB</td>
 </tr>
 </table>
 <br/>
@@ -129,12 +129,12 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">Logic</td>
-<td>33/23040</td>
-<td><1%</td>
+<td>310/23040</td>
+<td>2%</td>
 </tr>
 <tr>
 <td class="label">&nbsp &nbsp --LUT,ALU,ROM16</td>
-<td>33(9 LUT, 24 ALU, 0 ROM16)</td>
+<td>310(190 LUT, 120 ALU, 0 ROM16)</td>
 <td>-</td>
 </tr>
 <tr>
@@ -144,7 +144,7 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">Register</td>
-<td>29/23280</td>
+<td>207/23280</td>
 <td><1%</td>
 </tr>
 <tr>
@@ -154,7 +154,7 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">&nbsp &nbsp --Logic Register as FF</td>
-<td>29/23040</td>
+<td>207/23040</td>
 <td><1%</td>
 </tr>
 <tr>
@@ -169,8 +169,8 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">CLS</td>
-<td>20/11520</td>
-<td><1%</td>
+<td>181/11520</td>
+<td>2%</td>
 </tr>
 <tr>
 <td class="label">I/O Port</td>
@@ -179,12 +179,12 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">I/O Buf</td>
-<td>5</td>
+<td>6</td>
 <td>-</td>
 </tr>
 <tr>
 <td class="label"> &nbsp &nbsp --Input Buf</td>
-<td>1</td>
+<td>2</td>
 <td>-</td>
 </tr>
 <tr>
@@ -196,6 +196,11 @@ Generate output files:
 <td class="label"> &nbsp &nbsp --Inout Buf</td>
 <td>0</td>
 <td>-</td>
+</tr>
+<tr>
+<td class="label">BSRAM</td>
+<td>1 pROM<br/></td>
+<td>2%</td>
 </tr>
 </table>
 <h2><a name="I/O_Bank_Usage_Summary">I/O Bank Usage Summary:</a></h2>
@@ -251,8 +256,8 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">PRIMARY</td>
-<td>1/8</td>
-<td>13%</td>
+<td>4/8</td>
+<td>50%</td>
 </tr>
 <tr>
 <td class="label">LW</td>
@@ -263,6 +268,11 @@ Generate output files:
 <td class="label">GCLK_PIN</td>
 <td>4/30</td>
 <td>14%</td>
+</tr>
+<tr>
+<td class="label">PLLA</td>
+<td>1/6</td>
+<td>17%</td>
 </tr>
 </table>
 <br/>
@@ -276,7 +286,22 @@ Generate output files:
 <tr>
 <td class="label">clk_28m_d</td>
 <td>PRIMARY</td>
-<td> TL BL</td>
+<td> BL</td>
+</tr>
+<tr>
+<td class="label">clk_50m_d</td>
+<td>PRIMARY</td>
+<td> TR TL BL</td>
+</tr>
+<tr>
+<td class="label">clk_129m</td>
+<td>PRIMARY</td>
+<td> BL</td>
+</tr>
+<tr>
+<td class="label">clk_25m</td>
+<td>PRIMARY</td>
+<td> BL</td>
 </tr>
 </table>
 <br/>

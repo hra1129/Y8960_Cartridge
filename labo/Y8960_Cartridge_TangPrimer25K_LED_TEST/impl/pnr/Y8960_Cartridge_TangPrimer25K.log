@@ -7,7 +7,7 @@ Running placement......
 [10%] Placement Phase 0 completed
 [20%] Placement Phase 1 completed
 [30%] Placement Phase 2 completed
-WARN  (TA1132) :  'clk_28m' was determined to be a clock but was not created.
+WARN  (TA1132) :  'clk_50m' was determined to be a clock but was not created.
 [50%] Placement Phase 3 completed
 Running routing......
 [60%] Routing Phase 0 completed
@@ -26,5 +26,5 @@ Generate file "D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPr
 Generate file "D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\pnr\Y8960_Cartridge_TangPrimer25K.rpt.html" completed
 Generate file "D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\pnr\Y8960_Cartridge_TangPrimer25K.rpt.txt" completed
 Generate file "D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\pnr\Y8960_Cartridge_TangPrimer25K.tr.html" completed
-Sun Mar 15 18:18:20 2026
+Tue Mar 17 21:01:45 2026
 

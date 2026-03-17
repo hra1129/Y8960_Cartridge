@@ -1,10 +1,15 @@
 GowinSynthesis start
 Running parser ...
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v'
+Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll.v'
+Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll_mod.v'
+Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\pll_init.v'
 Compiling module 'y8960cartridge_tangprimer25k'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v":58)
+Compiling module 'Gowin_PLL'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll.v":1)
+Compiling module 'Gowin_PLL_MOD'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll_mod.v":10)
+Compiling module 'PLL_INIT(MULTI_FAC=36)'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\pll_init.v":4)
 NOTE  (EX0101) : Current top module is "y8960cartridge_tangprimer25k"
 [5%] Running netlist conversion ...
-WARN  (CV0016) : Input clk_50m is unused("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v":60)
 WARN  (CV0016) : Input dipsw is unused("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v":62)
 Running device independent optimization ...
 [10%] Optimizing Phase 0 completed

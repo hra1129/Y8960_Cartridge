@@ -5,6 +5,9 @@
     <Version>5</Version>
     <Device name="GW5A-25A" pn="GW5A-LV25MG121NES">gw5a25a-000</Device>
     <FileList>
+        <File path="src/gowin_pll/gowin_pll.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_pll/gowin_pll_mod.v" type="file.verilog" enable="1"/>
+        <File path="src/pll_init.v" type="file.verilog" enable="1"/>
         <File path="src/y8960_cartridge_tangprimer25k.v" type="file.verilog" enable="1"/>
         <File path="src/Y8960_Cartridge_TangPrimer25K.cst" type="file.cst" enable="1"/>
     </FileList>

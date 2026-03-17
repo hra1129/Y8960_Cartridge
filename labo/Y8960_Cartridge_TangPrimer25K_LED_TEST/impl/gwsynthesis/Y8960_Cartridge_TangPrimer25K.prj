@@ -5,6 +5,9 @@
     <Device id="GW5A-25A" package="MBGA121N" speed="1" partNumber="GW5A-LV25MG121NES"/>
     <FileList>
         <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll_mod.v" type="verilog"/>
+        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\pll_init.v" type="verilog"/>
     </FileList>
     <OptionList>
         <Option type="disable_insert_pad" value="0"/>
