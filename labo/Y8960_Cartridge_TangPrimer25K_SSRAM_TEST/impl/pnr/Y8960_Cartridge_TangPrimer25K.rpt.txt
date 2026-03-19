@@ -12,27 +12,27 @@
   <Part Number>: GW5A-LV25MG121NES
   <Device>: GW5A-25
   <Device Version>: A
-  <Created Time>:Tue Mar 17 07:23:49 2026
+  <Created Time>:Wed Mar 18 18:42:21 2026
 
 
 2. PnR Details
 
   Running placement:
-    Placement Phase 0: CPU time = 0h 0m 0.085s, Elapsed time = 0h 0m 0.084s
-    Placement Phase 1: CPU time = 0h 0m 0.243s, Elapsed time = 0h 0m 0.243s
-    Placement Phase 2: CPU time = 0h 0m 0.149s, Elapsed time = 0h 0m 0.149s
-    Placement Phase 3: CPU time = 0h 0m 0.538s, Elapsed time = 0h 0m 0.538s
+    Placement Phase 0: CPU time = 0h 0m 0.118s, Elapsed time = 0h 0m 0.118s
+    Placement Phase 1: CPU time = 0h 0m 0.254s, Elapsed time = 0h 0m 0.254s
+    Placement Phase 2: CPU time = 0h 0m 0.164s, Elapsed time = 0h 0m 0.164s
+    Placement Phase 3: CPU time = 0h 0m 0.559s, Elapsed time = 0h 0m 0.559s
     Total Placement: CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s
  Running routing:
-    Routing Phase 0: CPU time = 0h 0m 0.001s, Elapsed time = 0h 0m 0.001s
+    Routing Phase 0: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0.001s
     Routing Phase 1: CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s
-    Routing Phase 2: CPU time = 0h 0m 0.034s, Elapsed time = 0h 0m 0.033s
+    Routing Phase 2: CPU time = 0h 0m 0.035s, Elapsed time = 0h 0m 0.034s
     Routing Phase 3: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
     Total Routing: CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s
  Generate output files:
     CPU time = 0h 0m 4s, Elapsed time = 0h 0m 4s
 
- Total Time and Memory Usage: CPU time = 0h 0m 6s, Elapsed time = 0h 0m 6s, Peak memory usage = 568MB
+ Total Time and Memory Usage: CPU time = 0h 0m 6s, Elapsed time = 0h 0m 6s, Peak memory usage = 519MB
 
 
 3. Resource Usage Summary
@@ -40,8 +40,8 @@
   --------------------------------------------------------------------------------
   Resources                   | Usage                               | Utilization
   --------------------------------------------------------------------------------
-  Logic                       | 587/23040                           |  3%
-    --LUT,ALU,ROM16           | 587(515 LUT, 72 ALU, 0 ROM16)       | -
+  Logic                       | 589/23040                           |  3%
+    --LUT,ALU,ROM16           | 589(517 LUT, 72 ALU, 0 ROM16)       | -
     --SSRAM(RAM16)            | 0                                   | -
   Register                    | 430/23280                           |  2%
     --Logic Register as Latch | 0/23040                             |  0%

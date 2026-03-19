@@ -1,0 +1,54 @@
+[
+ {
+  "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/y8960_cartridge_tangprimer25k.v",
+  "InstLine" : 58,
+  "InstName" : "y8960cartridge_tangprimer25k",
+  "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/y8960_cartridge_tangprimer25k.v",
+  "ModuleLine" : 58,
+  "ModuleName" : "y8960cartridge_tangprimer25k",
+  "SubInsts" : [
+   {
+    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/y8960_cartridge_tangprimer25k.v",
+    "InstLine" : 89,
+    "InstName" : "u_pll",
+    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/gowin_pll/gowin_pll.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "Gowin_PLL",
+    "SubInsts" : [
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/gowin_pll/gowin_pll.v",
+      "InstLine" : 23,
+      "InstName" : "u_pll",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/gowin_pll/gowin_pll_mod.v",
+      "ModuleLine" : 10,
+      "ModuleName" : "Gowin_PLL_MOD"
+     },
+     {
+      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/gowin_pll/gowin_pll.v",
+      "InstLine" : 37,
+      "InstName" : "u_pll_init",
+      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/pll_init.v",
+      "ModuleLine" : 4,
+      "ModuleName" : "PLL_INIT"
+     }
+    ]
+   },
+   {
+    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/y8960_cartridge_tangprimer25k.v",
+    "InstLine" : 159,
+    "InstName" : "u_sound",
+    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/sound/sound.v",
+    "ModuleLine" : 7,
+    "ModuleName" : "sound"
+   },
+   {
+    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/y8960_cartridge_tangprimer25k.v",
+    "InstLine" : 170,
+    "InstName" : "u_i2s_audio",
+    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/i2s_audio/i2s_audio.v",
+    "ModuleLine" : 58,
+    "ModuleName" : "i2s_audio"
+   }
+  ]
+ }
+]

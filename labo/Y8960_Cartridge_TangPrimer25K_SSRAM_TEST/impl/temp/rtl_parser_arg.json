@@ -2,10 +2,6 @@
  "Device" : "GW5A-25A",
  "Files" : [
   {
-   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
    "Type" : "verilog"
   },
@@ -19,6 +15,10 @@
   },
   {
    "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/ssram/ssram.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
    "Type" : "verilog"
   }
  ],

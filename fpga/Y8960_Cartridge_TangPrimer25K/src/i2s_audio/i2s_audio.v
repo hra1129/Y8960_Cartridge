@@ -64,7 +64,6 @@ module i2s_audio(
 	output			i2s_audio_lrclk,
 	output			i2s_audio_bclk
 );
-	localparam		test_mode	= 0;		// 0: sound_l_in/sound_r_in を使う, 1: テスト信号を使う 
 	//	clk = 24.576MHz
 	//	BCLK = clk / 4 = 6.144MHz
 	//	LRCLK = BCLK / 64 = 96kHz (32bit x 2ch)
@@ -77,48 +76,12 @@ module i2s_audio(
 	wire	[23:0]	w_sound_l;
 	wire	[23:0]	w_sound_r;
 
-	generate
-		if( test_mode == 1 ) begin
-			reg		[6:0]	ff_880hz_counter;
-			reg				ff_440hz;
-
-			always @( posedge clk ) begin
-				if( !reset_n ) begin
-					ff_880hz_counter <= 7'd0;
-				end
-				else if( w_frame_start ) begin
-					if( ff_880hz_counter == 7'd108 ) begin
-						ff_880hz_counter <= 7'd0;
-					end
-					else begin
-						ff_880hz_counter <= ff_880hz_counter + 7'd1;
-					end
-				end
-			end
-
-			always @( posedge clk ) begin
-				if( !reset_n ) begin
-					ff_440hz <= 1'b0;
-				end
-				else if( w_frame_start ) begin
-					if( ff_880hz_counter == 7'd108 ) begin
-						ff_440hz <= ~ff_440hz;
-					end
-				end
-			end
-
-			assign w_sound_l	= { 24 { ff_440hz } };
-			assign w_sound_r	= { 24 { ff_440hz } };
-		end
-		else begin
-			assign w_sound_l	= sound_l_in;
-			assign w_sound_r	= sound_r_in;
-		end
-	endgenerate
+	assign w_sound_l	= sound_l_in;
+	assign w_sound_r	= sound_r_in;
 
 	// --------------------------------------------------------------------
 	//	BCLK divider : clk(24.576MHz) / 4 = 6.144MHz
-	//	  ff_bclk_count : 0 → 1 → 2 → 3 → 0 ...
+	//	  ff_bclk_count  : 0 → 1 → 2 → 3 → 0 ...
 	//	  BCLK(~count[1]): H   H   L   L   H ...
 	//	  BCLK falls at count 1→2, rises at count 3→0
 	// --------------------------------------------------------------------

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="y8960cartridge_tangprimer25k" Register="112" Alu="99" Lut="47" T_Register="269(112)" T_Alu="134(99)" T_Lut="270(47)" T_Bsram="1(0)">
+ <SubModule name="u_pll" T_Register="100(0)" T_Alu="18(0)" T_Lut="152(0)" T_Bsram="1(0)">
+  <SubModule name="u_pll"/>
+  <SubModule name="u_pll_init" Register="100" Alu="18" Lut="152" Bsram="1" T_Register="100(100)" T_Alu="18(18)" T_Lut="152(152)" T_Bsram="1(1)"/>
+ </SubModule>
+ <SubModule name="u_sound" Register="44" Alu="17" Lut="54" T_Register="44(44)" T_Alu="17(17)" T_Lut="54(54)"/>
+ <SubModule name="u_i2s_audio" Register="13" Lut="17" T_Register="13(13)" T_Lut="17(17)"/>
+</Module>

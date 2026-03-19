@@ -1,16 +1,16 @@
 GowinSynthesis start
 Running parser ...
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v'
+Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v'
 Compiling module 'y8960cartridge_tangprimer25k'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v":58)
 Compiling module 'Gowin_PLL'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v":1)
 Compiling module 'Gowin_PLL_MOD'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v":10)
-Compiling module 'PLL_INIT(MULTI_FAC=27)'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v":4)
+Compiling module 'PLL_INIT(MULTI_FAC=26)'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v":4)
 Compiling module 'ssram'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v":7)
-Extracting RAM for identifier 'burst_fifo'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v":89)
+Extracting RAM for identifier 'burst_fifo'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v":92)
 NOTE  (EX0101) : Current top module is "y8960cartridge_tangprimer25k"
 [5%] Running netlist conversion ...
 WARN  (CV0016) : Input dipsw is unused("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v":66)

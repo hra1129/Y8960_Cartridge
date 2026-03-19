@@ -11,11 +11,11 @@
 //	    - EQIO  (0x38): Enable Quad I/O mode (SPI -> QPI)
 //	  Quad I/O mode:
 //	    - Write (0x02): Quad Write
-//	    - Read  (0x0B): Quad Fast Read (3 dummy cycles)
+//	    - Read  (0x0B): Quad Fast Read (6 dummy cycles)
 //
 //	Protocol (Quad mode):
 //	  Write: [2 cmd nibbles][6 addr nibbles][2 data nibbles]  = 10 SCLK
-//	  Read:  [2 cmd nibbles][6 addr nibbles][3 dummy][2 data] = 13 SCLK
+//	  Read:  [2 cmd nibbles][6 addr nibbles][6 dummy][2 data] = 16 SCLK
 //
 //	Memory size: 512KB (19-bit address, 8-bit data)
 //
@@ -120,8 +120,11 @@ module ssram_test_model (
 	//	  count  8: dummy cycle 1   (also: load rd_data from memory)
 	//	  count  9: dummy cycle 2
 	//	  count 10: dummy cycle 3
-	//	  count 11: (model drives rd_data[7:4] -- sampled by master here)
-	//	  count 12: (model drives rd_data[3:0] -- sampled by master here)
+	//	  count 11: dummy cycle 4
+	//	  count 12: dummy cycle 5
+	//	  count 13: dummy cycle 6
+	//	  count 14: (model drives rd_data[7:4] -- sampled by master here)
+	//	  count 15: (model drives rd_data[3:0] -- sampled by master here)
 	//
 	always @( posedge sclk ) begin
 		if( !cs_n ) begin
@@ -185,12 +188,12 @@ module ssram_test_model (
 	//
 	always @( negedge sclk ) begin
 		if( !cs_n && quad_mode && cmd == 8'h0B ) begin
-			if( count == 11 ) begin
+			if( count == 14 ) begin
 				// Drive upper nibble of read data
 				sio_out		<= rd_data[7:4];
 				driving		<= 1'b1;
 			end
-			else if( count == 12 ) begin
+			else if( count == 15 ) begin
 				// Drive lower nibble of read data
 				sio_out		<= rd_data[3:0];
 			end

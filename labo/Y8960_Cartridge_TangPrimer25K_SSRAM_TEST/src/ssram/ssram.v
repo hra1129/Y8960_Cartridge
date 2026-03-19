@@ -50,12 +50,15 @@ module ssram (
 	localparam		c_state_dummy0		= 5'd20;
 	localparam		c_state_dummy1		= 5'd21;
 	localparam		c_state_dummy2		= 5'd22;
-	localparam		c_state_read0		= 5'd23;
-	localparam		c_state_read1		= 5'd24;
-	localparam		c_state_read2		= 5'd25;
-	localparam		c_state_burst_write0	= 5'd26;
-	localparam		c_state_burst_write1	= 5'd27;
-	localparam		c_state_burst_finish	= 5'd28;
+	localparam		c_state_dummy3		= 5'd23;
+	localparam		c_state_dummy4		= 5'd24;
+	localparam		c_state_dummy5		= 5'd25;
+	localparam		c_state_read0		= 5'd26;
+	localparam		c_state_read1		= 5'd27;
+	localparam		c_state_read2		= 5'd28;
+	localparam		c_state_burst_write0	= 5'd29;
+	localparam		c_state_burst_write1	= 5'd30;
+	localparam		c_state_burst_finish	= 5'd31;
 
 	reg				ff_ready;
 	reg				ff_valid_d0;
@@ -425,6 +428,15 @@ module ssram (
 				ff_state	<= c_state_dummy2;
 			end
 			c_state_dummy2: begin
+				ff_state	<= c_state_dummy3;
+			end
+			c_state_dummy3: begin
+				ff_state	<= c_state_dummy4;
+			end
+			c_state_dummy4: begin
+				ff_state	<= c_state_dummy5;
+			end
+			c_state_dummy5: begin
 				ff_state		<= c_state_read0;
 			end
 			c_state_read0: begin

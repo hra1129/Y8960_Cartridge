@@ -217,22 +217,22 @@ module tb ();
 						end
 						9: begin
 							ff_data[3:0]		<= sram_sio;
-							ff_count			<= 15;	// Go to finish
+							ff_count			<= 18;	// Go to finish
 						end
-						// --- dummy phase for read (3 cycles) ------
-						10, 11, 12: begin
+						// --- dummy phase for read (6 cycles) ------
+						10, 11, 12, 13, 14, 15: begin
 							ff_count			<= ff_count + 1;
 							ff_rdata			<= ff_sram_image[ ff_address ];
 						end
 						// --- data phase for read ------------------
-						13: begin
+						16: begin
 							ff_count			<= ff_count + 1;
 						end
-						14: begin
+						17: begin
 							ff_count			<= ff_count + 1;
 						end
 						// --- finish phase -------------------------
-						15: begin
+						18: begin
 							ff_count			<= 0;
 						end
 						endcase
@@ -255,14 +255,14 @@ module tb ();
 				@( negedge sram_sclk );
 				if( !sram_cs_n ) begin
 					if( quad_mode ) begin
-						if( ff_count == 13 ) begin
+						if( ff_count == 16 ) begin
 							ff_sram_sio	<= ff_rdata[7:4];
 							ff_read		<= 1'b1;
 						end
-						else if( ff_count == 14 ) begin
+						else if( ff_count == 17 ) begin
 							ff_sram_sio	<= ff_rdata[3:0];
 						end
-						else if( ff_count == 15 ) begin
+						else if( ff_count == 18 ) begin
 							ff_sram_sio	<= 4'bzzzz;
 						end
 					end

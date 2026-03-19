@@ -1,0 +1,37 @@
+{
+ "Device" : "GW5A-25A",
+ "Files" : [
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/gowin_pll/gowin_pll.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/gowin_pll/gowin_pll_mod.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/i2s_audio/i2s_audio.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/pll_init.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/sound/sound.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/src/y8960_cartridge_tangprimer25k.v",
+   "Type" : "verilog"
+  }
+ ],
+ "IncludePath" : [
+
+ ],
+ "LoopLimit" : 8000,
+ "ResultFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_I2S_TEST/impl/temp/rtl_parser.result",
+ "Top" : "y8960cartridge_tangprimer25k",
+ "VerilogStd" : "verilog_2001",
+ "VhdlStd" : "vhdl_93"
+}
