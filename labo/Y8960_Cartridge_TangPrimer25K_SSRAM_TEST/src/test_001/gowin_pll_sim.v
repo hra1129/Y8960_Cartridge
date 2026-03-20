@@ -4,7 +4,7 @@
 //	Replaces the real Gowin_PLL (with Gowin PLLA primitive + PLL_INIT)
 //	for behavioural simulation.
 //
-//	Output clock: 28.63636 MHz * 27 / 6 = 128.86362 MHz
+//	Output clock: 28.63636 MHz * 4 = 114.54544 MHz
 // --------------------------------------------------------------------
 
 `timescale 1ns/1ps
@@ -14,7 +14,7 @@ module Gowin_PLL (
 	output	reg		clkout0,
 	input			mdclk
 );
-	localparam	real	CLK_PERIOD	= 1000.0 / 128.86362;	//	ns  (~7.760 ns)
+	localparam	real	CLK_PERIOD	= 1000.0 / 114.54544;	//	ns  (~8.730 ns)
 
 	initial begin
 		clkout0 = 1'b0;

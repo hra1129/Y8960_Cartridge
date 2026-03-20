@@ -5,7 +5,7 @@
 //	Gowin_PLL is replaced by a simulation stub (gowin_pll_sim.v).
 //
 //	The DUT runs a 4-phase SSRAM test:
-//	  Phase 1: Burst write   (increment pattern, 512KB)
+//	  Phase 1: Single write  (increment pattern, 512KB)
 //	  Phase 2: Single read   & verify (increment pattern)
 //	  Phase 3: Single write  (decrement pattern, 512KB)
 //	  Phase 4: Single read   & verify (decrement pattern)
@@ -36,6 +36,7 @@ module tb ();
 	wire	[3:0]	sram_sio;
 	reg		[1:0]	dipsw;
 	wire	[3:0]	led;
+	reg		[3:0]	ff_led = 4'b1111;
 
 	// ----------------------------------------------------------------
 	//	DUT: y8960cartridge_tangprimer25k
@@ -53,7 +54,9 @@ module tb ();
 	// ----------------------------------------------------------------
 	//	Serial SRAM model
 	// ----------------------------------------------------------------
-	ssram_test_model u_sram_model (
+	ssram_test_model #(
+		.DEBUG_OUT		( 0				)
+	) u_sram_model (
 		.sclk			( sram_sclk		),
 		.cs_n			( sram_ce_n		),
 		.sio			( sram_sio		)
@@ -68,6 +71,22 @@ module tb ();
 
 	always #(clk_50m_base / 2) begin
 		clk_50m <= ~clk_50m;
+	end
+
+	// ----------------------------------------------------------------
+	//	Debug log
+	// ----------------------------------------------------------------
+	always @( posedge clk_28m ) begin
+		ff_led <= led;
+	end
+
+	initial begin
+		forever begin
+			if( ff_led != led ) begin
+				$display( "[%0t] LED Changed: %1d%1d%1d%1d", $realtime, led[3], led[2], led[1], led[0] );
+			end
+			@( posedge clk_28m );
+		end
 	end
 
 	// ----------------------------------------------------------------
@@ -97,7 +116,7 @@ module tb ();
 		dipsw	= 2'b00;
 
 		$display( "============================================" );
-		$display( "[TB] Simulation start" );
+		$display( "[%0t][TB] Simulation start", $realtime );
 		$display( "============================================" );
 
 		// --------------------------------------------------------
@@ -106,7 +125,7 @@ module tb ();
 		fork
 			begin
 				wait( u_dut.ff_phase1_done === 1'b1 );
-				$display( "[TB] Phase 1 complete -- burst write (increment pattern)" );
+				$display( "[TB] Phase 1 complete -- single write (increment pattern)" );
 			end
 			begin
 				wait( u_dut.ff_phase2_done === 1'b1 );

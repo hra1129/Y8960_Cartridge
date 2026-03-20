@@ -9,7 +9,7 @@
   "SubInsts" : [
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 88,
+    "InstLine" : 90,
     "InstName" : "u_pll",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
     "ModuleLine" : 1,
@@ -35,12 +35,20 @@
    },
    {
     "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 111,
+    "InstLine" : 107,
     "InstName" : "u_ssram",
     "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/ssram/ssram.v",
     "ModuleLine" : 7,
     "ModuleName" : "ssram"
    }
   ]
+ },
+ {
+  "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/uart/ip_uart.v",
+  "InstLine" : 27,
+  "InstName" : "ip_uart",
+  "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/uart/ip_uart.v",
+  "ModuleLine" : 27,
+  "ModuleName" : "ip_uart"
  }
 ]

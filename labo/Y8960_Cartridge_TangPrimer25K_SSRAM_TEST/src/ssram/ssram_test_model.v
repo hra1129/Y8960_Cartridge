@@ -26,7 +26,9 @@
 //	  - Master samples read data on SCLK rising edge
 // --------------------------------------------------------------------
 
-module ssram_test_model (
+module ssram_test_model #(
+	parameter		DEBUG_OUT = 1
+) (
 	input			sclk,
 	input			cs_n,
 	inout	[3:0]	sio
@@ -84,13 +86,17 @@ module ssram_test_model (
 			// ------ SPI mode: check for EQIO command ------
 			if( cmd == 8'h38 ) begin
 				quad_mode <= 1'b1;
-				$display( "[SRAM Model] EQIO command (0x38) received. Entering Quad I/O mode." );
+				if( DEBUG_OUT ) begin
+					$display( "[SRAM Model] EQIO command (0x38) received. Entering Quad I/O mode." );
+				end
 			end
 		end
 		else begin
 			// ------ Quad mode: finalize transaction ------
 			if( cmd == 8'h0B && driving ) begin
-				$display( "[SRAM Model] Read complete: addr=0x%05X data=0x%02X", addr, rd_data );
+				if( DEBUG_OUT ) begin
+					$display( "[SRAM Model] Read complete: addr=0x%05X data=0x%02X", addr, rd_data );
+				end
 			end
 		end
 
@@ -159,7 +165,9 @@ module ssram_test_model (
 						else begin
 							// Odd count (9, 11, 13, ...): capture lower nibble & commit
 							mem[addr]		<= { wr_data[7:4], sio };
-							$display( "[SRAM Model] Write: addr=0x%05X data=0x%02X", addr, { wr_data[7:4], sio } );
+							if( DEBUG_OUT ) begin
+								$display( "[SRAM Model] Write: addr=0x%05X data=0x%02X", addr, { wr_data[7:4], sio } );
+							end
 							addr			<= addr + 19'd1;
 						end
 					end

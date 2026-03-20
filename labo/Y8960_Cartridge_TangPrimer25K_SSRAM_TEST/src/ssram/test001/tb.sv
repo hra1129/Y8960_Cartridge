@@ -25,12 +25,12 @@
 // -----------------------------------------------------------------------------
 
 module tb ();
-	localparam	clk_129m_base	= 1_000_000_000/128.86362;	//	ps
+	localparam	clk_100m_base	= 1_000_000_000/100.22726;	//	ps
 	localparam	clk_base		= 1_000_000_000/28.63636;	//	ps
 	int				test_no;
 	int				i, j;
 	reg				clk;
-	reg				clk_129m;
+	reg				clk_100m;
 	reg				reset_n;
 	reg		[18:0]	address;
 	reg				valid;
@@ -52,7 +52,7 @@ module tb ();
 	// --------------------------------------------------------------------
 	ssram u_ssram (
 		.clk				( clk				),
-		.clk_129m			( clk_129m			),
+		.clk_100m			( clk_100m			),
 		.reset_n			( reset_n			),
 		.address			( address			),
 		.valid				( valid				),
@@ -61,12 +61,6 @@ module tb ();
 		.wdata				( wdata				),
 		.rdata				( rdata				),
 		.rdata_en			( rdata_en			),
-		.burst_start		( 1'b0				),
-		.burst_address		( 19'd0				),
-		.burst_length		( 17'd0				),
-		.burst_wdata		( 8'd0				),
-		.burst_wdata_en		( 1'b0				),
-		.burst_active		(					),
 		.sram_sclk			( sram_sclk			),
 		.sram_ce_n			( sram_cs_n			),
 		.sram_sio			( sram_sio			)
@@ -77,8 +71,8 @@ module tb ();
 	// --------------------------------------------------------------------
 	//	clock
 	// --------------------------------------------------------------------
-	always #(clk_129m_base/2) begin
-		clk_129m <= ~clk_129m;
+	always #(clk_100m_base/2) begin
+		clk_100m <= ~clk_100m;
 	end
 
 	always #(clk_base/2) begin
@@ -305,7 +299,7 @@ module tb ();
 		test_no = -1;
 		error_count = 0;
 		clk = 1;
-		clk_129m = 1;
+		clk_100m = 1;
 		reset_n = 0;
 		address = 0;
 		valid = 0;
