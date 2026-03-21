@@ -23,6 +23,16 @@ if errorlevel 1 (
 	pause
 	exit
 )
+vlog +define+SIM ..\uart\ip_uart.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\debug_controller\debug_controller.v
+if errorlevel 1 (
+	pause
+	exit
+)
 vlog +define+SIM tb.sv
 if errorlevel 1 (
 	pause

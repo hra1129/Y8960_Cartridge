@@ -87,10 +87,61 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	//	PLL
 	// ---------------------------------------------------------
-    Gowin_PLL u_pll (
-        .clkin		( clk_28m	),	// input  clkin
-    	.clkout0	( clk_100m	),	// output  clkout0
-        .mdclk		( clk_50m	)	// input  mdclk
+	Gowin_PLL u_pll (
+		.clkin		( clk_28m	),	// input  clkin
+		.clkout0	( clk_100m	),	// output  clkout0
+		.mdclk		( clk_50m	)	// input  mdclk
+	);
+
+	// ---------------------------------------------------------
+	//	CPU
+	// ---------------------------------------------------------
+	cz80_inst u_cz80 (
+		.reset_n			( w_reset_n				),
+		.clk_n				( clk_28m				),
+		.enable				( enable				),
+		.wait_n				( w_wait_n				),
+		.int_n				( w_int_n				),
+		.nmi_n				( w_nmi_n				),
+		.busrq_n			( w_busrq_n				),
+		.m1_n				( w_m1_n				),
+		.mreq_n				( w_mreq_n				),
+		.iorq_n				( w_iorq_n				),
+		.rd_n				( w_rd_n				),
+		.wr_n				( w_wr_n				),
+		.rfsh_n				( w_rfsh_n				),
+		.halt_n				( w_halt_n				),
+		.busak_n			( w_busak_n				),
+		.a					( w_address				),
+		.di					( w_di					),
+		.do					( w_do					)
+	);
+
+	// ---------------------------------------------------------
+	//	ROM/RAM
+	// ---------------------------------------------------------
+	wire		w_rom_mreq_n;
+	wire		w_ram_mreq_n;
+
+	assign w_rom_mreq_n = ~(~w_mreq_n & ( w_address[15:14] == 2'b00 ));
+	rom u_rom (
+		.clk				( clk_28m				),
+		.address			( w_address[13:0]		),
+		.mreq_n				( w_rom_mreq_n			),
+		.rd_n				( w_rd_n				),
+		.di					( w_di					),
+		.do					( w_do					)
+	);
+
+	assign w_ram_mreq_n = ~(~w_mreq_n & ( w_address[15:12] == 4'h4 ));
+	ram u_ram (
+		.clk				( clk_28m				),
+		.address			( w_address[11:0]		),
+		.mreq_n				( w_ram_mreq_n			),
+		.rd_n				( w_rd_n				),
+		.wr_n				( w_wr_n				),
+		.di					( w_di					),
+		.do					( w_do					)
 	);
 
 	// ---------------------------------------------------------
@@ -120,237 +171,19 @@ module y8960cartridge_tangprimer25k (
 		.sram_sio			( sram_sio				)
 	);
 
-	// ---------------------------------------------------------
-	//	Blink timer (toggle every 0.2s for error indication)
-	// ---------------------------------------------------------
-	reg		[22:0]	ff_blink_count = 23'd0;
-	reg				ff_blink = 1'b0;
-
-	always @( posedge clk_28m ) begin
-		if( !w_reset_n ) begin
-			ff_blink_count <= 23'd0;
-			ff_blink       <= 1'b0;
-		end
-		else if( ff_blink_count == 23'd5727271 ) begin
-			ff_blink_count <= 23'd0;
-			ff_blink       <= ~ff_blink;
-		end
-		else begin
-			ff_blink_count <= ff_blink_count + 23'd1;
-		end
-	end
 
 	// ---------------------------------------------------------
-	//	Test state machine (clk_28m domain)
+	//	UART
 	// ---------------------------------------------------------
-	localparam	S_WAIT_READY	= 5'd0;
-	localparam	S_WRITE1_REQ	= 5'd1;
-	localparam	S_WRITE1_ACCEPT	= 5'd2;
-	localparam	S_WRITE1_WAIT	= 5'd3;
-	localparam	S_LED0			= 5'd4;
-	localparam	S_READ1_REQ		= 5'd5;
-	localparam	S_READ1_ACCEPT	= 5'd6;
-	localparam	S_READ1_WAIT	= 5'd7;
-	localparam	S_LED1			= 5'd8;
-	localparam	S_WRITE2_REQ	= 5'd9;
-	localparam	S_WRITE2_ACCEPT	= 5'd10;
-	localparam	S_WRITE2_WAIT	= 5'd11;
-	localparam	S_LED2			= 5'd12;
-	localparam	S_READ2_REQ		= 5'd13;
-	localparam	S_READ2_ACCEPT	= 5'd14;
-	localparam	S_READ2_WAIT	= 5'd15;
-	localparam	S_LED3			= 5'd16;
-	localparam	S_DONE			= 5'd17;
-
-	reg		[4:0]	ff_state = S_WAIT_READY;
-	reg		[18:0]	ff_counter = 19'd0;
-	reg				ff_error1 = 1'b0;
-	reg				ff_error2 = 1'b0;
-	reg				ff_phase1_done = 1'b0;
-	reg				ff_phase2_done = 1'b0;
-	reg				ff_phase3_done = 1'b0;
-	reg				ff_phase4_done = 1'b0;
-
-	always @( posedge clk_28m ) begin
-		if( !w_reset_n ) begin
-			ff_state		<= S_WAIT_READY;
-			ff_valid		<= 1'b0;
-			ff_write		<= 1'b0;
-			ff_wdata		<= 8'd0;
-			ff_address		<= 19'd0;
-			ff_counter		<= 19'd0;
-			ff_error1		<= 1'b0;
-			ff_error2		<= 1'b0;
-			ff_phase1_done	<= 1'b0;
-			ff_phase2_done	<= 1'b0;
-			ff_phase3_done	<= 1'b0;
-			ff_phase4_done	<= 1'b0;
-		end
-		else begin
-			case( ff_state )
-			// -------------------------------------------------
-			//	Wait for SSRAM initialization to complete
-			// -------------------------------------------------
-			S_WAIT_READY: begin
-				if( w_ssram_ready ) begin
-					ff_state <= S_WRITE1_REQ;
-					ff_counter  <= 19'd0;
-				end
-			end
-
-			// -------------------------------------------------
-			//	Phase 1: Single write (increment pattern)
-			//	Data = address[7:0]  (0x00, 0x01, 0x02, ...)
-			// -------------------------------------------------
-			S_WRITE1_REQ: begin
-				ff_address <= ff_counter;
-				ff_write   <= 1'b1;
-				ff_wdata   <= ff_counter[7:0];
-				ff_valid   <= 1'b1;
-				ff_state   <= S_WRITE1_ACCEPT;
-			end
-			S_WRITE1_ACCEPT: begin
-				if( w_ssram_ready ) begin
-					ff_valid <= 1'b0;
-					ff_state <= S_WRITE1_WAIT;
-				end
-			end
-			S_WRITE1_WAIT: begin
-				if( ff_counter == 19'h7FFFF ) begin
-					ff_state <= S_LED0;
-				end
-				else begin
-					ff_counter  <= ff_counter + 19'd1;
-					ff_state <= S_WRITE1_REQ;
-				end
-			end
-			S_LED0: begin
-				ff_phase1_done <= 1'b1;
-				ff_counter     <= 19'd0;
-				ff_error1      <= 1'b0;
-				ff_state       <= S_READ1_REQ;
-			end
-
-			// -------------------------------------------------
-			//	Phase 2: Single read & verify (increment pattern)
-			//	Expected: data = address[7:0]
-			// -------------------------------------------------
-			S_READ1_REQ: begin
-				ff_address <= ff_counter;
-				ff_write   <= 1'b0;
-				ff_valid   <= 1'b1;
-				ff_state   <= S_READ1_ACCEPT;
-			end
-			S_READ1_ACCEPT: begin
-				if( w_ssram_ready ) begin
-					ff_valid <= 1'b0;
-					ff_state <= S_READ1_WAIT;
-				end
-			end
-			S_READ1_WAIT: begin
-				if( w_ssram_rdata_en ) begin
-					if( w_ssram_rdata != ff_counter[7:0] ) begin
-						ff_error1 <= 1'b1;
-					end
-					if( ff_counter == 19'h7FFFF ) begin
-						ff_state <= S_LED1;
-					end
-					else begin
-						ff_counter  <= ff_counter + 19'd1;
-						ff_state <= S_READ1_REQ;
-					end
-				end
-			end
-			S_LED1: begin
-				ff_phase2_done <= 1'b1;
-				ff_counter        <= 19'd0;
-				ff_state       <= S_WRITE2_REQ;
-			end
-
-			// -------------------------------------------------
-			//	Phase 3: Single write (decrement pattern)
-			//	Data = ~address[7:0]  (0xFF, 0xFE, 0xFD, ...)
-			// -------------------------------------------------
-			S_WRITE2_REQ: begin
-				ff_address <= ff_counter;
-				ff_write   <= 1'b1;
-				ff_wdata   <= ~ff_counter[7:0];
-				ff_valid   <= 1'b1;
-				ff_state   <= S_WRITE2_ACCEPT;
-			end
-			S_WRITE2_ACCEPT: begin
-				if( w_ssram_ready ) begin
-					ff_valid <= 1'b0;
-					ff_state <= S_WRITE2_WAIT;
-				end
-			end
-			S_WRITE2_WAIT: begin
-				if( ff_counter == 19'h7FFFF ) begin
-					ff_state <= S_LED2;
-				end
-				else begin
-					ff_counter  <= ff_counter + 19'd1;
-					ff_state <= S_WRITE2_REQ;
-				end
-			end
-			S_LED2: begin
-				ff_phase3_done <= 1'b1;
-				ff_counter        <= 19'd0;
-				ff_error2      <= 1'b0;
-				ff_state       <= S_READ2_REQ;
-			end
-
-			// -------------------------------------------------
-			//	Phase 4: Single read & verify (decrement pattern)
-			//	Expected: data = ~address[7:0]
-			// -------------------------------------------------
-			S_READ2_REQ: begin
-				ff_address <= ff_counter;
-				ff_write   <= 1'b0;
-				ff_valid   <= 1'b1;
-				ff_state   <= S_READ2_ACCEPT;
-			end
-			S_READ2_ACCEPT: begin
-				if( w_ssram_ready ) begin
-					ff_valid <= 1'b0;
-					ff_state <= S_READ2_WAIT;
-				end
-			end
-			S_READ2_WAIT: begin
-				if( w_ssram_rdata_en ) begin
-					if( w_ssram_rdata != ~ff_counter[7:0] ) begin
-						ff_error2 <= 1'b1;
-					end
-					if( ff_counter == 19'h7FFFF ) begin
-						ff_state <= S_LED3;
-					end
-					else begin
-						ff_counter  <= ff_counter + 19'd1;
-						ff_state <= S_READ2_REQ;
-					end
-				end
-			end
-			S_LED3: begin
-				ff_phase4_done <= 1'b1;
-				ff_state       <= S_DONE;
-			end
-
-			// -------------------------------------------------
-			S_DONE: begin
-			end
-			endcase
-		end
-	end
-
-	// ---------------------------------------------------------
-	//	LED output (active low: 0=ON, 1=OFF)
-	//	LED[0]: Phase 1 complete (single write increment)
-	//	LED[1]: Phase 2 result  (read verify: ON=OK, blink=NG)
-	//	LED[2]: Phase 3 complete (single write decrement)
-	//	LED[3]: Phase 4 result  (read verify: ON=OK, blink=NG)
-	// ---------------------------------------------------------
-	assign led[0] = ff_phase1_done ? 1'b0 : 1'b1;
-	assign led[1] = ff_phase2_done ? (ff_error1 ? ff_blink : 1'b0) : 1'b1;
-	assign led[2] = ff_phase3_done ? 1'b0 : 1'b1;
-	assign led[3] = ff_phase4_done ? (ff_error2 ? ff_blink : 1'b0) : 1'b1;
+	ip_uart_inst u_uart (
+		.n_reset		( w_reset_n		),
+		.clk			( clk_28m		),
+		.address		( w_address[0]	),
+		.iorq_n			( w_iorq_n		),
+		.wait_n			( w_wait_n		),
+		.wr_n			( w_wr_n		),
+		.di				( w_di			),
+		.uart_tx		( uart_tx		),
+		.led			( led			)
+	);
 endmodule

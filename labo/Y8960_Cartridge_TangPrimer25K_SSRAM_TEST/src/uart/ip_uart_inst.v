@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 //	ip_uart_inst.v
-//	Copyright (C)2024 Takayuki Hara (HRA!)
+//	Copyright (C)2026 Takayuki Hara (HRA!)
 //	
 //	 Permission is hereby granted, free of charge, to any person obtaining a 
 //	copy of this software and associated documentation files (the "Software"), 
@@ -24,56 +24,46 @@
 //		UART (TX ONLY)
 // -----------------------------------------------------------------------------
 
-module ip_uart_inst #(
-	parameter		clk_freq	= 27000000,
-	parameter		uart_freq	= 115200
-) (
-	input			reset_n,
+module ip_uart_inst (
+	input			n_reset,
 	input			clk,
-	input			enable,
+	input			address,
 	input			iorq_n,
+	output			wait_n,
 	input			wr_n,
-	input			rd_n,
-	input	[7:0]	a,
-	input	[7:0]	d,
-	output	[7:0]	q,
-	output			q_en,
-	input	[1:0]	button,
-	output			uart_tx
+	input	[7:0]	di,
+	output			uart_tx,
+	output	[3:0]	led
 );
-	reg		[7:0]	ff_d;
+	reg				ff_valid;
 	reg				ff_wr_n;
-	reg				ff_req;
-	reg				ff_hold;
-	wire			w_busy;
-	wire			w_dec;
-
-	assign w_dec	= !iorq_n && (a == 8'h10);
-	assign q		= (w_dec && !rd_n) ? { button, 5'd0, w_busy }: 8'd0;
-	assign q_en		= (w_dec && !rd_n);
+	wire			w_ready;
+	reg		[3:0]	ff_led;
 
 	always @( posedge clk ) begin
-		if( !reset_n ) begin
+		if( !n_reset ) begin
 			ff_wr_n <= 1'b1;
 		end
-		else if( enable ) begin
+		else begin
 			ff_wr_n <= wr_n;
 		end
-		else begin
-			//	hold
-		end
 	end
 
 	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_d <= 8'd0;
+		if( !n_reset ) begin
+			ff_valid <= 1'b0;
 		end
-		else if( enable ) begin
-			if( w_dec && !ff_wr_n ) begin
-				ff_d <= d;
+		else if( ff_valid ) begin
+			if( w_ready ) begin
+				ff_valid <= 1'b0;
+			end
+		end
+		else if( !wr_n && ff_wr_n ) begin
+			if( address == 1'b0 ) begin
+				ff_valid <= 1'b1;
 			end
 			else begin
-				//	hold
+				ff_led <= di[3:0];
 			end
 		end
 		else begin
@@ -81,45 +71,18 @@ module ip_uart_inst #(
 		end
 	end
 
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_req <= 1'b0;
-		end
-		else if( enable && w_dec && !ff_wr_n && !ff_hold ) begin
-			ff_req <= 1'b1;
-		end
-		else if( !w_busy ) begin
-			ff_req <= 1'b0;
-		end
-		else begin
-			//	hold
-		end
-	end
-
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_hold <= 1'b0;
-		end
-		else if( enable && w_dec && !ff_wr_n ) begin
-			ff_hold <= 1'b1;
-		end
-		else if( ff_wr_n ) begin
-			ff_hold <= 1'b0;
-		end
-		else begin
-			//	hold
-		end
-	end
+	assign wait_n	= ~(ff_valid && ~w_ready);
+	assign led		= ~ff_led;
 
 	ip_uart #(
-		.clk_freq		( clk_freq		),
-		.uart_freq		( uart_freq		)
+		.clk_freq		( 28636360		),
+		.uart_freq		( 115200		)
 	) u_uart (
-		.n_reset		( reset_n		),
+		.n_reset		( n_reset		),
 		.clk			( clk			),
-		.send_data		( ff_d			),
-		.send_req		( ff_req		),
-		.send_busy		( w_busy		),
+		.send_data		( di			),
+		.send_valid		( ff_valid		),
+		.send_ready		( w_ready		),
 		.uart_tx		( uart_tx		)
 	);
 endmodule
