@@ -60,290 +60,326 @@ module system_controller#(
 ) (
 	input			clk,
 	input			reset_n,
-	//	I/O
-	input			bus_cs,				//	I/O 40h...4Fh ChipSelect
-	input	[3:0]	bus_address,		//	I/O Address LSB
+	input			bus_cs,
+	input	[3:0]	bus_address,
 	input			bus_valid,
 	output			bus_ready,
 	input			bus_write,
 	input	[7:0]	bus_wdata,
 	output	[7:0]	bus_rdata,
 	output			bus_rdata_en,
-	//	SerialFrashROM I/F
-	output	[22:0]	rom_address,		//	8MB
-	output			rom_valid,
-	input			rom_ready,
-	output	[1:0]	rom_command,
-	output	[7:0]	rom_wdata,
-	input	[7:0]	rom_rdata,
-	input			rom_rdata_en,
-	//	Burst copy control
+	output			rom_bus_address,
+	output			rom_bus_valid,
+	input			rom_bus_ready,
+	output			rom_bus_write,
+	output	[7:0]	rom_bus_wdata,
+	input	[7:0]	rom_bus_rdata,
+	input			rom_bus_rdata_en,
+	output			init_rom_bus_address,
+	output			init_rom_bus_valid,
+	input			init_rom_bus_ready,
+	output			init_rom_bus_write,
+	output	[7:0]	init_rom_bus_wdata,
+	input	[7:0]	init_rom_bus_rdata,
+	input			init_rom_bus_rdata_en,
 	input			sram_ready,
-	output			burst_rom_start,
-	output	[22:0]	burst_rom_address,
-	output	[16:0]	burst_rom_length,
-	input			burst_rom_active,
-	output			burst_sram_start,
-	output	[18:0]	burst_sram_address,
-	output	[16:0]	burst_sram_length,
-	input			burst_sram_active,
-	//	Wait signal
+	output			init_sram_bus_address,
+	output			init_sram_bus_valid,
+	input			init_sram_bus_ready,
+	output			init_sram_bus_write,
+	output	[7:0]	init_sram_bus_wdata,
+	output			sram_initialize,
 	output			wait_n
 );
-	// ------------------------------------------------------------------------
-	//	I/O
-	//	40h Enabler   : 40h を書き込むと有効になる。有効な時に読み出すと BFh を返す。
-	//
-	//	41h SubFunc   : 機能選択
-	//		SubFunc に指定する機能番号
-	//		00h : Device Information
-	//		01h : Config ROM interface
-	//		02h-FFh : Reserved
-	//
-	//	- 00h Device Information
-	//		42h DeviceID : 下記のデバイスIDを指定すると、存在する場合は反転した値を読み出せる。
-	//			00h: N/A
-	//			01h: CPU Module
-	//			02h: SOUND Module
-	//			03h: VIDEO Module
-	//			04h-3Fh: Reserved
-	//			40h: BIOS
-	//			41h-5Fh: Reserved
-	//			60h: VDP Cartridge
-	//			61h: SOUND Cartridge
-	//			62h-FEh: Reserved
-	//			FFh: N/A
-	//			無効な場合、読み出すと FFh が返る。
-	//		43h System Information (42h=CPU Module の場合) : Read Only
-	//			bit0: 0=FPGA Hardware, 1=Software Emulator
-	//
-	//	- 01h Config ROM interface
-	//		42h DeviceID : 下記のデバイスIDを指定すると、存在する場合は反転した値を読み出せる。
-	//			00h: N/A
-	//			01h: CPU Module (Config ROM) [FPGA Hardware only]
-	//			02h: SOUND Module (Config ROM) [FPGA Hardware only]
-	//			03h: VIDEO Module (Config ROM) [FPGA Hardware only]
-	//			04h-3Fh: Reserved
-	//			40h: BIOS
-	//			41h-5Fh: Reserved
-	//			60h: VDP Cartridge (Config ROM)
-	//			61h: SOUND Cartridge (Config ROM + BIOS)
-	//			62h-FEh: Reserved
-	//			FFh: N/A
-	//			無効な場合、読み出すと FFh が返る。
-	//		43h Address(L): ターゲットアドレス指定、bit7-0
-	//		44h Address(M): ターゲットアドレス指定、bit15-8
-	//		45h Address(H): ターゲットアドレス指定、bit23-16
-	//		46h Command   : Command実行
-	//			Command番号
-	//			00h: Read
-	//			01h: Write
-	//			02h: Sector Erase
-	//			03h: All Erase
-	//			04h-FFh: Reserved
-	//		47h Read/Write: Command Read/Write の読み書きデータ
-	//
-	// ------------------------------------------------------------------------
-	localparam		c_io_enabler			= 4'h0;		//	40h
-	localparam		c_io_devsel				= 4'h1;		//	41h
-	localparam		c_io_address_l			= 4'h2;		//	42h
-	localparam		c_io_address_m			= 4'h3;		//	43h
-	localparam		c_io_address_h			= 4'h4;		//	44h
-	localparam		c_io_command			= 4'h5;		//	45h
-	localparam		c_io_data				= 4'h6;		//	46h
+	localparam		c_io_enabler			= 4'h0;
+	localparam		c_io_devsel				= 4'h1;
+	localparam		c_io_address_l			= 4'h2;
+	localparam		c_io_address_m			= 4'h3;
+	localparam		c_io_address_h			= 4'h4;
+	localparam		c_io_command			= 4'h5;
+	localparam		c_io_data				= 4'h6;
 
 	localparam		c_command_read			= 8'h00;
 	localparam		c_command_write			= 8'h01;
 	localparam		c_command_sector_erase	= 8'h02;
 	localparam		c_command_all_erase		= 8'h03;
 
-	reg				ff_enable = 1'b0;
-	reg				ff_devsel = 1'b0;
-	reg		[22:0]	ff_address;
-	reg		[7:0]	ff_data;
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
-
-	// ---------------------------------------------------------
-	//	State machine
-	// ---------------------------------------------------------
-	localparam		c_st_boot_burst_start		= 4'd0;
-	localparam		c_st_boot_burst_wait_act	= 4'd1;
-	localparam		c_st_boot_burst_wait_done	= 4'd2;
-	localparam		c_st_idle					= 4'd3;
-	localparam		c_st_cmd_req				= 4'd4;
-	localparam		c_st_cmd_accept				= 4'd5;
-	localparam		c_st_cmd_read_wait			= 4'd6;
-	localparam		c_st_cmd_done_wait			= 4'd7;
+	localparam		c_st_init_sel_cmd		= 5'd0;
+	localparam		c_st_init_sel_data		= 5'd1;
+	localparam		c_st_idle				= 5'd2;
+	localparam		c_st_addr_mode			= 5'd3;
+	localparam		c_st_addr_l				= 5'd4;
+	localparam		c_st_addr_m				= 5'd5;
+	localparam		c_st_addr_h				= 5'd6;
+	localparam		c_st_read_cmd			= 5'd7;
+	localparam		c_st_read_req			= 5'd8;
+	localparam		c_st_read_wait			= 5'd9;
+	localparam		c_st_write_cmd			= 5'd10;
+	localparam		c_st_write_data			= 5'd11;
+	localparam		c_st_write_WAIT			= 5'd12;
+	localparam		c_st_write_end			= 5'd13;
+	localparam		c_st_write_end_wait		= 5'd14;
+	localparam		c_st_erase_cmd			= 5'd15;
+	localparam		c_st_erase_wait			= 5'd16;
+	localparam		c_st_chip_cmd			= 5'd17;
+	localparam		c_st_chip_data			= 5'd18;
+	localparam		c_st_chip_wait			= 5'd19;
+	localparam		c_st_init_wait_sram		= 5'd20;
+	localparam		c_st_init_set_addr_cmd	= 5'd21;
+	localparam		c_st_init_set_addr_l	= 5'd22;
+	localparam		c_st_init_set_addr_m	= 5'd23;
+	localparam		c_st_init_set_addr_h	= 5'd24;
+	localparam		c_st_init_read_cmd		= 5'd25;
+	localparam		c_st_init_read_req		= 5'd26;
+	localparam		c_st_init_read_wait		= 5'd27;
+	localparam		c_st_init_write_req		= 5'd28;
+	localparam		c_st_init_write_wait		= 5'd29;
+	localparam		c_st_init_done			= 5'd30;
 
 	localparam	[22:0]	c_boot_rom_base		= 23'h7E0000;
 
-	reg		[3:0]	ff_state;
-	reg		[1:0]	ff_rom_command;
-	reg				ff_rom_valid;
-	reg				ff_wait_n;
-	reg				ff_burst_start;
+	reg			ff_enable;
+	reg			ff_devsel;
+	reg	[22:0]	ff_address;
+	reg	[7:0]	ff_data;
+	reg	[7:0]	ff_rdata;
+	reg			ff_rdata_en;
+	reg	[4:0]	ff_state;
+	reg	[1:0]	ff_rom_command;
+	reg			ff_rom_bus_address;
+	reg			ff_rom_bus_valid;
+	reg			ff_rom_bus_write;
+	reg		[4:0]	ff_init_state;
+	reg		[18:0]	ff_init_src_count;
+	reg		[18:0]	ff_init_dst_address;
+	reg		[7:0]	ff_init_data;
+	reg			ff_init_done;
+	reg			ff_init_rom_bus_address;
+	reg			ff_init_rom_bus_valid;
+	reg			ff_init_rom_bus_write;
+	reg	[7:0]	ff_init_rom_bus_wdata;
+	reg			ff_init_sram_bus_address;
+	reg			ff_init_sram_bus_valid;
+	reg			ff_init_sram_bus_write;
+	reg	[7:0]	ff_init_sram_bus_wdata;
+	reg	[7:0]	ff_rom_bus_wdata;
 
-	// ---------------------------------------------------------
-	//	Enabler
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_enable <= 1'b0;
 		end
 		else if( bus_cs && bus_valid && bus_write && bus_address == c_io_enabler ) begin
-			if( bus_wdata == 8'h40 ) begin
-				ff_enable <= 1'b1;
-			end
-			else begin
-				ff_enable <= 1'b0;
-			end
+			ff_enable <= (bus_wdata == 8'h40);
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	device select
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_devsel <= 1'b0;
 		end
 		else if( !ff_enable ) begin
-			//	hold
+			ff_devsel <= 1'b0;
 		end
 		else if( bus_cs && bus_valid && bus_write && bus_address == c_io_devsel ) begin
-			if( bus_wdata == device_id ) begin
-				ff_devsel <= 1'b1;
-			end
-			else begin
-				ff_devsel <= 1'b0;
-			end
+			ff_devsel <= (bus_wdata == device_id);
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	address latch
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_address <= 23'd0;
 		end
-		else if( !ff_enable || !ff_devsel ) begin
-			//	hold
-		end
-		else if( bus_cs && bus_valid && bus_write ) begin
+		else if( ff_enable && ff_devsel && bus_cs && bus_valid && bus_write ) begin
 			case( bus_address )
 			c_io_address_l:		ff_address[ 7: 0] <= bus_wdata;
 			c_io_address_m:		ff_address[15: 8] <= bus_wdata;
 			c_io_address_h:		ff_address[22:16] <= bus_wdata[6:0];
-			default:			;
+			default:				;
 			endcase
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	Data register (46h)
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_data <= 8'd0;
 		end
-		else if( rom_rdata_en && (ff_state == c_st_cmd_read_wait) ) begin
-			ff_data <= rom_rdata;
+		else if( rom_bus_rdata_en && ff_state == c_st_read_wait ) begin
+			ff_data <= rom_bus_rdata;
 		end
 		else if( ff_enable && ff_devsel && bus_cs && bus_valid && bus_write && bus_address == c_io_data ) begin
 			ff_data <= bus_wdata;
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	Main state machine
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_state          <= (device_id == 8'h61) ? c_st_boot_burst_start : c_st_idle;
-			ff_wait_n         <= (device_id == 8'h61) ? 1'b0 : 1'b1;
-			ff_rom_command    <= 2'd0;
-			ff_rom_valid      <= 1'b0;
-			ff_burst_start    <= 1'b0;
+			ff_state <= c_st_idle;
+			ff_rom_command <= 2'd0;
+			ff_rom_bus_address <= 1'b0;
+			ff_rom_bus_valid <= 1'b0;
+			ff_rom_bus_write <= 1'b0;
+			ff_rom_bus_wdata <= 8'd0;
 		end
 		else begin
+			ff_rom_bus_valid <= 1'b0;
 			case( ff_state )
-			// --- Boot burst: wait for SRAM init, then assert start signal ---
-			c_st_boot_burst_start: begin
-				if( sram_ready ) begin
-					ff_burst_start <= 1'b1;
-					ff_state       <= c_st_boot_burst_wait_act;
-				end
-			end
-			// --- Boot burst: wait for burst to become active ---
-			c_st_boot_burst_wait_act: begin
-				ff_burst_start <= 1'b0;
-				if( burst_rom_active || burst_sram_active ) begin
-					ff_state <= c_st_boot_burst_wait_done;
-				end
-			end
-			// --- Boot burst: wait for burst to complete ---
-			c_st_boot_burst_wait_done: begin
-				if( !burst_rom_active && !burst_sram_active ) begin
-					ff_wait_n <= 1'b1;
-					ff_state  <= c_st_idle;
-				end
-			end
-			// --- Idle ---
 			c_st_idle: begin
-				ff_rom_valid  <= 1'b0;
 				if( ff_enable && ff_devsel && bus_cs && bus_valid && bus_write && bus_address == c_io_command ) begin
 					case( bus_wdata )
 					c_command_read: begin
 						ff_rom_command <= 2'd0;
-						ff_state       <= c_st_cmd_req;
+						ff_state <= c_st_addr_mode;
 					end
 					c_command_write: begin
 						ff_rom_command <= 2'd1;
-						ff_state       <= c_st_cmd_req;
+						ff_state <= c_st_addr_mode;
 					end
 					c_command_sector_erase: begin
 						ff_rom_command <= 2'd2;
-						ff_state       <= c_st_cmd_req;
+						ff_state <= c_st_addr_mode;
 					end
 					c_command_all_erase: begin
 						ff_rom_command <= 2'd3;
-						ff_state       <= c_st_cmd_req;
+						ff_state <= c_st_chip_cmd;
 					end
 					default: ;
 					endcase
 				end
 			end
-			// --- Command: ROM request ---
-			c_st_cmd_req: begin
-				if( rom_ready ) begin
-					ff_rom_valid <= 1'b1;
-					ff_state     <= c_st_cmd_accept;
+			c_st_addr_mode: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b0;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h00;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_addr_l;
 				end
 			end
-			// --- Command: wait ROM accept ---
-			c_st_cmd_accept: begin
-				if( !rom_ready ) begin
-					ff_rom_valid <= 1'b0;
-					if( ff_rom_command == 2'd0 ) begin
-						ff_state <= c_st_cmd_read_wait;
-					end
-					else begin
-						ff_state <= c_st_cmd_done_wait;
-					end
+			c_st_addr_l: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b1;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= ff_address[7:0];
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_addr_m;
 				end
 			end
-			// --- Command: wait ROM read data ---
-			c_st_cmd_read_wait: begin
-				if( rom_rdata_en ) begin
-					// ff_data is updated in the data register always block
+			c_st_addr_m: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b1;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= ff_address[15:8];
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_addr_h;
+				end
+			end
+			c_st_addr_h: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b1;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= { 1'b0, ff_address[22:16] };
+					ff_rom_bus_valid <= 1'b1;
+					case( ff_rom_command )
+					2'd0:	ff_state <= c_st_read_cmd;
+					2'd1:	ff_state <= c_st_write_cmd;
+					default:	ff_state <= c_st_erase_cmd;
+					endcase
+				end
+			end
+			c_st_read_cmd: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b0;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h01;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_read_req;
+				end
+			end
+			c_st_read_req: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b1;
+					ff_rom_bus_write <= 1'b0;
+					ff_rom_bus_wdata <= 8'd0;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_read_wait;
+				end
+			end
+			c_st_read_wait: begin
+				if( rom_bus_rdata_en ) begin
 					ff_state <= c_st_idle;
 				end
 			end
-			// --- Command: wait ROM write/erase complete ---
-			c_st_cmd_done_wait: begin
-				if( rom_ready ) begin
+			c_st_write_cmd: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b0;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h03;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_write_data;
+				end
+			end
+			c_st_write_data: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b1;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= ff_data;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_write_WAIT;
+				end
+			end
+			c_st_write_WAIT: begin
+				if( rom_bus_ready ) begin
+					ff_state <= c_st_write_end;
+				end
+			end
+			c_st_write_end: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b0;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h07;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_write_end_wait;
+				end
+			end
+			c_st_write_end_wait: begin
+				if( rom_bus_ready ) begin
+					ff_state <= c_st_idle;
+				end
+			end
+			c_st_erase_cmd: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b0;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h09;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_erase_wait;
+				end
+			end
+			c_st_erase_wait: begin
+				if( rom_bus_ready ) begin
+					ff_state <= c_st_idle;
+				end
+			end
+			c_st_chip_cmd: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b0;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h04;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_chip_data;
+				end
+			end
+			c_st_chip_data: begin
+				if( rom_bus_ready ) begin
+					ff_rom_bus_address <= 1'b1;
+					ff_rom_bus_write <= 1'b1;
+					ff_rom_bus_wdata <= 8'h00;
+					ff_rom_bus_valid <= 1'b1;
+					ff_state <= c_st_chip_wait;
+				end
+			end
+			c_st_chip_wait: begin
+				if( rom_bus_ready ) begin
 					ff_state <= c_st_idle;
 				end
 			end
@@ -354,9 +390,6 @@ module system_controller#(
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	Bus read data
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_rdata <= 8'hFF;
@@ -378,9 +411,6 @@ module system_controller#(
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	Bus read data enable
-	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_rdata_en <= 1'b0;
@@ -393,26 +423,159 @@ module system_controller#(
 		end
 	end
 
-	// ---------------------------------------------------------
-	//	Output assignments
-	// ---------------------------------------------------------
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_init_state <= c_st_init_wait_sram;
+			ff_init_src_count <= 19'd0;
+			ff_init_dst_address <= 19'd0;
+			ff_init_data <= 8'd0;
+			ff_init_done <= 1'b0;
+			ff_init_rom_bus_address <= 1'b0;
+			ff_init_rom_bus_valid <= 1'b0;
+			ff_init_rom_bus_write <= 1'b0;
+			ff_init_rom_bus_wdata <= 8'd0;
+			ff_init_sram_bus_address <= 1'b0;
+			ff_init_sram_bus_valid <= 1'b0;
+			ff_init_sram_bus_write <= 1'b0;
+			ff_init_sram_bus_wdata <= 8'd0;
+		end
+		else begin
+			ff_init_rom_bus_valid <= 1'b0;
+			ff_init_sram_bus_valid <= 1'b0;
+			case( ff_init_state )
+			c_st_init_wait_sram: begin
+				if( sram_ready ) begin
+					ff_init_dst_address <= 19'd0;
+					ff_init_state <= c_st_init_sel_cmd;
+				end
+			end
+			c_st_init_sel_cmd: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b0;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h06;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_sel_data;
+				end
+			end
+			c_st_init_sel_data: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b1;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h00;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_set_addr_cmd;
+				end
+			end
+			c_st_init_set_addr_cmd: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b0;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h00;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_set_addr_l;
+				end
+			end
+			c_st_init_set_addr_l: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b1;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h00;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_set_addr_m;
+				end
+			end
+			c_st_init_set_addr_m: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b1;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h00;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_set_addr_h;
+				end
+			end
+			c_st_init_set_addr_h: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b1;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h78;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_read_cmd;
+				end
+			end
+			c_st_init_read_cmd: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b0;
+					ff_init_rom_bus_write <= 1'b1;
+					ff_init_rom_bus_wdata <= 8'h01;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_read_req;
+				end
+			end
+			c_st_init_read_req: begin
+				if( init_rom_bus_ready ) begin
+					ff_init_rom_bus_address <= 1'b1;
+					ff_init_rom_bus_write <= 1'b0;
+					ff_init_rom_bus_wdata <= 8'd0;
+					ff_init_rom_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_read_wait;
+				end
+			end
+			c_st_init_read_wait: begin
+				if( init_rom_bus_rdata_en ) begin
+					ff_init_data <= init_rom_bus_rdata;
+					ff_init_state <= c_st_init_write_req;
+				end
+			end
+			c_st_init_write_req: begin
+				if( init_sram_bus_ready ) begin
+					ff_init_sram_bus_address <= ff_init_dst_address;
+					ff_init_sram_bus_write <= 1'b1;
+					ff_init_sram_bus_wdata <= ff_init_data;
+					ff_init_sram_bus_valid <= 1'b1;
+					ff_init_state <= c_st_init_write_wait;
+				end
+			end
+			c_st_init_write_wait: begin
+				if( init_sram_bus_ready ) begin
+					if( ff_init_dst_address == 19'h7FFFF ) begin
+						ff_init_state <= c_st_init_done;
+					end
+					else begin
+						ff_init_dst_address <= ff_init_dst_address + 19'd1;
+						ff_init_state <= c_st_init_read_req;
+					end
+				end
+			end
+			c_st_init_done: begin
+				ff_init_done <= 1'b1;
+			end
+			default: begin
+				ff_init_state <= c_st_init_wait_sram;
+			end
+			endcase
+		end
+	end
 
-	assign bus_ready	= (ff_state == c_st_idle);
-	assign bus_rdata	= ff_rdata;
-	assign bus_rdata_en	= ff_rdata_en;
+	assign bus_ready = (ff_state == c_st_idle);
+	assign bus_rdata = ff_rdata;
+	assign bus_rdata_en = ff_rdata_en;
 
-	assign rom_address	= ff_address;
-	assign rom_valid	= ff_rom_valid;
-	assign rom_command	= ff_rom_command;
-	assign rom_wdata	= ff_data;
+	assign rom_bus_address = ff_rom_bus_address;
+	assign rom_bus_valid = ff_rom_bus_valid;
+	assign rom_bus_write = ff_rom_bus_write;
+	assign rom_bus_wdata = ff_rom_bus_wdata;
 
-	assign burst_rom_start		= ff_burst_start;
-	assign burst_rom_address	= c_boot_rom_base;
-	assign burst_rom_length		= 17'h1FFFF;
-	assign burst_sram_start		= ff_burst_start;
-	assign burst_sram_address	= 19'h00000;
-	assign burst_sram_length	= 17'h1FFFF;
+	assign init_rom_bus_address = ff_init_rom_bus_address;
+	assign init_rom_bus_valid = ff_init_rom_bus_valid;
+	assign init_rom_bus_write = ff_init_rom_bus_write;
+	assign init_rom_bus_wdata = ff_init_rom_bus_wdata;
+	assign init_sram_bus_address = ff_init_sram_bus_address;
+	assign init_sram_bus_valid = ff_init_sram_bus_valid;
+	assign init_sram_bus_write = ff_init_sram_bus_write;
+	assign init_sram_bus_wdata = ff_init_sram_bus_wdata;
 
-	assign wait_n		= ff_wait_n;
+	assign sram_initialize = ~ff_init_done;
+	assign wait_n = ff_init_done;
 
 endmodule

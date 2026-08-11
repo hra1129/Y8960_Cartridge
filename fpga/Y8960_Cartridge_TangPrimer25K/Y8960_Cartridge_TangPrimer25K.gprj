@@ -67,6 +67,7 @@
         <File path="src/pll_init.v" type="file.verilog" enable="1"/>
         <File path="src/sfrom/sfrom.v" type="file.verilog" enable="1"/>
         <File path="src/sn76489_audio_patch/sn76489.v" type="file.verilog" enable="1"/>
+        <File path="src/spi_rom/ip_spi_rom.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/dual_ssg.v" type="file.verilog" enable="1"/>
         <File path="src/ssg/ssg_core.v" type="file.verilog" enable="1"/>
         <File path="src/ssram/sram_arbiter.v" type="file.verilog" enable="1"/>
@@ -77,6 +78,7 @@
         <File path="src/y8960_cartridge_tangprimer25k.v" type="file.verilog" enable="1"/>
         <File path="src/sn76489_audio/src/sn76489_audio.vhd" type="file.vhdl" enable="1"/>
         <File path="src/Y8960_Cartridge_TangPrimer25K.cst" type="file.cst" enable="1"/>
+        <File path="src/Y8960_Cartridge_TangPrimer25K.sdc" type="file.sdc" enable="1"/>
         <File path="src/i2s_audio/i2s_audio.txt" type="file.other" enable="1"/>
         <File path="src/opl3/exp_tab.mem" type="file.other" enable="1"/>
         <File path="src/opl3/opl3prg.mem" type="file.other" enable="1"/>
