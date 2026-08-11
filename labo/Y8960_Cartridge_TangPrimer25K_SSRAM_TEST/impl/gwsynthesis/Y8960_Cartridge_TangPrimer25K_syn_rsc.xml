@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="y8960cartridge_tangprimer25k" Register="87" Alu="30" Lut="112" T_Register="242(87)" T_Alu="48(30)" T_Lut="335(112)" T_Bsram="1(0)">
- <SubModule name="u_pll" T_Register="100(0)" T_Alu="18(0)" T_Lut="150(0)" T_Bsram="1(0)">
+<Module name="y8960cartridge_tangprimer25k" Register="4" Lut="10" T_Register="416(4)" T_Alu="62(0)" T_Lut="703(10)" T_Bsram="1(0)">
+ <SubModule name="u_pll" T_Register="100(0)" T_Alu="18(0)" T_Lut="156(0)" T_Bsram="1(0)">
   <SubModule name="u_pll"/>
-  <SubModule name="u_pll_init" Register="100" Alu="18" Lut="150" Bsram="1" T_Register="100(100)" T_Alu="18(18)" T_Lut="150(150)" T_Bsram="1(1)"/>
+  <SubModule name="u_pll_init" Register="100" Alu="18" Lut="156" Bsram="1" T_Register="100(100)" T_Alu="18(18)" T_Lut="156(156)" T_Bsram="1(1)"/>
  </SubModule>
- <SubModule name="u_ssram" Register="55" Lut="73" T_Register="55(55)" T_Lut="73(73)"/>
+ <SubModule name="u_ssram_test" Register="187" Alu="31" Lut="414" T_Register="187(187)" T_Alu="31(31)" T_Lut="414(414)"/>
+ <SubModule name="u_ssram" Register="101" Alu="13" Lut="92" T_Register="101(101)" T_Alu="13(13)" T_Lut="92(92)"/>
+ <SubModule name="u_uart" Register="24" Lut="31" T_Register="24(24)" T_Lut="31(31)"/>
 </Module>

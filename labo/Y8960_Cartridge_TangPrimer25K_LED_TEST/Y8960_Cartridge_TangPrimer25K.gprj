@@ -10,5 +10,6 @@
         <File path="src/pll_init.v" type="file.verilog" enable="1"/>
         <File path="src/y8960_cartridge_tangprimer25k.v" type="file.verilog" enable="1"/>
         <File path="src/Y8960_Cartridge_TangPrimer25K.cst" type="file.cst" enable="1"/>
+        <File path="src/Y8960_Cartridge_TangPrimer25K.rao" type="file.gao" enable="1"/>
     </FileList>
 </Project>

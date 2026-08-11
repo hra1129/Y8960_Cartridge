@@ -67,9 +67,21 @@ module y8960cartridge_tangprimer25k (
 	//	LED
 	output	[3:0]	led,					//	B10,B11,C10,C11
 	//	UART TX
-	output			uart_tx					//	C3
+	output			uart_tx				//	C3
 );
-	wire			clk_100m;				//	PLL output (100.22726MHz for SSRAM controller)
+	wire			clk_200m;				//	PLL output (200.452MHz for SSRAM controller)
+	wire			w_ssram_cs;
+	wire	[18:0]	w_ssram_address;
+	wire			w_ssram_write;
+	wire			w_ssram_valid;
+	wire	[7:0]	w_ssram_wdata;
+	wire			w_ssram_ready;
+	wire	[7:0]	w_ssram_rdata;
+	wire			w_ssram_rdata_en;
+	wire	[7:0]	w_uart_data;
+	wire			w_uart_valid;
+	wire			w_uart_ready;
+	wire	[3:0]	w_led;
 
 	// ---------------------------------------------------------
 	//	Reset generator
@@ -89,83 +101,46 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	Gowin_PLL u_pll (
 		.clkin		( clk_28m	),	// input  clkin
-		.clkout0	( clk_100m	),	// output  clkout0
+		.clkout0	( clk_200m	),	// output  clkout0
 		.mdclk		( clk_50m	)	// input  mdclk
 	);
 
 	// ---------------------------------------------------------
-	//	CPU
+	//	SSRAM test controller
 	// ---------------------------------------------------------
-	cz80_inst u_cz80 (
-		.reset_n			( w_reset_n				),
-		.clk_n				( clk_28m				),
-		.enable				( enable				),
-		.wait_n				( w_wait_n				),
-		.int_n				( w_int_n				),
-		.nmi_n				( w_nmi_n				),
-		.busrq_n			( w_busrq_n				),
-		.m1_n				( w_m1_n				),
-		.mreq_n				( w_mreq_n				),
-		.iorq_n				( w_iorq_n				),
-		.rd_n				( w_rd_n				),
-		.wr_n				( w_wr_n				),
-		.rfsh_n				( w_rfsh_n				),
-		.halt_n				( w_halt_n				),
-		.busak_n			( w_busak_n				),
-		.a					( w_address				),
-		.di					( w_di					),
-		.do					( w_do					)
-	);
-
-	// ---------------------------------------------------------
-	//	ROM/RAM
-	// ---------------------------------------------------------
-	wire		w_rom_mreq_n;
-	wire		w_ram_mreq_n;
-
-	assign w_rom_mreq_n = ~(~w_mreq_n & ( w_address[15:14] == 2'b00 ));
-	rom u_rom (
+	ssram_test u_ssram_test (
+		.n_reset			( w_reset_n				),
 		.clk				( clk_28m				),
-		.address			( w_address[13:0]		),
-		.mreq_n				( w_rom_mreq_n			),
-		.rd_n				( w_rd_n				),
-		.di					( w_di					),
-		.do					( w_do					)
-	);
-
-	assign w_ram_mreq_n = ~(~w_mreq_n & ( w_address[15:12] == 4'h4 ));
-	ram u_ram (
-		.clk				( clk_28m				),
-		.address			( w_address[11:0]		),
-		.mreq_n				( w_ram_mreq_n			),
-		.rd_n				( w_rd_n				),
-		.wr_n				( w_wr_n				),
-		.di					( w_di					),
-		.do					( w_do					)
+		.dipsw				( dipsw					),
+		.bus_cs				( w_ssram_cs			),
+		.bus_address		( w_ssram_address		),
+		.bus_write			( w_ssram_write			),
+		.bus_valid			( w_ssram_valid			),
+		.bus_wdata			( w_ssram_wdata			),
+		.bus_ready			( w_ssram_ready			),
+		.bus_rdata			( w_ssram_rdata			),
+		.bus_rdata_en		( w_ssram_rdata_en		),
+		.uart_data			( w_uart_data			),
+		.uart_valid			( w_uart_valid			),
+		.uart_ready			( w_uart_ready			),
+		.led				( w_led					)
 	);
 
 	// ---------------------------------------------------------
 	//	SSRAM controller
 	// ---------------------------------------------------------
-	reg		[18:0]	ff_address = 19'd0;
-	reg				ff_valid = 1'b0;
-	reg				ff_write = 1'b0;
-	reg		[7:0]	ff_wdata = 8'd0;
-	wire			w_ssram_ready;
-	wire	[7:0]	w_ssram_rdata;
-	wire			w_ssram_rdata_en;
-
 	ssram u_ssram (
+		.n_reset			( w_reset_n				),
 		.clk				( clk_28m				),
-		.clk_100m			( clk_100m				),
-		.reset_n			( w_reset_n				),
-		.address			( ff_address			),
-		.valid				( ff_valid				),
-		.ready				( w_ssram_ready			),
-		.write				( ff_write				),
-		.wdata				( ff_wdata				),
-		.rdata				( w_ssram_rdata			),
-		.rdata_en			( w_ssram_rdata_en		),
+		.clk_200m			( clk_200m				),
+		.bus_cs				( w_ssram_cs			),
+		.bus_address		( w_ssram_address		),
+		.bus_write			( w_ssram_write			),
+		.bus_valid			( w_ssram_valid			),
+		.bus_wdata			( w_ssram_wdata			),
+		.bus_ready			( w_ssram_ready			),
+		.bus_rdata			( w_ssram_rdata			),
+		.bus_rdata_en		( w_ssram_rdata_en		),
 		.sram_sclk			( sram_sclk				),
 		.sram_ce_n			( sram_ce_n				),
 		.sram_sio			( sram_sio				)
@@ -175,15 +150,17 @@ module y8960cartridge_tangprimer25k (
 	// ---------------------------------------------------------
 	//	UART
 	// ---------------------------------------------------------
-	ip_uart_inst u_uart (
-		.n_reset		( w_reset_n		),
-		.clk			( clk_28m		),
-		.address		( w_address[0]	),
-		.iorq_n			( w_iorq_n		),
-		.wait_n			( w_wait_n		),
-		.wr_n			( w_wr_n		),
-		.di				( w_di			),
-		.uart_tx		( uart_tx		),
-		.led			( led			)
+	ip_uart #(
+		.clk_freq			( 28636360				),
+		.uart_freq			( 115200				)
+	) u_uart (
+		.n_reset			( w_reset_n				),
+		.clk				( clk_28m				),
+		.send_data			( w_uart_data			),
+		.send_valid			( w_uart_valid			),
+		.send_ready			( w_uart_ready			),
+		.uart_tx			( uart_tx				)
 	);
+
+	assign led = ~w_led;
 endmodule

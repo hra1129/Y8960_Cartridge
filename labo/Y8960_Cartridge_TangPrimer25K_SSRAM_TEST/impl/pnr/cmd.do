@@ -1,8 +1,8 @@
--d D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg
+-d C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg
 -p GW5A-25A-MBGA121N-1
 -pn GW5A-LV25MG121NES
--cst D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\Y8960_Cartridge_TangPrimer25K.cst
--cfg D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\pnr\device.cfg
+-cst C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\Y8960_Cartridge_TangPrimer25K.cst
+-cfg C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\pnr\device.cfg
 -bit
 -tr
 -ph

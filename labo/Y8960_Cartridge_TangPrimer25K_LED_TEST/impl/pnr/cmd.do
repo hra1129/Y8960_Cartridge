@@ -3,6 +3,7 @@
 -pn GW5A-LV25MG121NES
 -cst D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\Y8960_Cartridge_TangPrimer25K.cst
 -cfg D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\pnr\device.cfg
+-gao_crc 0110000010101010
 -bit
 -tr
 -ph
@@ -16,3 +17,4 @@
 -route_maxfan 23
 -global_freq 28.636
 -enable_dsrm 0
+-rtl_gao

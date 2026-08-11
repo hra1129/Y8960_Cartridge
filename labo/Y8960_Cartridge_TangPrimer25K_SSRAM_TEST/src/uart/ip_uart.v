@@ -37,7 +37,8 @@ module ip_uart #(
 	output			uart_tx
 );
 	localparam	uart_cycle		= clk_freq / uart_freq;
-	localparam	uart_count_max	= uart_cycle - 1;
+	localparam	integer uart_count_w = $clog2( uart_cycle ) + 2;
+	localparam	[uart_count_w-1:0]	uart_count_max	= uart_cycle - 1;
 
 	localparam	ST_IDLE			= 4'd0;
 	localparam	ST_PRE_START	= 4'd1;
@@ -52,7 +53,7 @@ module ip_uart #(
 	localparam	ST_D7			= 4'd10;
 	localparam	ST_STOP			= 4'd11;
 
-	reg		[ $clog2( uart_cycle ) + 1: 0 ] ff_uart_count;
+	reg		[ uart_count_w - 1: 0 ] ff_uart_count;
 	reg		[3:0]	ff_state;
 	reg		[9:0]	ff_data;
 	reg				ff_ready;

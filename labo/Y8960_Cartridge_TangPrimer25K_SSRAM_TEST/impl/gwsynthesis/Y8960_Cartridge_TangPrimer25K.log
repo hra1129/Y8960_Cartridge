@@ -1,19 +1,22 @@
 GowinSynthesis start
 Running parser ...
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v'
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v'
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v'
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v'
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v'
-Compiling module 'y8960cartridge_tangprimer25k'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v":58)
-Compiling module 'Gowin_PLL'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v":1)
-Compiling module 'Gowin_PLL_MOD'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v":10)
-Compiling module 'PLL_INIT(MULTI_FAC=28)'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v":4)
-Compiling module 'ssram'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v":7)
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v'
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v'
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v'
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v'
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram_test\ssram_test.v'
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\uart\ip_uart.v'
+Analyzing Verilog file 'C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v'
+Compiling module 'y8960cartridge_tangprimer25k'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v":58)
+Compiling module 'Gowin_PLL'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v":1)
+Compiling module 'Gowin_PLL_MOD'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v":11)
+Compiling module 'PLL_INIT(MULTI_FAC=28)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v":4)
+Compiling module 'ssram_test'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram_test\ssram_test.v":6)
+Compiling module 'ssram'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v":7)
+Compiling module 'ip_uart'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\uart\ip_uart.v":27)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 10("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\uart\ip_uart.v":69)
 NOTE  (EX0101) : Current top module is "y8960cartridge_tangprimer25k"
-WARN  (EX0211) : The output port "uart_tx" of module "y8960cartridge_tangprimer25k" has no driver, assigning undriven bits to Z, simulation mismatch possible("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v":70)
 [5%] Running netlist conversion ...
-WARN  (CV0016) : Input dipsw is unused("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v":66)
 Running device independent optimization ...
 [10%] Optimizing Phase 0 completed
 [15%] Optimizing Phase 1 completed
@@ -29,6 +32,6 @@ Running technical mapping ...
 [75%] Tech-Mapping Phase 2 completed
 [80%] Tech-Mapping Phase 3 completed
 [90%] Tech-Mapping Phase 4 completed
-[95%] Generate netlist file "D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg" completed
-[100%] Generate report file "D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K_syn.rpt.html" completed
+[95%] Generate netlist file "C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg" completed
+[100%] Generate report file "C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K_syn.rpt.html" completed
 GowinSynthesis finish

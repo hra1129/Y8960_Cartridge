@@ -13,6 +13,11 @@ if errorlevel 1 (
 	pause
 	exit
 )
+vlog +define+SIM ..\ssram_test\ssram_test.v
+if errorlevel 1 (
+	pause
+	exit
+)
 vlog +define+SIM ..\ssram\ssram_test_model.v
 if errorlevel 1 (
 	pause
@@ -28,7 +33,42 @@ if errorlevel 1 (
 	pause
 	exit
 )
-vlog +define+SIM ..\debug_controller\debug_controller.v
+vlog +define+SIM ..\uart\ip_uart_inst.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\cz80\cz80.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\cz80\cz80_alu.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\cz80\cz80_inst.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\cz80\cz80_mcode.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\cz80\cz80_reg.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\rom\rom.v
+if errorlevel 1 (
+	pause
+	exit
+)
+vlog +define+SIM ..\ram\ram.v
 if errorlevel 1 (
 	pause
 	exit

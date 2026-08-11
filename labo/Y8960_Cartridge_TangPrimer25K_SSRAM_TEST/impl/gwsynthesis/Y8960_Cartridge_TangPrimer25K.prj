@@ -4,20 +4,30 @@
     <Version>beta</Version>
     <Device id="GW5A-25A" package="MBGA121N" speed="1" partNumber="GW5A-LV25MG121NES"/>
     <FileList>
-        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v" type="verilog"/>
-        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v" type="verilog"/>
-        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v" type="verilog"/>
-        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v" type="verilog"/>
-        <File path="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\gowin_pll\gowin_pll_mod.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\pll_init.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram\ssram.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\ssram_test\ssram_test.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\uart\ip_uart.v" type="verilog"/>
+        <File path="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\src\y8960_cartridge_tangprimer25k.v" type="verilog"/>
     </FileList>
     <OptionList>
         <Option type="disable_insert_pad" value="0"/>
+        <Option type="dsp_style" value="auto"/>
         <Option type="enable_dsrm" value="0"/>
         <Option type="global_freq" value="28.636"/>
         <Option type="looplimit" value="8000"/>
-        <Option type="output_file" value="D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg"/>
+        <Option type="map_option" value="1"/>
+        <Option type="max_fanout" value="1000"/>
+        <Option type="netlist_hierarchy" value="1"/>
+        <Option type="opt_goal" value="auto"/>
+        <Option type="output_file" value="C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_SSRAM_TEST\impl\gwsynthesis\Y8960_Cartridge_TangPrimer25K.vg"/>
         <Option type="print_all_synthesis_warning" value="0"/>
         <Option type="ram_rw_check" value="0"/>
+        <Option type="ram_style" value="auto"/>
+        <Option type="rom_style" value="auto"/>
+        <Option type="shift_reg" value="auto"/>
         <Option type="top_module" value="y8960cartridge_tangprimer25k"/>
         <Option type="vcc" value="0.9"/>
         <Option type="verilog_language" value="verilog-2001"/>

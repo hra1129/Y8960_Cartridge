@@ -14,7 +14,7 @@ module Gowin_PLL (
 	output	reg		clkout0,
 	input			mdclk
 );
-	localparam	real	CLK_PERIOD	= 1000.0 / 114.54544;	//	ns  (~8.730 ns)
+	localparam	real	CLK_PERIOD	= 1000.0 / 200.452;	//	200.452MHz
 
 	initial begin
 		clkout0 = 1'b0;

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="y8960cartridge_tangprimer25k" Register="107" Alu="99" Lut="42" T_Register="207(107)" T_Alu="117(99)" T_Lut="192(42)" T_Bsram="1(0)">
- <SubModule name="u_pll" T_Register="100(0)" T_Alu="18(0)" T_Lut="150(0)" T_Bsram="1(0)">
+<Module name="y8960cartridge_tangprimer25k" Register="107" Alu="99" Lut="42" T_Register="550(107)" T_Alu="130(99)" T_Lut="618(42)" T_Bsram="4(0)">
+ <SubModule name="u_pll" T_Register="100(0)" T_Alu="18(0)" T_Lut="155(0)" T_Bsram="1(0)">
   <SubModule name="u_pll"/>
-  <SubModule name="u_pll_init" Register="100" Alu="18" Lut="150" Bsram="1" T_Register="100(100)" T_Alu="18(18)" T_Lut="150(150)" T_Bsram="1(1)"/>
+  <SubModule name="u_pll_init" Register="100" Alu="18" Lut="155" Bsram="1" T_Register="100(100)" T_Alu="18(18)" T_Lut="155(155)" T_Bsram="1(1)"/>
  </SubModule>
+ <SubModule name="gw_gao_inst_0" Register="343" Alu="13" Lut="421" Bsram="3" T_Register="343(343)" T_Alu="13(13)" T_Lut="421(421)" T_Bsram="3(3)"/>
 </Module>

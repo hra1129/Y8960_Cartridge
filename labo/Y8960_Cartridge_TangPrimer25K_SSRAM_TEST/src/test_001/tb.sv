@@ -37,6 +37,7 @@ module tb ();
 	reg		[1:0]	dipsw;
 	wire	[3:0]	led;
 	reg		[3:0]	ff_led = 4'b1111;
+	wire			uart_tx;
 
 	// ----------------------------------------------------------------
 	//	DUT: y8960cartridge_tangprimer25k
@@ -48,7 +49,8 @@ module tb ();
 		.sram_sclk		( sram_sclk		),
 		.sram_sio		( sram_sio		),
 		.dipsw			( dipsw			),
-		.led			( led			)
+		.led			( led			),
+		.uart_tx		( uart_tx		)
 	);
 
 	// ----------------------------------------------------------------
@@ -97,12 +99,6 @@ module tb ();
 		#(TIMEOUT_MS * 1_000_000);
 		$display( "============================================" );
 		$display( "[TB] TIMEOUT after %0d ms -- aborting.", TIMEOUT_MS );
-		$display( "  Phase 1 done = %b", u_dut.ff_phase1_done );
-		$display( "  Phase 2 done = %b", u_dut.ff_phase2_done );
-		$display( "  Phase 3 done = %b", u_dut.ff_phase3_done );
-		$display( "  Phase 4 done = %b", u_dut.ff_phase4_done );
-		$display( "  Error 1      = %b", u_dut.ff_error1 );
-		$display( "  Error 2      = %b", u_dut.ff_error2 );
 		$display( "============================================" );
 		$finish;
 	end
@@ -120,43 +116,26 @@ module tb ();
 		$display( "============================================" );
 
 		// --------------------------------------------------------
-		//	Wait for each phase to complete, report progress
+		//	DIPSW trigger at proper timing
+		//	led=1110 means ST_WAIT_DIP in current top-level polarity.
 		// --------------------------------------------------------
-		fork
-			begin
-				wait( u_dut.ff_phase1_done === 1'b1 );
-				$display( "[TB] Phase 1 complete -- single write (increment pattern)" );
-			end
-			begin
-				wait( u_dut.ff_phase2_done === 1'b1 );
-				$display( "[TB] Phase 2 complete -- read & verify (increment pattern)" );
-			end
-			begin
-				wait( u_dut.ff_phase3_done === 1'b1 );
-				$display( "[TB] Phase 3 complete -- single write (decrement pattern)" );
-			end
-			begin
-				wait( u_dut.ff_phase4_done === 1'b1 );
-				$display( "[TB] Phase 4 complete -- read & verify (decrement pattern)" );
-			end
-		join
+		wait( led == 4'b1110 );
+		repeat( 70000 ) @( posedge clk_28m );
+		dipsw <= 2'b01;
+		@( posedge clk_28m );
+
+		$display( "[TB] DIPSW trigger injected after stable wait." );
 
 		// --------------------------------------------------------
-		//	Let a few more clocks pass, then report results
+		//	Wait until PASS LED pattern appears
+		//	w_led=1011 -> led=0100 because top-level output is inverted.
 		// --------------------------------------------------------
+		wait( led == 4'b0100 );
+
 		repeat( 100 ) @( posedge clk_28m );
 
 		$display( "============================================" );
-		if( !u_dut.ff_error1 && !u_dut.ff_error2 ) begin
-			$display( "[TB] RESULT: ALL TESTS PASSED" );
-		end
-		else begin
-			if( u_dut.ff_error1 )
-				$display( "[TB] RESULT: Phase 2 read-verify FAILED (error1)" );
-			if( u_dut.ff_error2 )
-				$display( "[TB] RESULT: Phase 4 read-verify FAILED (error2)" );
-		end
-		$display( "[TB] LED = %b (active-low: 0=ON)", led );
+		$display( "[TB] RESULT: ALL TESTS PASSED" );
 		$display( "============================================" );
 
 		$finish;

@@ -1,54 +1,62 @@
 [
- {
-  "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-  "InstLine" : 58,
-  "InstName" : "y8960cartridge_tangprimer25k",
-  "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-  "ModuleLine" : 58,
-  "ModuleName" : "y8960cartridge_tangprimer25k",
-  "SubInsts" : [
-   {
-    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 90,
-    "InstName" : "u_pll",
-    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
-    "ModuleLine" : 1,
-    "ModuleName" : "Gowin_PLL",
-    "SubInsts" : [
-     {
-      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
-      "InstLine" : 21,
-      "InstName" : "u_pll",
-      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll_mod.v",
-      "ModuleLine" : 10,
-      "ModuleName" : "Gowin_PLL_MOD"
-     },
-     {
-      "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
-      "InstLine" : 34,
-      "InstName" : "u_pll_init",
-      "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/pll_init.v",
-      "ModuleLine" : 4,
-      "ModuleName" : "PLL_INIT"
-     }
-    ]
-   },
-   {
-    "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
-    "InstLine" : 107,
-    "InstName" : "u_ssram",
-    "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/ssram/ssram.v",
-    "ModuleLine" : 7,
-    "ModuleName" : "ssram"
-   }
-  ]
- },
- {
-  "InstFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/uart/ip_uart.v",
-  "InstLine" : 27,
-  "InstName" : "ip_uart",
-  "ModuleFile" : "D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/uart/ip_uart.v",
-  "ModuleLine" : 27,
-  "ModuleName" : "ip_uart"
- }
+    {
+        "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
+        "InstLine": 58,
+        "InstName": "y8960cartridge_tangprimer25k",
+        "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
+        "ModuleLine": 58,
+        "ModuleName": "y8960cartridge_tangprimer25k",
+        "SubInsts": [
+            {
+                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
+                "InstLine": 102,
+                "InstName": "u_pll",
+                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
+                "ModuleLine": 1,
+                "ModuleName": "Gowin_PLL",
+                "SubInsts": [
+                    {
+                        "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
+                        "InstLine": 21,
+                        "InstName": "u_pll",
+                        "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll_mod.v",
+                        "ModuleLine": 11,
+                        "ModuleName": "Gowin_PLL_MOD"
+                    },
+                    {
+                        "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/gowin_pll.v",
+                        "InstLine": 34,
+                        "InstName": "u_pll_init",
+                        "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/pll_init.v",
+                        "ModuleLine": 4,
+                        "ModuleName": "PLL_INIT"
+                    }
+                ]
+            },
+            {
+                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
+                "InstLine": 111,
+                "InstName": "u_ssram_test",
+                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/ssram_test/ssram_test.v",
+                "ModuleLine": 6,
+                "ModuleName": "ssram_test"
+            },
+            {
+                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
+                "InstLine": 132,
+                "InstName": "u_ssram",
+                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/ssram/ssram.v",
+                "ModuleLine": 7,
+                "ModuleName": "ssram"
+            },
+            {
+                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/y8960_cartridge_tangprimer25k.v",
+                "InstLine": 156,
+                "InstName": "u_uart",
+                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/uart/ip_uart.v",
+                "ModuleLine": 27,
+                "ModuleName": "ip_uart"
+            }
+        ]
+    }
 ]

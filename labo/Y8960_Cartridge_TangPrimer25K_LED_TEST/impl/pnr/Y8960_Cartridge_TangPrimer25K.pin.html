@@ -78,7 +78,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Tue Mar 17 21:01:45 2026
+<td>Sun Mar 29 21:03:02 2026
 </td>
 </tr>
 <tr>
@@ -195,6 +195,69 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>NONE</td>
 </tr>
 <tr>
+<td class="label">tms_pad_i</td>
+<td>-</td>
+<td>B1/10</td>
+<td>N</td>
+<td>in</td>
+<td>IOR3[A]</td>
+<td>TMS</td>
+<td>LVCMOS33</td>
+<td>OFF</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>ON</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">tck_pad_i</td>
+<td>-</td>
+<td>C1/10</td>
+<td>N</td>
+<td>in</td>
+<td>IOR1[A]</td>
+<td>TCK</td>
+<td>LVCMOS33</td>
+<td>OFF</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>ON</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">tdi_pad_i</td>
+<td>-</td>
+<td>A3/10</td>
+<td>N</td>
+<td>in</td>
+<td>IOR1[B]</td>
+<td>TDI</td>
+<td>LVCMOS33</td>
+<td>OFF</td>
+<td>NONE</td>
+<td>OFF</td>
+<td>ON</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
 <td class="label">led[0]</td>
 <td>-</td>
 <td>C11/6</td>
@@ -268,6 +331,27 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <td>LVCMOS33</td>
 <td>8</td>
 <td>UP</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>OFF</td>
+<td>3.3</td>
+<td>MEDIUM</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td class="label">tdo_pad_o</td>
+<td>-</td>
+<td>A2/10</td>
+<td>N</td>
+<td>out</td>
+<td>IOR3[B]</td>
+<td>TDO</td>
+<td>LVCMOS33</td>
+<td>8</td>
+<td>NONE</td>
 <td>OFF</td>
 <td>OFF</td>
 <td>OFF</td>
@@ -1633,13 +1717,13 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">C1/10</td>
-<td>-</td>
+<td>tck_pad_i</td>
 <td>in</td>
 <td>IOR1[A]</td>
 <td>TCK</td>
 <td>LVCMOS33</td>
-<td>8</td>
-<td>UP</td>
+<td>OFF</td>
+<td>NONE</td>
 <td>OFF</td>
 <td>ON</td>
 <td>OFF</td>
@@ -1652,13 +1736,13 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">A3/10</td>
-<td>-</td>
+<td>tdi_pad_i</td>
 <td>in</td>
 <td>IOR1[B]</td>
 <td>TDI</td>
 <td>LVCMOS33</td>
-<td>8</td>
-<td>UP</td>
+<td>OFF</td>
+<td>NONE</td>
 <td>OFF</td>
 <td>ON</td>
 <td>OFF</td>
@@ -1671,13 +1755,13 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">B1/10</td>
-<td>-</td>
+<td>tms_pad_i</td>
 <td>in</td>
 <td>IOR3[A]</td>
 <td>TMS</td>
 <td>LVCMOS33</td>
-<td>8</td>
-<td>UP</td>
+<td>OFF</td>
+<td>NONE</td>
 <td>OFF</td>
 <td>ON</td>
 <td>OFF</td>
@@ -1690,13 +1774,13 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">A2/10</td>
-<td>-</td>
+<td>tdo_pad_o</td>
 <td>out</td>
 <td>IOR3[B]</td>
 <td>TDO</td>
 <td>LVCMOS33</td>
 <td>8</td>
-<td>UP</td>
+<td>NONE</td>
 <td>OFF</td>
 <td>OFF</td>
 <td>OFF</td>

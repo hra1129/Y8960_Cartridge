@@ -7,9 +7,10 @@
 
 -mod_name Gowin_PLL_MOD
 -file_name gowin_pll_mod
--path D:/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/
+-path C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/labo/Y8960_Cartridge_TangPrimer25K_SSRAM_TEST/src/gowin_pll/
 -type PLL_ADV
 -file_type vlg
+-ip_version 1.0
 -ssc false
 -rst true
 -rst_pwd false
@@ -23,7 +24,7 @@
 -en_lock true
 -dyn_dpa_en false
 -clkout0_bypass false
--odiv0_sel 8
+-odiv0_sel 4
 -odiv0_frac_sel 0
 -clkout0_dt_dir 1
 -clkout0_dt_step 0

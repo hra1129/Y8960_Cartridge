@@ -1,16 +1,56 @@
 GowinSynthesis start
 Running parser ...
-Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll_mod.v'
 Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\pll_init.v'
+Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v'
+Analyzing Verilog file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_crc32.v'
+Analyzing Verilog file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v'
+Analyzing included file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_define.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_top_define.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_init.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+Analyzing Verilog file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_mem_ctrl.v'
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_top_define.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_mem_ctrl.v":1256)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_mem_ctrl.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_mem_ctrl.v":1256)
+Analyzing Verilog file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v'
+Analyzing included file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_define.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_top_define.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_expression.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_parameter.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_0\gw_ao_init.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Analyzing Verilog file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v'
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_control\gw_con_top_define.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v":377)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v":377)
+Analyzing included file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\ao_control\gw_con_parameter.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v":377)
+Back to file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v":377)
+Analyzing Verilog file 'C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\gw_jtag.v'
+Analyzing Verilog file 'D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\gw_gao_top.v'
 Compiling module 'y8960cartridge_tangprimer25k'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v":58)
 Compiling module 'Gowin_PLL'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll.v":1)
 Compiling module 'Gowin_PLL_MOD'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\gowin_pll\gowin_pll_mod.v":10)
 Compiling module 'PLL_INIT(MULTI_FAC=36)'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\pll_init.v":4)
+Compiling module 'gw_gao'("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\impl\gwsynthesis\RTL_GAO\gw_gao_top.v":1)
+Compiling module 'GW_JTAG'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\gw_jtag.v":1)
+Compiling module '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_CON\gw_con_top.v":377)
+Compiling module '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Compiling module '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_mem_ctrl.v":1256)
+Extracting RAM for identifier '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_mem_ctrl.v":1256)
+Compiling module '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_crc32.v":74)
+Compiling module '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_match.v":374)
+WARN  (EX3791) : Expression size ** truncated to fit in target size **("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Extracting RAM for identifier '**'("C:\Gowin\Gowin_V1.9.11.02_SP1_x64\IDE\data\ipcores\GAO\GW_AO_0\gw_ao_top.v":3042)
+Trying to combine GAO to RTL design
 NOTE  (EX0101) : Current top module is "y8960cartridge_tangprimer25k"
 [5%] Running netlist conversion ...
-WARN  (CV0016) : Input dipsw is unused("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v":62)
+WARN  (CV0018) : Input dipsw[0] is unused("D:\github\HRA_product\Y8960_Cartridge\labo\Y8960_Cartridge_TangPrimer25K_LED_TEST\src\y8960_cartridge_tangprimer25k.v":62)
 Running device independent optimization ...
 [10%] Optimizing Phase 0 completed
 [15%] Optimizing Phase 1 completed

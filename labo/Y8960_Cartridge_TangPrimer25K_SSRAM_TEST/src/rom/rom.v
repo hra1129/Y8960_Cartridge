@@ -5,25 +5,42 @@
 // --------------------------------------------------------------------
 
 module rom (
+	input			n_reset,
 	input			clk,
-	input	[13:0]	address,
-	input			mreq_n,
-	input			rd_n,
-	input	[7:0]	di,
-	output	[7:0]	do
+	input			bus_cs,
+	input	[15:0]	bus_address,
+	input			bus_write,
+	input			bus_valid,
+	input	[7:0]	bus_wdata,
+	output			bus_ready,
+	output	[7:0]	bus_rdata,
+	output			bus_rdata_en
 );
-	reg		[7:0]	ff_rom [0:16383];
-	reg		[7:0]	ff_do;
+	reg		[7:0]	ff_rom_q;
+	reg				ff_rdata_en;
+	wire			w_read_valid;
 
-	initial begin
-		`include "rom_image.v"
-	end
+	assign w_read_valid = bus_cs && bus_valid && !bus_write;
 
 	always @( posedge clk ) begin
-		if( !rd_n ) begin
-			ff_do <= ff_rom[ address ];
+		if( !n_reset ) begin
+			ff_rom_q <= 8'd0;
+			ff_rdata_en <= 1'b0;
+		end
+		else begin
+			if( w_read_valid ) begin
+				case( bus_address[11:0] )
+				`include "bootrom.vh"
+				endcase
+				ff_rdata_en <= 1'b1;
+			end
+			else begin
+				ff_rdata_en <= 1'b0;
+			end
 		end
 	end
 
-	assign do = ff_do;
+	assign bus_ready	= 1'b1;
+	assign bus_rdata	= ff_rom_q;
+	assign bus_rdata_en = ff_rdata_en;
 endmodule
