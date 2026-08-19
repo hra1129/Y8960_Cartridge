@@ -59,7 +59,7 @@ module msx_slot(
 	input			clk,
 	output			reset_n,
 	//	MSX Slot Signal
-	input			p_slot_reset,
+	input			p_slot_reset_n,
 	input			p_slot_sltsl_n,
 	input			p_slot_memreq_n,
 	input			p_slot_ioreq_n,
@@ -156,13 +156,12 @@ module msx_slot(
 	//	reset signal
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		ff_reset_n	<= ~p_slot_reset;
+		ff_reset_n	<= p_slot_reset_n;
 	end
 
 	assign reset_n		= ff_reset_n;
 
 	// --------------------------------------------------------------------
-	//	髱槫酔譛溯ｼ峨○譖ｿ縺医・縺溘ａ縺ｫ 2蝗槫娼縺・※縺翫￥
 	//	Pass through FF twice for asynchronous replacement.
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
@@ -181,7 +180,7 @@ module msx_slot(
 	end
 
 	// --------------------------------------------------------------------
-	//	ff_slot_ioreq_n == 0 縺ｮ繧ｿ繧､繝溘Φ繧ｰ縺ｧ縺ｯ縲・	//	繧｢繝峨Ξ繧ｹ縺ｨ譖ｸ縺崎ｾｼ縺ｿ譎ゅ・繝・・繧ｿ縺ｯ遒ｺ螳壽ｸ医∩
+	//	書込みであれば、p_slot_data をラッチする
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
 		if( ff_slot_wr ) begin

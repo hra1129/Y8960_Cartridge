@@ -32,7 +32,7 @@ module tb ();
 	reg				clk_14m;
 	reg				clk_50m;
 	//	slot
-	reg				slot_reset;
+	reg				slot_reset_n;
 	reg		[15:0]	slot_a;
 	wire	[7:0]	slot_d;
 	reg				slot_sltsl_n;
@@ -75,7 +75,7 @@ module tb ();
 	y8960cartridge_tangprimer25k u_dut (
 		.clk_28m				( clk					),
 		.clk_50m				( clk					),
-		.slot_reset				( slot_reset			),
+		.slot_reset_n			( slot_reset_n			),
 		.slot_a					( slot_a				),
 		.slot_d					( slot_d				),
 		.slot_sltsl_n			( slot_sltsl_n			),
@@ -334,7 +334,7 @@ module tb ();
 
 		test_no = -1;
 		clk = 1;
-		slot_reset = 0;
+		slot_reset_n = 0;
 		slot_a = 0;
 		slot_sltsl_n = 0;
 		slot_mereq_n = 0;
@@ -345,8 +345,10 @@ module tb ();
 
 		@( negedge clk );
 		@( negedge clk );
-		@( posedge clk );
 
+		slot_reset_n = 1;
+
+		@( posedge clk );
 		@( posedge clk );
 
 		repeat( 100 ) @( posedge clk );

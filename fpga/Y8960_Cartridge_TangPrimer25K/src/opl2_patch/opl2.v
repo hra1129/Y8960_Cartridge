@@ -106,7 +106,7 @@ module dual_opl2 (
 	//	JT OPL2 body
 	// --------------------------------------------------------------------
 	jtopl2 u_opl2_0 (
-		.rst			( reset_n				),
+		.rst			( ~reset_n				),
 		.clk			( clk					),
 		.cen			( enable				),
 		.din			( bus_wdata				),
@@ -120,7 +120,7 @@ module dual_opl2 (
 	);
 
 	jtopl2 u_opl2_1 (
-		.rst			( reset_n				),
+		.rst			( ~reset_n				),
 		.clk			( clk					),
 		.cen			( enable				),
 		.din			( bus_wdata				),

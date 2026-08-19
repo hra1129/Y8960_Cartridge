@@ -59,7 +59,7 @@ module y8960cartridge_tangprimer25k (
 	input			clk_28m,				//	H5	28.63636MHz MSX clock
 	input			clk_50m,				//	E2	50.00000MHz audio base clock (on board)
 	//	slot
-	input			slot_reset,				//	G11
+	input			slot_reset_n,				//	G11
 	input	[15:0]	slot_a,					//	L11,K11,H8,H7,G7,G8,F5,G5,J11,J10,F6,F7,K8,J8,K9,L9
 	inout	[7:0]	slot_d,					//	K10,L10,L8,L7,J7,K7,K6,L6
 	input			slot_sltsl_n,			//	J5
@@ -244,7 +244,7 @@ module y8960cartridge_tangprimer25k (
 	msx_slot u_msx_slot (
 		.clk					( clk_28m					),
 		.reset_n				( w_reset_n					),
-		.p_slot_reset			( slot_reset				),
+		.p_slot_reset_n			( slot_reset_n				),
 		.p_slot_sltsl_n			( slot_sltsl_n				),
 		.p_slot_memreq_n		( slot_mereq_n				),
 		.p_slot_ioreq_n			( slot_ioreq_n				),

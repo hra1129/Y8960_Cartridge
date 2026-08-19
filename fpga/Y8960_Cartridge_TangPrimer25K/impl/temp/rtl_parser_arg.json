@@ -242,15 +242,15 @@
             "Type": "verilog"
         },
         {
-            "Path": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/spi_rom/ip_spi_rom.v",
-            "Type": "verilog"
-        },
-        {
             "Path": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sfrom/sfrom.v",
             "Type": "verilog"
         },
         {
             "Path": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
+            "Type": "verilog"
+        },
+        {
+            "Path": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/spi_rom/ip_spi_rom.v",
             "Type": "verilog"
         },
         {

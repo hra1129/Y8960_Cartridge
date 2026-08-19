@@ -89,6 +89,8 @@ vlog ..\ssram\sram_arbiter.v
 
 vlog ..\system_controller\system_controller.v
 
+vlog ..\spi_rom\ip_spi_rom.v
+
 vlog ..\y8960_cartridge_tangprimer25k.v
 
 vlog tb.sv
