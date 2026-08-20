@@ -2,25 +2,25 @@
 //	Test of msx_slot.v
 //	Copyright (C)2025 Takayuki Hara (HRA!)
 //	
-//	譛ｬ繧ｽ繝輔ヨ繧ｦ繧ｧ繧｢縺翫ｈ縺ｳ譛ｬ繧ｽ繝輔ヨ繧ｦ繧ｧ繧｢縺ｫ蝓ｺ縺･縺・※菴懈・縺輔ｌ縺滓ｴｾ逕溽黄縺ｯ縲∽ｻ･荳九・譚｡莉ｶ繧・
-//	貅縺溘☆蝣ｴ蜷医↓髯舌ｊ縲∝・鬆貞ｸ・♀繧医・菴ｿ逕ｨ縺瑚ｨｱ蜿ｯ縺輔ｌ縺ｾ縺吶・
+//	本ソフトウェアおよび本ソフトウェアに基づいて作成された派生物は、以下の条件を
+//	満たす場合に限り、再頒布および使用が許可されます。
 //
-//	1.繧ｽ繝ｼ繧ｹ繧ｳ繝ｼ繝牙ｽ｢蠑上〒蜀埼貞ｸ・☆繧句ｴ蜷医∽ｸ願ｨ倥・闡嶺ｽ懈ｨｩ陦ｨ遉ｺ縲∵悽譚｡莉ｶ荳隕ｧ縲√♀繧医・荳玖ｨ・
-//	  蜈崎ｲｬ譚｡鬆・ｒ縺昴・縺ｾ縺ｾ縺ｮ蠖｢縺ｧ菫晄戟縺吶ｋ縺薙→縲・
-//	2.繝舌う繝翫Μ蠖｢蠑上〒蜀埼貞ｸ・☆繧句ｴ蜷医・貞ｸ・黄縺ｫ莉伜ｱ槭・繝峨く繝･繝｡繝ｳ繝育ｭ峨・雉・侭縺ｫ縲∽ｸ願ｨ倥・
-//	  闡嶺ｽ懈ｨｩ陦ｨ遉ｺ縲∵悽譚｡莉ｶ荳隕ｧ縲√♀繧医・荳玖ｨ伜・雋ｬ譚｡鬆・ｒ蜷ｫ繧√ｋ縺薙→縲・
-//	3.譖ｸ髱｢縺ｫ繧医ｋ莠句燕縺ｮ險ｱ蜿ｯ縺ｪ縺励↓縲∵悽繧ｽ繝輔ヨ繧ｦ繧ｧ繧｢繧定ｲｩ螢ｲ縲√♀繧医・蝠・･ｭ逧・↑陬ｽ蜩√ｄ豢ｻ蜍・
-//	  縺ｫ菴ｿ逕ｨ縺励↑縺・％縺ｨ縲・
+//	1.ソースコード形式で再頒布する場合、上記の著作権表示、本条件一覧、および下記
+//	  免責条項をそのままの形で保持すること。
+//	2.バイナリ形式で再頒布する場合、頒布物に付属のドキュメント等の資料に、上記の
+//	  著作権表示、本条件一覧、および下記免責条項を含めること。
+//	3.書面による事前の許可なしに、本ソフトウェアを販売、および商業的な製品や活動
+//	  に使用しないこと。
 //
-//	譛ｬ繧ｽ繝輔ヨ繧ｦ繧ｧ繧｢縺ｯ縲∬送菴懈ｨｩ閠・↓繧医▲縺ｦ縲檎樟迥ｶ縺ｮ縺ｾ縺ｾ縲肴署萓帙＆繧後※縺・∪縺吶り送菴懈ｨｩ閠・・縲・
-//	迚ｹ螳夂岼逧・∈縺ｮ驕ｩ蜷域ｧ縺ｮ菫晁ｨｼ縲∝膚蜩∵ｧ縺ｮ菫晁ｨｼ縲√∪縺溘◎繧後↓髯仙ｮ壹＆繧後↑縺・√＞縺九↑繧区・遉ｺ
-//	逧・ｂ縺励￥縺ｯ證鈴ｻ吶↑菫晁ｨｼ雋ｬ莉ｻ繧りｲ縺・∪縺帙ｓ縲り送菴懈ｨｩ閠・・縲∽ｺ狗罰縺ｮ縺・°繧薙ｒ蝠上ｏ縺壹∵錐螳ｳ
-//	逋ｺ逕溘・蜴溷屏縺・°繧薙ｒ蝠上ｏ縺壹√°縺､雋ｬ莉ｻ縺ｮ譬ｹ諡縺悟･醍ｴ・〒縺ゅｋ縺句宍譬ｼ雋ｬ莉ｻ縺ｧ縺ゅｋ縺具ｼ磯℃螟ｱ
-//	縺昴・莉悶・・我ｸ肴ｳ戊｡檎ぜ縺ｧ縺ゅｋ縺九ｒ蝠上ｏ縺壹∽ｻｮ縺ｫ縺昴・繧医≧縺ｪ謳榊ｮｳ縺檎匱逕溘☆繧句庄閭ｽ諤ｧ繧堤衍繧・
-//	縺輔ｌ縺ｦ縺・◆縺ｨ縺励※繧ゅ∵悽繧ｽ繝輔ヨ繧ｦ繧ｧ繧｢縺ｮ菴ｿ逕ｨ縺ｫ繧医▲縺ｦ逋ｺ逕溘＠縺滂ｼ井ｻ｣譖ｿ蜩√∪縺溘・莉｣逕ｨ繧ｵ
-//	繝ｼ繝薙せ縺ｮ隱ｿ驕斐∽ｽｿ逕ｨ縺ｮ蝟ｪ螟ｱ縲√ョ繝ｼ繧ｿ縺ｮ蝟ｪ螟ｱ縲∝茜逶翫・蝟ｪ螟ｱ縲∵･ｭ蜍吶・荳ｭ譁ｭ繧ょ性繧√√∪縺溘◎
-//	繧後↓髯仙ｮ壹＆繧後↑縺・ｼ臥峩謗･謳榊ｮｳ縲・俣謗･謳榊ｮｳ縲∝・逋ｺ逧・↑謳榊ｮｳ縲∫音蛻･謳榊ｮｳ縲∵・鄂ｰ逧・錐螳ｳ縲√∪
-//	縺溘・邨先棡謳榊ｮｳ縺ｫ縺､縺・※縲∽ｸ蛻・ｲｬ莉ｻ繧定ｲ繧上↑縺・ｂ縺ｮ縺ｨ縺励∪縺吶・
+//	本ソフトウェアは、著作権者によって「現状のまま」提供されています。著作権者は、
+//	特定目的への適合性の保証、商品性の保証、またそれに限定されない、いかなる明示
+//	的もしくは暗黙な保証責任も負いません。著作権者は、事由のいかんを問わず、損害
+//	発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失
+//	その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知ら
+//	されていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サ
+//	ービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそ
+//	れに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、ま
+//	たは結果損害について、一切責任を負わないものとします。
 //
 //	Note that above Japanese version license is the formal document.
 //	The following translation is only for reference.
@@ -51,14 +51,14 @@
 //	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //	POSSIBILITY OF SUCH DAMAGE.
 //
-// --------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 module tb ();
-	localparam		clk_base		= 1_000_000_000_000.0/28_636_360;	//	ps
+	localparam		clk_base		= 1_000_000_000_000.0/42_954_540;	//	ps
 	localparam		cpu_clk_base	= 1_000_000_000_000.0/ 3_579_545;	//	ps
 	reg				clk;
 	reg				p_slot_clk;
-	reg				p_slot_reset;
+	reg				p_slot_reset_n;
 	reg				p_slot_sltsl_n;
 	reg				p_slot_memreq_n;
 	reg				p_slot_ioreq_n;
@@ -72,27 +72,15 @@ module tb ();
 	wire			reset_n;
 	reg				int_n;
 	wire	[15:0]	bus_address;
-	wire			bus_memreq;
+	wire			bus_io;
+	wire			bus_write;
 	wire			bus_valid;
+	wire			bus_ready;
 	wire	[7:0]	bus_wdata;
 	reg		[7:0]	bus_rdata;
 	reg				bus_rdata_en;
-	wire			bus_timer_cs;
-	wire			bus_opll_cs;
-	wire			bus_opl2_cs;
-	wire			bus_ssg_cs;
-	wire			bus_scc_cs;
-	wire			bus_dcsg_cs;
-	wire			bus_sysctrl_cs;
-	wire			bus_timer_ready;
-	wire			bus_opll_ready;
-	wire			bus_opl2_ready;
-	wire			bus_ssg_ready;
-	wire			bus_scc_ready;
-	wire			bus_dcsg_ready;
-	wire			bus_sysctrl_ready;
-	reg				memory_io_en;
 	string			s_state;
+	integer			error_count;
 
 	// --------------------------------------------------------------------
 	//	DUT
@@ -100,7 +88,7 @@ module tb ();
 	msx_slot u_msx_slot (
 		.clk					( clk					),
 		.reset_n				( reset_n				),
-		.p_slot_reset			( p_slot_reset			),
+		.p_slot_reset_n			( p_slot_reset_n		),
 		.p_slot_sltsl_n			( p_slot_sltsl_n		),
 		.p_slot_memreq_n		( p_slot_memreq_n		),
 		.p_slot_ioreq_n			( p_slot_ioreq_n		),
@@ -112,26 +100,13 @@ module tb ();
 		.p_slot_data_dir		( p_slot_data_dir		),
 		.int_n					( int_n					),
 		.bus_address			( bus_address			),
+		.bus_io					( bus_io				),
 		.bus_write				( bus_write				),
 		.bus_valid				( bus_valid				),
-		.bus_timer_ready		( bus_timer_ready		),
-		.bus_opll_ready			( bus_opll_ready		),
-		.bus_opl2_ready			( bus_opl2_ready		),
-		.bus_ssg_ready			( bus_ssg_ready			),
-		.bus_scc_ready			( bus_scc_ready			),
-		.bus_dcsg_ready			( bus_dcsg_ready		),
-		.bus_sysctrl_ready		( bus_sysctrl_ready		),
+		.bus_ready				( bus_ready				),
 		.bus_wdata				( bus_wdata				),
 		.bus_rdata				( bus_rdata				),
-		.bus_rdata_en			( bus_rdata_en			),
-		.bus_timer_cs			( bus_timer_cs			),
-		.bus_opll_cs			( bus_opll_cs			),
-		.bus_opl2_cs			( bus_opl2_cs			),
-		.bus_ssg_cs				( bus_ssg_cs			),
-		.bus_scc_cs				( bus_scc_cs			),
-		.bus_sysctrl_cs			( bus_sysctrl_cs		),
-		.bus_dcsg_cs			( bus_dcsg_cs			),
-		.memory_io_en			( memory_io_en			)
+		.bus_rdata_en			( bus_rdata_en			)
 	);
 
 	//	1: Read, 0: Write
@@ -145,23 +120,62 @@ module tb ();
 	end
 
 	// --------------------------------------------------------------------
-	//	response
+	//	Local BUS responder (simple slave model: bus_ready after a fixed
+	//	latency, dummy read data derived from the accessed address)
 	// --------------------------------------------------------------------
 	reg		[2:0]	ff_bus_valid = 0;
 
-	always @( clk ) begin
-		ff_bus_valid = { bus_valid, ff_bus_valid[2:1] };
+	always @( posedge clk ) begin
+		ff_bus_valid	<= { bus_valid, ff_bus_valid[2:1] };
 	end
 
-	wire w_bus_ready;
-	assign w_bus_ready			= ff_bus_valid[0];
-	assign bus_timer_ready		= w_bus_ready;
-	assign bus_opll_ready		= w_bus_ready;
-	assign bus_opl2_ready		= w_bus_ready;
-	assign bus_ssg_ready		= w_bus_ready;
-	assign bus_scc_ready		= w_bus_ready;
-	assign bus_dcsg_ready		= w_bus_ready;
-	assign bus_sysctrl_ready	= w_bus_ready;
+	assign bus_ready	= ff_bus_valid[0];
+
+	always @( posedge clk ) begin
+		if( bus_ready && bus_valid && !bus_write ) begin
+			bus_rdata		<= ~bus_address[7:0];
+			bus_rdata_en	<= 1'b1;
+		end
+		else begin
+			bus_rdata_en	<= 1'b0;
+		end
+	end
+
+	// --------------------------------------------------------------------
+	//	Local BUS transaction monitor (captures the first cycle of each
+	//	transaction, used to check the MSX Slot Signal -> Local BUS conversion)
+	// --------------------------------------------------------------------
+	reg				ff_prev_valid = 1'b0;
+	reg		[15:0]	ff_cap_address;
+	reg		[7:0]	ff_cap_wdata;
+	reg				ff_cap_io;
+	reg				ff_cap_write;
+
+	always @( posedge clk ) begin
+		ff_prev_valid	<= bus_valid;
+		if( bus_valid && !ff_prev_valid ) begin
+			ff_cap_address	<= bus_address;
+			ff_cap_wdata	<= bus_wdata;
+			ff_cap_io		<= bus_io;
+			ff_cap_write	<= bus_write;
+		end
+	end
+
+	// --------------------------------------------------------------------
+	//	check
+	// --------------------------------------------------------------------
+	task check(
+		input string	name,
+		input			condition
+	);
+		if( condition ) begin
+			$display( "OK   : %s", name );
+		end
+		else begin
+			$display( "ERROR: %s", name );
+			error_count = error_count + 1;
+		end
+	endtask
 
 	// --------------------------------------------------------------------
 	//	tasks
@@ -231,6 +245,8 @@ module tb ();
 				ff_slot_data	= wdata;
 			end
 		join
+		check( $sformatf( "write_io  address=%02h wdata=%02h", address, wdata ),
+			(ff_cap_io == 1'b1) && (ff_cap_write == 1'b1) && (ff_cap_address[7:0] == address) && (ff_cap_wdata == wdata) );
 	endtask
 
 	// --------------------------------------------------------------------
@@ -299,6 +315,8 @@ module tb ();
 				ff_slot_data	= wdata;
 			end
 		join
+		check( $sformatf( "write_io_ex address=%02h wdata=%02h", address, wdata ),
+			(ff_cap_io == 1'b1) && (ff_cap_write == 1'b1) && (ff_cap_address[7:0] == address) && (ff_cap_wdata == wdata) );
 	endtask
 
 	// --------------------------------------------------------------------
@@ -361,6 +379,156 @@ module tb ();
 				p_slot_rd_n = 1'b1;
 			end
 		join
+		check( $sformatf( "read_io   address=%02h rdata=%02h", address, rdata ),
+			(ff_cap_io == 1'b1) && (ff_cap_write == 1'b0) && (ff_cap_address[7:0] == address) && (rdata == ~address) );
+	endtask
+
+	// --------------------------------------------------------------------
+	task write_mem(
+		input	[15:0]	address,
+		input	[7:0]	wdata
+	);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/MREQ, /SLTSL
+			begin
+				p_slot_memreq_n	= 1'b1;
+				p_slot_sltsl_n	= 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns begin
+					p_slot_memreq_n	= 1'b0;
+					p_slot_sltsl_n	= 1'b0;
+				end
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns begin
+					p_slot_memreq_n	= 1'b1;
+					p_slot_sltsl_n	= 1'b1;
+				end
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#125ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#120ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+		check( $sformatf( "write_mem address=%04h wdata=%02h", address, wdata ),
+			(ff_cap_io == 1'b0) && (ff_cap_write == 1'b1) && (ff_cap_address == address) && (ff_cap_wdata == wdata) );
+	endtask
+
+	// --------------------------------------------------------------------
+	task read_mem(
+		input	[15:0]	address,
+		output	[7:0]	rdata
+	);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/MREQ, /SLTSL
+			begin
+				p_slot_memreq_n	= 1'b1;
+				p_slot_sltsl_n	= 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns begin
+					p_slot_memreq_n	= 1'b0;
+					p_slot_sltsl_n	= 1'b0;
+				end
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns begin
+					p_slot_memreq_n	= 1'b1;
+					p_slot_sltsl_n	= 1'b1;
+				end
+			end
+			//	/RD
+			begin
+				p_slot_rd_n = 1'b1;
+				//	T1
+				@( negedge p_slot_memreq_n );
+				#10ns p_slot_rd_n = 1'b0;
+				@( posedge p_slot_memreq_n );
+				rdata = p_slot_data;
+				p_slot_rd_n = 1'b1;
+			end
+		join
+		check( $sformatf( "read_mem  address=%04h rdata=%02h", address, rdata ),
+			(ff_cap_io == 1'b0) && (ff_cap_write == 1'b0) && (ff_cap_address == address) && (rdata == ~address[7:0]) );
 	endtask
 
 	// --------------------------------------------------------------------
@@ -371,7 +539,7 @@ module tb ();
 
 		clk					= 0;			//	42.95454MHz
 		p_slot_clk			= 0;
-		p_slot_reset		= 1;
+		p_slot_reset_n		= 1'b0;
 		p_slot_sltsl_n		= 1;
 		p_slot_memreq_n		= 1;
 		p_slot_ioreq_n		= 1;
@@ -381,15 +549,17 @@ module tb ();
 		bus_rdata			= 0;
 		bus_rdata_en		= 0;
 		int_n				= 1;
-		memory_io_en		= 0;
+		error_count			= 0;
 
-		@( negedge clk );
-		@( negedge clk );
-
-		p_slot_reset		= 0;
 		@( posedge clk );
 		@( posedge clk );
 
+		p_slot_reset_n		= 1'b1;
+		@( posedge clk );
+		@( posedge clk );
+
+		// --------------------------------------------------------------------
+		//	I/O access
 		// --------------------------------------------------------------------
 		write_io( 8'h88, 8'h12 );
 		write_io( 8'h89, 8'h23 );
@@ -421,7 +591,26 @@ module tb ();
 		write_io( 8'hDD, 8'h67 );
 		write_io( 8'hEE, 8'h67 );
 
+		// --------------------------------------------------------------------
+		//	Memory access
+		// --------------------------------------------------------------------
+		write_mem( 16'h4000, 8'h12 );
+		write_mem( 16'h7FEA, 8'h34 );
+		write_mem( 16'h7FFF, 8'h56 );
+
+		read_mem( 16'h4000, rdata );
+		read_mem( 16'h7FEA, rdata );
+		read_mem( 16'h7FFF, rdata );
+
 		repeat( 10 ) @( posedge clk );
+
+		if( error_count == 0 ) begin
+			$display( "OK   : all tests passed" );
+		end
+		else begin
+			$display( "ERROR: %0d test(s) failed", error_count );
+		end
 		$finish;
 	end
 endmodule
+

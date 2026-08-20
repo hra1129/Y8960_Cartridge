@@ -7,7 +7,7 @@
 module ssram (
 	input			n_reset,
 	input			clk,
-	input			clk_200m,
+	input			clk_serial,
 	input			bus_cs,
 	input	[18:0]	bus_address,
 	input			bus_write,
@@ -82,7 +82,7 @@ module ssram (
 	assign w_req = bus_cs && bus_valid;
 
 	// Internal SCLK divider: input clock is 200.452MHz, output SCLK becomes half-rate.
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_sclk_div <= 1'b0;
 		end
@@ -94,7 +94,7 @@ module ssram (
 	// ---------------------------------------------------------
 	//	Access timing pulse
 	// ---------------------------------------------------------
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_req_toggle_200_d0 <= 1'b0;
 			ff_req_toggle_200_d1 <= 1'b0;
@@ -108,7 +108,7 @@ module ssram (
 	// ---------------------------------------------------------
 	//	Access timing pulse
 	// ---------------------------------------------------------
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_valid_d0 <= 1'b0;
 			ff_valid_d1 <= 1'b0;
@@ -157,7 +157,7 @@ module ssram (
 	// ---------------------------------------------------------
 	//	Data latch
 	// ---------------------------------------------------------
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_wdata	<= 8'd0;
 		end
@@ -169,7 +169,7 @@ module ssram (
 	// ---------------------------------------------------------
 	//	State machine
 	// ---------------------------------------------------------
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_state	<= c_state_init_w0;
 			ff_ce_n		<= 1'b1;
@@ -379,7 +379,7 @@ module ssram (
 	end
 
 	// Sample read data on SCLK rising edge
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_rdata <= 8'd0;
 		end
@@ -393,7 +393,7 @@ module ssram (
 		end
 	end
 
-	always @( posedge clk_200m ) begin
+	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_read_complete <= 1'b0;
 		end

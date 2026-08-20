@@ -25,7 +25,7 @@
         "SubInsts": [
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 236,
+                "InstLine": 241,
                 "InstName": "u_pll",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_pll/gowin_pll.v",
                 "ModuleLine": 1,
@@ -51,7 +51,15 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 244,
+                "InstLine": 248,
+                "InstName": "u_div4",
+                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/gowin_clkdiv/gowin_clkdiv.v",
+                "ModuleLine": 11,
+                "ModuleName": "Gowin_CLKDIV"
+            },
+            {
+                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
+                "InstLine": 255,
                 "InstName": "u_msx_slot",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/msx_slot/msx_slot.v",
                 "ModuleLine": 58,
@@ -59,7 +67,15 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 285,
+                "InstLine": 280,
+                "InstName": "u_y8960_address_decode",
+                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_address_decode/y8960_address_decode.v",
+                "ModuleLine": 63,
+                "ModuleName": "y8960_address_decode"
+            },
+            {
+                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
+                "InstLine": 311,
                 "InstName": "u_scc_bank",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc_bank.v",
                 "ModuleLine": 7,
@@ -67,7 +83,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 308,
+                "InstLine": 334,
                 "InstName": "u_msx_timer",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/timer/msx_timer.v",
                 "ModuleLine": 58,
@@ -109,7 +125,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 323,
+                "InstLine": 349,
                 "InstName": "u_dual_opl2",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2_patch/opl2.v",
                 "ModuleLine": 7,
@@ -1011,7 +1027,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 352,
+                "InstLine": 378,
                 "InstName": "u_dual_opll",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll_patch/opll.v",
                 "ModuleLine": 7,
@@ -1637,7 +1653,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 369,
+                "InstLine": 395,
                 "InstName": "u_dual_ssg",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssg/dual_ssg.v",
                 "ModuleLine": 48,
@@ -1663,7 +1679,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 393,
+                "InstLine": 419,
                 "InstName": "u_scc",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc.v",
                 "ModuleLine": 7,
@@ -1983,7 +1999,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 411,
+                "InstLine": 437,
                 "InstName": "u_dcsg",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/sn76489_audio_patch/sn76489.v",
                 "ModuleLine": 7,
@@ -2009,7 +2025,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 430,
+                "InstLine": 456,
                 "InstName": "u_system_controller",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/system_controller/system_controller.v",
                 "ModuleLine": 58,
@@ -2017,7 +2033,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 482,
+                "InstLine": 508,
                 "InstName": "u_sram_arbiter",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssram/sram_arbiter.v",
                 "ModuleLine": 7,
@@ -2025,7 +2041,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 511,
+                "InstLine": 537,
                 "InstName": "u_spi_rom",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/spi_rom/ip_spi_rom.v",
                 "ModuleLine": 27,
@@ -2033,7 +2049,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 534,
+                "InstLine": 560,
                 "InstName": "u_ssram",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ssram/ssram.v",
                 "ModuleLine": 7,
@@ -2041,7 +2057,7 @@
             },
             {
                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/y8960_cartridge_tangprimer25k.v",
-                "InstLine": 570,
+                "InstLine": 651,
                 "InstName": "u_i2s",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/i2s_audio/i2s_audio.v",
                 "ModuleLine": 58,

@@ -618,7 +618,7 @@ module ssg_core #(
 		end
 		else if( enable ) begin
 			if( ff_ssg_state[1:0] == 2'd0 ) begin
-				ff_ssg_mixer[11:4]	<= 8'd0;
+				ff_ssg_mixer		<= 12'd0;
 			end
 			else begin
 				ff_ssg_mixer		<= { 2'b00, w_out_level } + ff_ssg_mixer;

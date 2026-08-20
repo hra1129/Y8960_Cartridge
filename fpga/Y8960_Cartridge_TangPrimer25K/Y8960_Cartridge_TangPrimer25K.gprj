@@ -12,6 +12,7 @@
         <File path="src/adpcm/src/jt10_adpcmb_gain.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm/src/jt10_adpcmb_interpol.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm_patch/adpcm.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_clkdiv/gowin_clkdiv.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_pll/gowin_pll.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_pll/gowin_pll_mod.v" type="file.verilog" enable="1"/>
         <File path="src/i2s_audio/i2s_audio.v" type="file.verilog" enable="1"/>
@@ -75,6 +76,7 @@
         <File path="src/system_controller/system_controller.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer.v" type="file.verilog" enable="1"/>
         <File path="src/timer/msx_timer_core.v" type="file.verilog" enable="1"/>
+        <File path="src/y8960_address_decode/y8960_address_decode.v" type="file.verilog" enable="1"/>
         <File path="src/y8960_cartridge_tangprimer25k.v" type="file.verilog" enable="1"/>
         <File path="src/sn76489_audio/src/sn76489_audio.vhd" type="file.vhdl" enable="1"/>
         <File path="src/Y8960_Cartridge_TangPrimer25K.cst" type="file.cst" enable="1"/>
