@@ -124,12 +124,15 @@ module tb ();
 	//	latency, dummy read data derived from the accessed address)
 	// --------------------------------------------------------------------
 	reg		[2:0]	ff_bus_valid = 0;
+	//	When set, bus_ready is forced low forever (models a Local BUS access
+	//	that no module claims, e.g. an unmapped I/O port).
+	reg				ff_suppress_bus_ready = 1'b0;
 
 	always @( posedge clk ) begin
 		ff_bus_valid	<= { bus_valid, ff_bus_valid[2:1] };
 	end
 
-	assign bus_ready	= ff_bus_valid[0];
+	assign bus_ready	= ff_suppress_bus_ready ? 1'b0 : ff_bus_valid[0];
 
 	always @( posedge clk ) begin
 		if( bus_ready && bus_valid && !bus_write ) begin
@@ -532,10 +535,476 @@ module tb ();
 	endtask
 
 	// --------------------------------------------------------------------
+	//	Access that never receives bus_ready (models an access to a Local BUS
+	//	address that no module claims). Checks that the Local BUS transaction
+	//	still reaches msx_slot correctly, and that msx_slot's internal ff_valid
+	//	is released again once the MSX Slot Signal itself deasserts, even
+	//	though bus_ready never came back (see msx_slot.v ff_valid clear cond.).
+	// --------------------------------------------------------------------
+	task write_io_no_ready(
+		input	[7:0]	address,
+		input	[7:0]	wdata
+	);
+		ff_suppress_bus_ready = 1'b1;
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/IORQ
+			begin
+				p_slot_ioreq_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns p_slot_ioreq_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns p_slot_ioreq_n = 1'b1;
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#125ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#120ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+		check( $sformatf( "write_io_no_ready address=%02h wdata=%02h (captured despite no bus_ready)", address, wdata ),
+			(ff_cap_io == 1'b1) && (ff_cap_write == 1'b1) && (ff_cap_address[7:0] == address) && (ff_cap_wdata == wdata) );
+		repeat( 4 ) @( posedge clk );
+		check( "write_io_no_ready: msx_slot ff_valid released without bus_ready", u_msx_slot.ff_valid == 1'b0 );
+		ff_suppress_bus_ready = 1'b0;
+		repeat( 2 ) @( posedge clk );
+	endtask
+
+	// --------------------------------------------------------------------
+	task write_mem_no_ready(
+		input	[15:0]	address,
+		input	[7:0]	wdata
+	);
+		ff_suppress_bus_ready = 1'b1;
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/MREQ, /SLTSL
+			begin
+				p_slot_memreq_n	= 1'b1;
+				p_slot_sltsl_n	= 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns begin
+					p_slot_memreq_n	= 1'b0;
+					p_slot_sltsl_n	= 1'b0;
+				end
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns begin
+					p_slot_memreq_n	= 1'b1;
+					p_slot_sltsl_n	= 1'b1;
+				end
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#125ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#120ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+		check( $sformatf( "write_mem_no_ready address=%04h wdata=%02h (captured despite no bus_ready)", address, wdata ),
+			(ff_cap_io == 1'b0) && (ff_cap_write == 1'b1) && (ff_cap_address == address) && (ff_cap_wdata == wdata) );
+		repeat( 4 ) @( posedge clk );
+		check( "write_mem_no_ready: msx_slot ff_valid released without bus_ready", u_msx_slot.ff_valid == 1'b0 );
+		ff_suppress_bus_ready = 1'b0;
+		repeat( 2 ) @( posedge clk );
+	endtask
+
+	// --------------------------------------------------------------------
+	//	Phase-shifted access tasks
+	//	Same MSX Slot Signal timing as write_io/read_io/write_mem/read_mem,
+	//	but the whole transaction is started (posedge clk) + delay_ns later,
+	//	in order to sweep the async-to-clk phase relationship 1clk cycle wide
+	//	(clk = 42.95454MHz, period approx. 23.28ns) and check that the
+	//	msx_slot single-flop synchronizer never drops an access regardless
+	//	of the phase.
+	// --------------------------------------------------------------------
+	task write_io_phase(
+		input	[7:0]	address,
+		input	[7:0]	wdata,
+		input	integer	delay_ns
+	);
+		@( posedge clk );
+		#(delay_ns);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/IORQ
+			begin
+				p_slot_ioreq_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns p_slot_ioreq_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns p_slot_ioreq_n = 1'b1;
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#125ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#120ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+		check( $sformatf( "write_io_phase(+%0dns) address=%02h wdata=%02h", delay_ns, address, wdata ),
+			(ff_cap_io == 1'b1) && (ff_cap_write == 1'b1) && (ff_cap_address[7:0] == address) && (ff_cap_wdata == wdata) );
+	endtask
+
+	// --------------------------------------------------------------------
+	task read_io_phase(
+		input	[7:0]	address,
+		output	[7:0]	rdata,
+		input	integer	delay_ns
+	);
+		@( posedge clk );
+		#(delay_ns);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/IORQ
+			begin
+				p_slot_ioreq_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns p_slot_ioreq_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns p_slot_ioreq_n = 1'b1;
+			end
+			//	/RD
+			begin
+				p_slot_rd_n = 1'b1;
+				//	T1
+				@( negedge p_slot_ioreq_n );
+				#10ns p_slot_rd_n = 1'b0;
+				@( posedge p_slot_ioreq_n );
+				rdata = p_slot_data;
+				p_slot_rd_n = 1'b1;
+			end
+		join
+		check( $sformatf( "read_io_phase(+%0dns) address=%02h rdata=%02h", delay_ns, address, rdata ),
+			(ff_cap_io == 1'b1) && (ff_cap_write == 1'b0) && (ff_cap_address[7:0] == address) && (rdata == ~address) );
+	endtask
+
+	// --------------------------------------------------------------------
+	task write_mem_phase(
+		input	[15:0]	address,
+		input	[7:0]	wdata,
+		input	integer	delay_ns
+	);
+		@( posedge clk );
+		#(delay_ns);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/MREQ, /SLTSL
+			begin
+				p_slot_memreq_n	= 1'b1;
+				p_slot_sltsl_n	= 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns begin
+					p_slot_memreq_n	= 1'b0;
+					p_slot_sltsl_n	= 1'b0;
+				end
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns begin
+					p_slot_memreq_n	= 1'b1;
+					p_slot_sltsl_n	= 1'b1;
+				end
+			end
+			//	/WR
+			begin
+				p_slot_wr_n = 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#125ns p_slot_wr_n = 1'b0;
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#120ns p_slot_wr_n = 1'b1;
+			end
+			//	others
+			begin
+				ff_slot_data	= wdata;
+			end
+		join
+		check( $sformatf( "write_mem_phase(+%0dns) address=%04h wdata=%02h", delay_ns, address, wdata ),
+			(ff_cap_io == 1'b0) && (ff_cap_write == 1'b1) && (ff_cap_address == address) && (ff_cap_wdata == wdata) );
+	endtask
+
+	// --------------------------------------------------------------------
+	task read_mem_phase(
+		input	[15:0]	address,
+		output	[7:0]	rdata,
+		input	integer	delay_ns
+	);
+		@( posedge clk );
+		#(delay_ns);
+		fork
+			//	CPU clock
+			begin
+				//	T1
+				s_state		= "T1";
+				p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T2
+				s_state		= "T2";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	TW
+				s_state		= "TW";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T3
+				s_state		= "T3";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T4
+				s_state		= "T4";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+				//	T5
+				s_state		= "T5";
+				#(cpu_clk_base/2) p_slot_clk	= 1'b1;
+				#(cpu_clk_base/2) p_slot_clk	= 1'b0;
+			end
+			//	Address
+			begin
+				#170ns p_slot_address = address;
+			end
+			//	/MREQ, /SLTSL
+			begin
+				p_slot_memreq_n	= 1'b1;
+				p_slot_sltsl_n	= 1'b1;
+				//	T1
+				@( negedge p_slot_clk );
+				@( posedge p_slot_clk );
+				#135ns begin
+					p_slot_memreq_n	= 1'b0;
+					p_slot_sltsl_n	= 1'b0;
+				end
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				@( negedge p_slot_clk );
+				#145ns begin
+					p_slot_memreq_n	= 1'b1;
+					p_slot_sltsl_n	= 1'b1;
+				end
+			end
+			//	/RD
+			begin
+				p_slot_rd_n = 1'b1;
+				//	T1
+				@( negedge p_slot_memreq_n );
+				#10ns p_slot_rd_n = 1'b0;
+				@( posedge p_slot_memreq_n );
+				rdata = p_slot_data;
+				p_slot_rd_n = 1'b1;
+			end
+		join
+		check( $sformatf( "read_mem_phase(+%0dns) address=%04h rdata=%02h", delay_ns, address, rdata ),
+			(ff_cap_io == 1'b0) && (ff_cap_write == 1'b0) && (ff_cap_address == address) && (rdata == ~address[7:0]) );
+	endtask
+
+	// --------------------------------------------------------------------
 	//	Test bench
 	// --------------------------------------------------------------------
 	initial begin
 		logic [7:0] rdata;
+		integer     d;
 
 		clk					= 0;			//	42.95454MHz
 		p_slot_clk			= 0;
@@ -601,6 +1070,36 @@ module tb ();
 		read_mem( 16'h4000, rdata );
 		read_mem( 16'h7FEA, rdata );
 		read_mem( 16'h7FFF, rdata );
+
+		// --------------------------------------------------------------------
+		//	Phase-shifted access: sweep the delay from clk posedge (1ns to 23ns,
+		//	1ns step, spans one clk cycle @42.95454MHz) to check that no access
+		//	is dropped regardless of the async-to-clk phase relationship.
+		// --------------------------------------------------------------------
+		for( d = 1; d <= 23; d = d + 1 ) begin
+			write_io_phase( 8'h88, 8'h40 + d[7:0], d );
+		end
+		for( d = 1; d <= 23; d = d + 1 ) begin
+			read_io_phase( 8'h88, rdata, d );
+		end
+		for( d = 1; d <= 23; d = d + 1 ) begin
+			write_mem_phase( 16'h4000 + d, 8'h60 + d[7:0], d );
+		end
+		for( d = 1; d <= 23; d = d + 1 ) begin
+			read_mem_phase( 16'h4000 + d, rdata, d );
+		end
+
+		// --------------------------------------------------------------------
+		//	After an access that never receives bus_ready (e.g. a Local BUS
+		//	address no module claims), a normal access must still succeed.
+		// --------------------------------------------------------------------
+		write_io_no_ready( 8'h77, 8'hAB );
+		write_io( 8'h88, 8'h99 );
+		read_io( 8'h88, rdata );
+
+		write_mem_no_ready( 16'h5000, 8'hCD );
+		write_mem( 16'h6000, 8'hEF );
+		read_mem( 16'h6000, rdata );
 
 		repeat( 10 ) @( posedge clk );
 

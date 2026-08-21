@@ -166,7 +166,7 @@ module msx_slot(
 			ff_io		<= 1'b0;
 		end
 		else if( ff_valid ) begin
-			if( bus_ready ) begin
+			if( bus_ready || (!ff_slot_io_wr && !ff_slot_io_rd && !ff_slot_mem_wr && !ff_slot_mem_rd) ) begin
 				ff_valid	<= 1'b0;
 			end
 		end
