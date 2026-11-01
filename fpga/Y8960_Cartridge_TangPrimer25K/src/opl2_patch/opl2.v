@@ -85,7 +85,10 @@ module opl2 (
 			ff_clk50_cnt <= ff_clk50_cnt + 10'd1;
 		end
 	end
-	assign w_cen50		= (ff_clk50_cnt == 10'd0);
+	//	ff_clk50_cnt stays 0 for a whole enable period, so gate it with enable
+	//	to make a one clock pulse. Otherwise the ADPCM address counter advances
+	//	up to 12 times per sample.
+	assign w_cen50		= enable && (ff_clk50_cnt == 10'd0);
 
 	// --------------------------------------------------------------------
 	//	Address decoder
