@@ -56,23 +56,24 @@
 //-----------------------------------------------------------------------------
 
 module i2s_audio(
-	input			clk,				//	24.576MHz
+	input			clk,				//	24.16193MHz in this project
 	input			reset_n,
 	input	[23:0]	sound_l_in,
 	input	[23:0]	sound_r_in,
+	output			sample_request,
 	output			i2s_audio_din,
 	output			i2s_audio_lrclk,
 	output			i2s_audio_bclk
 );
-	//	clk = 24.576MHz
-	//	BCLK = clk / 4 = 6.144MHz
-	//	LRCLK = BCLK / 64 = 96kHz (32bit x 2ch)
+	//	BCLK = clk / 4, LRCLK = BCLK / 64 (32bit x 2ch)
+	//	At 24.16193MHz: BCLK = 6.04048MHz, LRCLK = 94.38kHz.
 	//	PCM5102A: I2S format, MSB first
 	reg		[1:0]	ff_bclk_count;
 	wire			w_bclk_fall;
 	wire			w_frame_start;
 	reg		[5:0]	ff_bit_count;
 	reg		[31:0]	ff_shift_reg;
+	reg		[23:0]	ff_frame_r;
 	wire	[23:0]	w_sound_l;
 	wire	[23:0]	w_sound_r;
 
@@ -116,6 +117,8 @@ module i2s_audio(
 	end
 
 	assign w_frame_start	= w_bclk_fall && (ff_bit_count == 6'd63);
+	//	Request the next stereo pair halfway through the current frame.
+	assign sample_request	= w_bclk_fall && (ff_bit_count == 6'd31);
 
 	// --------------------------------------------------------------------
 	//	Shift register
@@ -125,13 +128,16 @@ module i2s_audio(
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_shift_reg <= 32'd0;
+			ff_frame_r   <= 24'd0;
 		end
 		else if( w_bclk_fall ) begin
-			if( ff_bit_count == 6'd63 ) begin
+			if( w_frame_start ) begin
 				ff_shift_reg <= { 1'b0, w_sound_l, 7'd0 };
+				//	The right channel must come from the same stereo pair.
+				ff_frame_r   <= w_sound_r;
 			end
 			else if( ff_bit_count == 6'd31 ) begin
-				ff_shift_reg <= { 1'b0, w_sound_r, 7'd0 };
+				ff_shift_reg <= { 1'b0, ff_frame_r, 7'd0 };
 			end
 			else begin
 				ff_shift_reg <= { ff_shift_reg[30:0], 1'b0 };

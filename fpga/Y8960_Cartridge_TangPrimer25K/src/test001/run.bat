@@ -37,7 +37,7 @@ vlog ..\ikascc_patch\scc_bank.v
 vlog ..\adpcm\src\jt10_adpcm_div.v
 vlog ..\adpcm\src\jt10_adpcm_drvB.v
 vlog ..\adpcm\src\jt10_adpcmb.v
-vlog ..\adpcm\src\jt10_adpcmb_cnt.v
+vlog ..\adpcm_patch\jt10_adpcmb_cnt.v
 vlog ..\adpcm\src\jt10_adpcmb_gain.v
 vlog ..\adpcm\src\jt10_adpcmb_interpol.v
 vlog ..\adpcm_patch\adpcm.v
@@ -80,6 +80,7 @@ vlog ..\pan\pan_lut.v
 vlog gowin_pll_dummy.v
 vlog gowin_clkdiv_dummy.v
 
+vlog ..\i2s_audio\audio_cdc.v
 vlog ..\i2s_audio\i2s_audio.v
 
 vlog ..\msx_slot\msx_slot.v

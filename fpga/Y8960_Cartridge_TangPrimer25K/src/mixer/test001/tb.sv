@@ -21,6 +21,7 @@ module tb ();
 	reg		[7:0]		master_volume;
 	wire signed	[23:0]	audio_l_out;
 	wire signed	[23:0]	audio_r_out;
+	wire				audio_valid;
 	integer				error_count;
 
 	mixier u_dut (
@@ -43,7 +44,8 @@ module tb ();
 		.opm_volume		( opm_volume	),
 		.master_volume	( master_volume	),
 		.audio_l_out	( audio_l_out	),
-		.audio_r_out	( audio_r_out	)
+		.audio_r_out	( audio_r_out	),
+		.audio_valid	( audio_valid	)
 	);
 
 	always #(clk_base/2) clk = ~clk;
@@ -101,7 +103,7 @@ module tb ();
 		opl2_r	= -16'sd500;
 		scc_l	= -11'sd50;
 		scc_r	= -11'sd50;
-		check_output( "all sources at 100%", 24'sd16000, 24'sd25600 );
+		check_output( "all sources at 100%", 24'sd128000, 24'sd204800 );
 
 		ssg_l	= 13'd1024;
 		ssg_r	= 13'd1024;
@@ -115,7 +117,7 @@ module tb ();
 		opll_volume		= 8'd32;
 		opl2_volume		= 8'd0;
 		scc_volume		= 8'd127;
-		check_output( "independent gains and SCC L/R", 24'sd28544, -24'sd3968 );
+		check_output( "independent gains and SCC L/R", 24'sd228352, -24'sd31744 );
 
 		ssg_volume		= 8'd0;
 		opll_volume		= 8'd0;
@@ -136,13 +138,13 @@ module tb ();
 		scc_l	= -11'sd50;
 		scc_r	= -11'sd50;
 		master_volume	= 8'd64;
-		check_output( "master volume 50%", 24'sd8000, 24'sd12800 );
+		check_output( "master volume 50%", 24'sd64000, 24'sd102400 );
 
 		master_volume	= 8'd1;
-		check_output( "master volume 1/128", 24'sd125, 24'sd200 );
+		check_output( "master volume 1/128", 24'sd1000, 24'sd1600 );
 
 		master_volume	= 8'd255;
-		check_output( "master volume bit7 clamps to 100%", 24'sd16000, 24'sd25600 );
+		check_output( "master volume bit7 clamps to 100%", 24'sd128000, 24'sd204800 );
 
 		master_volume	= 8'd0;
 		check_output( "master volume muted", 24'sd0, 24'sd0 );
@@ -156,10 +158,10 @@ module tb ();
 		scc_l	= 11'sd1023;
 		scc_r	= -11'sd1024;
 		master_volume	= 8'd128;
-		check_output( "full scale at master 100%", 24'sd1245072, -24'sd983056 );
+		check_output( "full scale at master 100% (L saturated)", 24'sd8388607, -24'sd7864448 );
 
 		master_volume	= 8'd96;
-		check_output( "full scale at master 75%", 24'sd933804, -24'sd737292 );
+		check_output( "full scale at master 75%", 24'sd6291455, -24'sd5898336 );
 
 		ssg_l	= 13'd0;
 		ssg_r	= 13'd0;
@@ -172,10 +174,10 @@ module tb ();
 		opm_l	= 16'sd1024;
 		opm_r	= -16'sd2048;
 		master_volume	= 8'd128;
-		check_output( "OPM only at 100%", 24'sd16384, -24'sd32768 );
+		check_output( "OPM only at 100%", 24'sd131072, -24'sd262144 );
 
 		opm_volume		= 8'd32;
-		check_output( "OPM volume 25%", 24'sd4096, -24'sd8192 );
+		check_output( "OPM volume 25%", 24'sd32768, -24'sd65536 );
 
 		opm_volume		= 8'd0;
 		check_output( "OPM muted", 24'sd0, 24'sd0 );
@@ -191,10 +193,10 @@ module tb ();
 		opm_l	= 16'sd32767;
 		opm_r	= -16'sd32768;
 		opm_volume		= 8'd128;
-		check_output( "full scale with OPM at master 100%", 24'sd1769344, -24'sd1507344 );
+		check_output( "full scale with OPM at master 100% (saturated)", 24'sd8388607, -24'sd8388608 );
 
 		master_volume	= 8'd96;
-		check_output( "full scale with OPM at master 75%", 24'sd1327008, -24'sd1130508 );
+		check_output( "full scale with OPM at master 75%", 24'sd6291455, -24'sd6291456 );
 		if( error_count == 0 ) begin
 			$display( "OK   : all tests passed" );
 		end

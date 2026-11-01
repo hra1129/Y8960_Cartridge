@@ -36,6 +36,8 @@ module opl2 (
 	reg		[15:0]	ff_opl2_sound_out_l;
 	reg		[15:0]	ff_opl2_sound_out_r;
 	wire	[7:0]	w_opl_rdata;
+	wire			w_opl_irq_n;
+	wire			w_adpcm_irq;
 	wire	[7:0]	w_bus_rdata;
 	wire			w_bus_rdata_en;
 	reg				ff_ready;
@@ -104,7 +106,7 @@ module opl2 (
 		.cs_n			( w_cs_n				),
 		.wr_n			( ~bus_write			),
 		.dout			( w_opl_rdata			),
-		.irq_n			( intr_n				),
+		.irq_n			( w_opl_irq_n			),
 		.snd_l			( w_opl2_sound_out_l	),
 		.snd_r			( w_opl2_sound_out_r	),
 		.sample			( w_opl2_sound_en		)
@@ -126,6 +128,7 @@ module opl2 (
 		.bus_rdata			( w_bus_rdata			),
 		.bus_rdata_en		( w_bus_rdata_en		),
 		.opl2_status		( w_opl_rdata			),
+		.adpcm_irq			( w_adpcm_irq			),
 		.adpcm_sound_out_l	( w_adpcm_sound_out_l	),
 		.adpcm_sound_out_r	( w_adpcm_sound_out_r	),
 		.adpcm_write		( adpcm_write			),
@@ -200,4 +203,6 @@ module opl2 (
 	assign opl2_sound_out_l		= saturate_16( w_sound_sum_l );
 	assign opl2_sound_out_r		= saturate_16( w_sound_sum_r );
 	assign adpcm_address		= w_adpcm_address[17:0];
+	//	Y8950: unmasked ADPCM flags (EOS/BUF_RDY) also assert IRQ.
+	assign intr_n				= w_opl_irq_n & ~w_adpcm_irq;
 endmodule

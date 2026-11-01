@@ -1,3 +1,8 @@
+onerror {quit -code 1}
+onbreak {
+    if {[examine -radix unsigned sim:/tb/test_passed] == 1} {quit -code 0}
+    quit -code 1
+}
 add wave -r *
-run 1000000ms
-quit
+run -all
+quit -code 1

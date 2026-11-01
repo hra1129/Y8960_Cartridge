@@ -31,6 +31,7 @@ module tb ();
 		.bus_rdata			( bus_rdata			),
 		.bus_rdata_en		( bus_rdata_en		),
 		.opl2_status		( 8'd0				),
+		.adpcm_irq			(					),
 		.adpcm_sound_out_l	( adpcm_sound_out_l	),
 		.adpcm_sound_out_r	( adpcm_sound_out_r	),
 		.adpcm_write		( adpcm_write		),

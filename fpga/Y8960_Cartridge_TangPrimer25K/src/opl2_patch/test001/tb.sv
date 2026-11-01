@@ -437,11 +437,13 @@ module tb ();
 		adpcm_mem[18'h01234] = 8'hA5;
 		force u_dut.u_adpcm.w_core_address = 24'h001234;
 		force u_dut.u_adpcm.w_adpcm_oe_n = 1'b0;
+		force u_dut.u_adpcm.w_mode_play = 1'b1;
 		@( posedge clk );
 		release u_dut.u_adpcm.w_adpcm_oe_n;
+		release u_dut.u_adpcm.w_mode_play;
 		release u_dut.u_adpcm.w_core_address;
-		repeat( 6 ) @( posedge clk );
-		assert( u_dut.u_adpcm.ff_adpcm_data == 8'hA5 );
+		repeat( 10 ) @( posedge clk );
+		assert( u_dut.u_adpcm.ff_core_data == 8'hA5 );
 
 		repeat( 100 ) @( posedge clk );
 		$display( "==== All tests done ====");

@@ -75,7 +75,8 @@ module mixier (
 	input			[7:0]		opm_volume,
 	input			[7:0]		master_volume,
 	output reg signed [23:0]	audio_l_out,
-	output reg signed [23:0]	audio_r_out
+	output reg signed [23:0]	audio_r_out,
+	output reg					audio_valid
 );
 	//	One multiplier is shared by 12 steps:
 	//	  0-4 : SSG/OPLL/OPL2/SCC/OPM Lch x volume, 5 : Lch mix x master volume
@@ -97,7 +98,9 @@ module mixier (
 	assign w_product_raw	= w_sample * $signed({ 1'b0, w_gain });
 	assign w_product		= w_product_raw[27:0];
 	assign w_sum			= ff_acc + w_product;
-	assign w_scaled			= w_sum >>> 3;
+	//	No attenuation after mixing: a full-scale 16bit source at volume 128 is
+	//	-6dBFS. Louder mixes are clipped by saturate_24().
+	assign w_scaled			= w_sum;
 	//	|ff_mix| <= 2^23 and gain <= 128, so the result always fits in 24 bits.
 	assign w_master_out		= w_product_raw[30:7];
 	assign w_master_state	= (ff_state == 4'd5) || (ff_state == 4'd11);
@@ -144,8 +147,12 @@ module mixier (
 			ff_mix			<= 24'sd0;
 			audio_l_out		<= 24'sd0;
 			audio_r_out		<= 24'sd0;
+			audio_valid		<= 1'b0;
 		end
 		else begin
+			//	High after the R output is updated, with both channels stable.
+			audio_valid <= (ff_state == 4'd11);
+
 			if( ff_state == 4'd0 || ff_state == 4'd6 ) begin
 				ff_acc <= w_product;
 			end

@@ -21,73 +21,133 @@
 //	in the Software.
 // -----------------------------------------------------------------------------
 //	Description:
-//		Pulse wave modulation
+//		I2S framing and stereo sample coherence
 // -----------------------------------------------------------------------------
 
-module tb ();
-	localparam	clk_base	= 1_000_000_000/42.95454;	//	ps
-	int						test_no;
-	int						i;
-	reg						clk;				//	42.95454MHz
-	reg						reset_n;
-	reg		[15:0]			sound_in;
-	wire					i2s_audio_en;
-	wire					i2s_audio_din;
-	wire					i2s_audio_lrclk;
-	wire					i2s_audio_bclk;
+`timescale 1ps/1ps
 
-	// --------------------------------------------------------------------
-	//	DUT
-	// --------------------------------------------------------------------
+module tb ();
+	reg				clk;
+	reg				reset_n;
+	reg		[23:0]	sound_l;
+	reg		[23:0]	sound_r;
+	wire			sample_request;
+	wire			i2s_audio_din;
+	wire			i2s_audio_lrclk;
+	wire			i2s_audio_bclk;
+	integer			request_count;
+	reg				test_passed;
+
 	i2s_audio u_i2s_audio (
-	.clk				( clk				),
-	.reset_n			( reset_n			),
-	.sound_in			( sound_in			),
-	.i2s_audio_en		( i2s_audio_en		),
-	.i2s_audio_din		( i2s_audio_din		),
-	.i2s_audio_lrclk	( i2s_audio_lrclk	),
-	.i2s_audio_bclk		( i2s_audio_bclk	)
+		.clk				( clk				),
+		.reset_n			( reset_n			),
+		.sound_l_in			( sound_l			),
+		.sound_r_in			( sound_r			),
+		.sample_request		( sample_request	),
+		.i2s_audio_din		( i2s_audio_din		),
+		.i2s_audio_lrclk	( i2s_audio_lrclk	),
+		.i2s_audio_bclk		( i2s_audio_bclk	)
 	);
-	
-	// --------------------------------------------------------------------
-	//	clock
-	// --------------------------------------------------------------------
-	always #(clk_base/2) begin
-		clk <= ~clk;
+
+	always #20694 clk = ~clk;
+
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			request_count = 0;
+		end
+		else if( sample_request ) begin
+			if( u_i2s_audio.ff_bclk_count !== 2'd1 ||
+				u_i2s_audio.ff_bit_count !== 6'd31 ) begin
+				$fatal( 1, "sample request was not at the right-channel boundary" );
+			end
+			request_count = request_count + 1;
+		end
 	end
 
-	// --------------------------------------------------------------------
-	//	Test bench
-	// --------------------------------------------------------------------
+	task check_channel( input bit channel, input [23:0] expected );
+		integer bit_index;
+		reg [23:0] actual;
+		begin
+			actual = 24'd0;
+			for( bit_index = 0; bit_index < 32; bit_index = bit_index + 1 ) begin
+				@( posedge i2s_audio_bclk );
+				#1;
+				if( i2s_audio_lrclk !== channel ) begin
+					$fatal( 1, "LRCLK changed inside channel %0d at bit %0d", channel, bit_index );
+				end
+				if( bit_index == 0 || bit_index >= 25 ) begin
+					if( i2s_audio_din !== 1'b0 ) begin
+						$fatal( 1, "nonzero I2S lead or padding bit %0d", bit_index );
+					end
+				end
+				else begin
+					actual = { actual[22:0], i2s_audio_din };
+				end
+			end
+			if( actual !== expected ) begin
+				$fatal( 1, "channel %0d: expected %06h, got %06h", channel, expected, actual );
+			end
+		end
+	endtask
+
 	initial begin
-		test_no			= -1;
-		reset_n			= 0;
-		clk				= 1;
-		sound_in		= 0;
+		clk = 1'b0;
+		reset_n = 1'b0;
+		sound_l = 24'h812345;
+		sound_r = 24'hFEDCBA;
+		request_count = 0;
+		test_passed = 1'b0;
+		repeat( 4 ) @( posedge clk );
+		@( negedge clk );
+		reset_n = 1'b1;
+
+		@( negedge i2s_audio_lrclk );
+		fork
+			begin
+				check_channel( 1'b0, 24'h812345 );
+				check_channel( 1'b1, 24'hFEDCBA );
+				check_channel( 1'b0, 24'h7FFFFF );
+				check_channel( 1'b1, 24'h800000 );
+				check_channel( 1'b0, 24'h123456 );
+				check_channel( 1'b1, 24'hABCDEF );
+			end
+			begin
+				repeat( 10 ) @( posedge i2s_audio_bclk );
+				@( negedge clk );
+				sound_l = 24'h7FFFFF;
+				sound_r = 24'h800000;
+				@( negedge i2s_audio_lrclk );
+				repeat( 18 ) @( posedge i2s_audio_bclk );
+				@( negedge clk );
+				sound_l = 24'h123456;
+				sound_r = 24'hABCDEF;
+			end
+		join
+		if( request_count != 4 ) begin
+			$fatal( 1, "expected 4 sample requests, got %0d", request_count );
+		end
 
 		@( negedge clk );
+		reset_n = 1'b0;
+		sound_l = 24'hFFFFFF;
+		sound_r = 24'h000001;
+		repeat( 4 ) @( posedge clk );
+		#1;
+		if( i2s_audio_din !== 1'b0 || i2s_audio_lrclk !== 1'b0 ) begin
+			$fatal( 1, "I2S outputs did not reset" );
+		end
 		@( negedge clk );
-		@( posedge clk );
-
-		reset_n		= 1;
-		@( posedge clk );
-
-		sound_in	<= 16'b1000000000000000;
-		repeat( 1000 ) @( posedge clk );
-
-		sound_in	<= 16'b1111111100000000;
-		repeat( 1000 ) @( posedge clk );
-
-		sound_in	<= 16'b0101010101010101;
-		repeat( 1000 ) @( posedge clk );
-
-		sound_in	<= 16'b1110111011101110;
-		repeat( 1000 ) @( posedge clk );
-
-		sound_in	<= 16'b1100110000110011;
-		repeat( 1000 ) @( posedge clk );
-
-		repeat( 100000 ) @( posedge clk );
+		reset_n = 1'b1;
+		@( negedge i2s_audio_lrclk );
+		check_channel( 1'b0, 24'hFFFFFF );
+		check_channel( 1'b1, 24'h000001 );
+		test_passed = 1'b1;
+		$display( "OK: I2S framing, stereo snapshots, requests and reset" );
 		$finish;
+	end
+
+	initial begin
+		#1000000000;
+		$fatal( 1, "I2S test timed out" );
 	end
 endmodule

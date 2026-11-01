@@ -8,13 +8,14 @@
         <File path="src/adpcm/src/jt10_adpcm_div.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm/src/jt10_adpcm_drvB.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm/src/jt10_adpcmb.v" type="file.verilog" enable="1"/>
-        <File path="src/adpcm/src/jt10_adpcmb_cnt.v" type="file.verilog" enable="1"/>
+        <File path="src/adpcm_patch/jt10_adpcmb_cnt.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm/src/jt10_adpcmb_gain.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm/src/jt10_adpcmb_interpol.v" type="file.verilog" enable="1"/>
         <File path="src/adpcm_patch/adpcm.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_clkdiv/gowin_clkdiv.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_pll/gowin_pll.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_pll/gowin_pll_mod.v" type="file.verilog" enable="1"/>
+        <File path="src/i2s_audio/audio_cdc.v" type="file.verilog" enable="1"/>
         <File path="src/i2s_audio/i2s_audio.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_eg.v" type="file.verilog" enable="1"/>
         <File path="src/ikaopll/src/IKAOPLL_modules/IKAOPLL_lfo.v" type="file.verilog" enable="1"/>

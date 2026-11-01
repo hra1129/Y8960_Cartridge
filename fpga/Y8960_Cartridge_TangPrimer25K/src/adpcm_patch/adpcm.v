@@ -1,7 +1,9 @@
 // --------------------------------------------------------------------
-//	ADPCM Wrapper
+//	ADPCM Wrapper (Y8950 / MSX-AUDIO compatible register interface)
 // ====================================================================
 //	2026/02/19 t.hara
+//	2026/11/01 t.hara  Y8950 compatible playback start, address units,
+//	                   status flags, memory read/write and R#08.
 // --------------------------------------------------------------------
 
 module adpcm (
@@ -17,6 +19,7 @@ module adpcm (
 	output	[7:0]	bus_rdata,
 	output			bus_rdata_en,
 	input	[7:0]	opl2_status,
+	output			adpcm_irq,
 	output	[15:0]	adpcm_sound_out_l,			//	signed
 	output	[15:0]	adpcm_sound_out_r,			//	signed
 	//	ADPCM Memory I/F
@@ -28,48 +31,132 @@ module adpcm (
 	input	[ 7:0]	adpcm_rdata,
 	input			adpcm_rdata_en
 );
+	localparam		[1:0]	c_owner_core		= 2'd0;
+	localparam		[1:0]	c_owner_prefetch	= 2'd1;
+	localparam		[1:0]	c_owner_cpu_write	= 2'd2;
+
+	//	Registers
 	reg		[7:0]	ff_reg_select;
+	reg				reg_mask_eos;				//	04h [4]
+	reg				reg_mask_buf_rdy;			//	04h [3]
+	reg				reg_start;					//	07h [7]
+	reg				reg_record;					//	07h [6]
+	reg				reg_memory_data;			//	07h [5]
+	reg				reg_repeat;					//	07h [4]
+	reg				reg_sp_off;					//	07h [3]
+	reg				reg_64k;					//	08h [1]
+	reg				reg_rom;					//	08h [0]
+	reg		[15:0]	reg_start_address;			//	09h, 0Ah (4 bytes unit)
+	reg		[15:0]	reg_stop_address;			//	0Bh, 0Ch (4 bytes unit)
+	reg		[7:0]	reg_adpcm_data;				//	0Fh (last written value)
+	reg		[15:0]	reg_delta_n;				//	10h, 11h
+	reg		[7:0]	reg_envelope_control;		//	12h
+	reg		[7:0]	reg_pan;					//	FFh
+
+	//	Status flags and CPU memory access
+	reg				ff_eos;
+	reg				ff_buf_rdy;
+	reg				ff_start_pulse;
+	reg		[18:0]	ff_mem_ptr;					//	byte address
+	reg		[1:0]	ff_read_delay;
+	reg				ff_prefetch_valid;
+	reg		[7:0]	ff_prefetch_data;
+	reg				ff_cpu_write_pending;
+	reg		[17:0]	ff_cpu_write_address;
+	reg		[7:0]	ff_cpu_write_data;
 	reg		[7:0]	ff_rdata;
-	reg		[7:0]	ff_adpcm_data;
-	reg		[7:0]	ff_adpcm_wdata;
-	reg		[23:0]	ff_adpcm_address;
-	reg				ff_bus_valid;
-	reg				reg_mask_eds;				// 04h [4]
-	reg				reg_mask_buffer_ready;		// 04h [3]
-	reg				reg_start;					// 07h [7]
-	reg				reg_record;					// 07h [6]
-	reg				reg_memory_data;			// 07h [5]
-	reg				reg_repeat;					// 07h [4]
-	reg				reg_reset;					// 07h [0]
-	reg		[12:0]	reg_start_address;			// 09h, 0Ah
-	reg		[12:0]	reg_stop_address;			// 0Bh, 0Ch
-	reg		[15:0]	reg_delta_n;				// 10h, 11h
-	reg		[7:0]	reg_envelope_control;		// 12h
-	reg		[17:0]	ff_byte_counter;
-	wire			w_flag;
-	reg				ff_read_state;				// 0: request state, 1: data state
-	localparam		c_read_state_request = 1'b0;
-	localparam		c_read_state_data = 1'b1;
-	reg				ff_adpcm_access;			// ADPCM-SRAM I/F master 0: ADPCM, 1: CPU
-	localparam		c_access_adpcm = 1'b0;
-	localparam		c_access_cpu = 1'b1;
-	reg				ff_adpcm_valid;
-	reg				ff_adpcm_write;
-	reg				ff_adpcm_read;
+	reg				ff_rdata_en;
+
+	//	ADPCM memory interface
+	reg				ff_mem_valid;
+	reg				ff_mem_write;
+	reg				ff_mem_wait_data;
+	reg		[1:0]	ff_mem_owner;
+	reg		[17:0]	ff_mem_address;
+	reg		[7:0]	ff_mem_wdata;
 	reg				ff_core_pending;
-	reg		[23:0]	ff_core_address;
-	reg		[7:0]	reg_pan;					// FFh
+	reg		[17:0]	ff_core_address;
+	reg		[7:0]	ff_core_data;
+
+	wire			w_access;
+	wire			w_select_write;
+	wire			w_reg_write;
+	wire			w_reg_read;
+	wire			w_status_read;
+	wire			w_data_read;
+	wire			w_mode_idle;
+	wire			w_mode_mem_write;
+	wire			w_mode_mem_read;
+	wire			w_mode_play;
+	wire			w_mode_cpu_synth;
+	wire			w_buf_rdy_hold;
+	wire	[18:0]	w_start_ptr;
+	wire	[18:0]	w_stop_ptr;
+	wire			w_ptr_over;
+	wire	[18:0]	w_write_ptr;
+	wire			w_eos_visible;
+	wire			w_buf_rdy_visible;
+	wire	[7:0]	w_status;
+	wire			w_mem_idle;
+	wire			w_need_prefetch;
+	wire			w_issue_cpu_write;
+	wire			w_issue_core;
+	wire			w_issue_prefetch;
+	wire			w_prefetch_busy;
+	wire			w_prefetch_done;
+	wire			w_cpu_write_done;
+	wire			w_core_eos;
 	wire			w_adpcm_oe_n;
 	wire			w_core_enable;
 	wire	[23:0]	w_core_address;
+	wire	[15:0]	w_core_pcm;
 	wire	[15:0]	w_pcm;
 	wire	[8:0]	w_pan_gain_l;
 	wire	[8:0]	w_pan_gain_r;
 	wire	[8:0]	w_pan_gain;
 	wire signed [25:0]	w_pan_product;
-	reg				ff_pan_phase;				// 0: Lch, 1: Rch
+	reg				ff_pan_phase;				//	0: Lch, 1: Rch
 	reg		[15:0]	ff_pan_out_l;
 	reg		[15:0]	ff_pan_out_r;
+
+	function [17:0] mask_address;
+		input	[18:0]	address;
+		input			is_64k;
+		begin
+			mask_address = is_64k ? { 2'd0, address[15:0] } : address[17:0];
+		end
+	endfunction
+
+	// ---------------------------------------------------------
+	//	Decode
+	// ---------------------------------------------------------
+	assign w_access				= bus_cs & bus_valid;
+	assign w_select_write		= w_access &  bus_write & ~bus_address;
+	assign w_reg_write			= w_access &  bus_write &  bus_address;
+	assign w_reg_read			= w_access & ~bus_write &  bus_address;
+	assign w_status_read		= w_access & ~bus_write & ~bus_address;
+	assign w_data_read			= w_reg_read & (ff_reg_select == 8'h0F);
+
+	//	R#07 bit7-5 (START, REC, MEMORY DATA)
+	assign w_mode_idle			= ~reg_start & ~reg_record & ~reg_memory_data;
+	assign w_mode_mem_write		= ~reg_start &  reg_record &  reg_memory_data;
+	assign w_mode_mem_read		= ~reg_start & ~reg_record &  reg_memory_data;
+	assign w_mode_play			=  reg_start & ~reg_record &  reg_memory_data;
+	assign w_mode_cpu_synth		=  reg_start & ~reg_record & ~reg_memory_data;
+	//	BUF_RDY stays 1 in "no function" and memory transfer modes
+	assign w_buf_rdy_hold		= w_mode_idle | (~reg_start & reg_memory_data);
+
+	assign w_start_ptr			= { 1'b0, reg_start_address, 2'b00 };
+	assign w_stop_ptr			= { 1'b0, reg_stop_address,  2'b11 };
+	assign w_ptr_over			= (ff_mem_ptr > w_stop_ptr);
+	assign w_write_ptr			= (ff_read_delay != 2'd0) ? w_start_ptr : ff_mem_ptr;
+
+	//	Status register: IRQ, T1, T2, EOS, BUF_RDY, 1, 1, PCM_BSY
+	assign w_eos_visible		= ff_eos     & ~reg_mask_eos;
+	assign w_buf_rdy_visible	= ff_buf_rdy & ~reg_mask_buf_rdy;
+	assign adpcm_irq			= w_eos_visible | w_buf_rdy_visible;
+	assign w_status				= { opl2_status[7] | adpcm_irq, opl2_status[6:5],
+									w_eos_visible, w_buf_rdy_visible, 2'b11, reg_start };
 
 	// ---------------------------------------------------------
 	//	JT ADPCM (TypeB) body
@@ -81,23 +168,26 @@ module adpcm (
 		.clk			( clk								),
 		.cen			( w_core_enable						),
 		.cen55			( cen55								),
-		.acmd_on_b		( reg_start							),
+		.acmd_on_b		( w_mode_play						),
 		.acmd_rep_b		( reg_repeat						),
-		.acmd_rst_b		( reg_reset							),
-		.acmd_up_b		( reg_record						),
+		.acmd_rst_b		( 1'b0								),
+		.acmd_up_b		( ff_start_pulse					),
 		.alr_b			( 2'b11								),		//	always enable
-		.astart_b		( { 3'd0, reg_start_address }		),
-		.aend_b			( { 3'd0, reg_stop_address }		),
+		.astart_b		( reg_start_address					),
+		.aend_b			( reg_stop_address					),
 		.adeltan_b		( reg_delta_n						),
 		.aeg_b			( reg_envelope_control				),
-		.flag			( w_flag							),
-		.clr_flag		( reg_mask_eds						),
-		.addr			( w_core_address						),
-		.data			( ff_adpcm_data						),
+		.flag			( w_core_eos						),		//	one clock pulse
+		.clr_flag		( 1'b1								),
+		.addr			( w_core_address					),
+		.data			( ff_core_data						),
 		.roe_n			( w_adpcm_oe_n						),
-		.pcm55_l		( w_pcm								),
+		.pcm55_l		( w_core_pcm						),
 		.pcm55_r		(									)
 	);
+
+	//	Y8950: no output while not playing, or when SP-OFF is set.
+	assign w_pcm				= (reg_sp_off | ~w_mode_play) ? 16'd0 : w_core_pcm;
 
 	// ---------------------------------------------------------
 	//	Stereo panning (register FFh)
@@ -133,227 +223,304 @@ module adpcm (
 	assign adpcm_sound_out_l	= ff_pan_out_l;
 	assign adpcm_sound_out_r	= ff_pan_out_r;
 
+	// ---------------------------------------------------------
+	//	Registers, status flags and CPU memory access
+	// ---------------------------------------------------------
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
 			ff_reg_select			<= 8'd0;
-			reg_mask_eds			<= 1'b1;
-			reg_mask_buffer_ready	<= 1'b1;
+			reg_mask_eos			<= 1'b1;
+			reg_mask_buf_rdy		<= 1'b1;
 			reg_start				<= 1'b0;
 			reg_record				<= 1'b0;
 			reg_memory_data			<= 1'b0;
 			reg_repeat				<= 1'b0;
-			reg_reset				<= 1'b0;
-			reg_start_address		<= 13'd0;
-			reg_stop_address		<= 13'd0;
+			reg_sp_off				<= 1'b0;
+			reg_64k					<= 1'b0;
+			reg_rom					<= 1'b0;
+			reg_start_address		<= 16'd0;
+			reg_stop_address		<= 16'd0;
+			reg_adpcm_data			<= 8'd0;
 			reg_delta_n				<= 16'd0;
 			reg_envelope_control	<= 8'd0;
 			reg_pan					<= 8'd128;
+			ff_eos					<= 1'b0;
+			ff_buf_rdy				<= 1'b1;
+			ff_start_pulse			<= 1'b0;
+			ff_mem_ptr				<= 19'd0;
+			ff_read_delay			<= 2'd0;
+			ff_prefetch_valid		<= 1'b0;
+			ff_prefetch_data		<= 8'd0;
+			ff_cpu_write_pending	<= 1'b0;
+			ff_cpu_write_address	<= 18'd0;
+			ff_cpu_write_data		<= 8'd0;
+			ff_rdata				<= 8'hFF;
+			ff_rdata_en				<= 1'b0;
 		end
-		else if( !bus_cs || !bus_valid ) begin
-		end
-		else if( bus_write ) begin
-			if( !bus_address ) begin
+		else begin
+			ff_start_pulse	<= 1'b0;
+			ff_rdata_en		<= w_status_read | w_reg_read;
+
+			//	Memory side events
+			if( w_issue_cpu_write ) begin
+				ff_cpu_write_pending	<= 1'b0;
+			end
+			if( w_cpu_write_done ) begin
+				ff_buf_rdy				<= 1'b1;
+			end
+			if( w_mode_mem_read && !ff_prefetch_valid && !w_ptr_over ) begin
+				if( reg_rom ) begin
+					//	ROM bank is not readable: returns 0
+					ff_prefetch_data	<= 8'd0;
+					ff_prefetch_valid	<= 1'b1;
+					ff_buf_rdy			<= 1'b1;
+				end
+				else if( w_prefetch_done && (ff_mem_address == mask_address( ff_mem_ptr, reg_64k )) ) begin
+					ff_prefetch_data	<= adpcm_rdata;
+					ff_prefetch_valid	<= 1'b1;
+					ff_buf_rdy			<= 1'b1;
+				end
+			end
+
+			//	End of sample in playback mode
+			if( w_core_eos ) begin
+				ff_eos					<= 1'b1;
+				if( !reg_repeat ) begin
+					reg_start			<= 1'b0;
+					reg_record			<= 1'b0;
+					reg_memory_data		<= 1'b0;
+					reg_repeat			<= 1'b0;
+					reg_sp_off			<= 1'b0;
+				end
+			end
+
+			//	CPU access
+			if( w_select_write ) begin
 				ff_reg_select	<= bus_wdata;
 			end
-			else begin
+			else if( w_reg_write ) begin
 				case( ff_reg_select )
-					8'h04: begin
-						reg_mask_eds			<= bus_wdata[4];
-						reg_mask_buffer_ready	<= bus_wdata[3];
+				8'h04: begin
+					if( bus_wdata[7] ) begin
+						//	IRQ RESET: clear all flags (masks are kept)
+						ff_eos				<= 1'b0;
+						ff_buf_rdy			<= w_buf_rdy_hold;
 					end
-					8'h07: begin
-						reg_start				<= bus_wdata[7];
-						reg_record				<= bus_wdata[6];
-						reg_memory_data			<= bus_wdata[5];
-						reg_repeat				<= bus_wdata[4];
-						reg_reset				<= bus_wdata[0];
+					else begin
+						reg_mask_eos		<= bus_wdata[4];
+						reg_mask_buf_rdy	<= bus_wdata[3];
+						if( bus_wdata[4] ) begin
+							ff_eos			<= 1'b0;
+						end
+						if( bus_wdata[3] ) begin
+							ff_buf_rdy		<= w_buf_rdy_hold;
+						end
+						else if( w_buf_rdy_hold ) begin
+							ff_buf_rdy		<= 1'b1;
+						end
 					end
-					8'h09: begin
-						reg_start_address[7:0]	<= bus_wdata;
-					end
-					8'h0A: begin
-						reg_start_address[12:8]	<= bus_wdata[4:0];
-					end
-					8'h0B: begin
-						reg_stop_address[7:0]	<= bus_wdata;
-					end
-					8'h0C: begin
-						reg_stop_address[12:8]	<= bus_wdata[4:0];
-					end
-					8'h10: begin
-						reg_delta_n[7:0]		<= bus_wdata;
-					end
-					8'h11: begin
-						reg_delta_n[15:8]		<= bus_wdata;
-					end
-					8'h12: begin
-						reg_envelope_control	<= bus_wdata;
-					end
-					8'hFF: begin
-						reg_pan					<= bus_wdata;
-					end
-				endcase
-			end
-		end
-	end
-
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_bus_valid <= 1'b0;
-		end
-		else if( bus_cs ) begin
-			if( !bus_address ) begin
-				//	read status
-				ff_bus_valid <= bus_valid;
-			end
-			else begin
-				//	read register
-				if( ff_reg_select == 8'h0F ) begin
-					//	ADPCM-DATA register
-					ff_bus_valid <= adpcm_rdata_en;
 				end
-				else begin
-					//	others
-					ff_bus_valid <= bus_valid;
+				8'h07: begin
+					ff_prefetch_valid	<= 1'b0;
+					if( bus_wdata[0] ) begin
+						//	RESET
+						reg_start		<= 1'b0;
+						reg_record		<= 1'b0;
+						reg_memory_data	<= 1'b0;
+						reg_repeat		<= 1'b0;
+						reg_sp_off		<= 1'b0;
+						ff_mem_ptr		<= 19'd0;
+					end
+					else begin
+						reg_start		<= bus_wdata[7];
+						reg_record		<= bus_wdata[6];
+						reg_memory_data	<= bus_wdata[5];
+						reg_repeat		<= bus_wdata[4];
+						reg_sp_off		<= bus_wdata[3];
+						ff_start_pulse	<= bus_wdata[7];
+						if( bus_wdata[5] ) begin
+							ff_mem_ptr		<= w_start_ptr;
+							ff_read_delay	<= 2'd2;
+							if( !bus_wdata[7] ) begin
+								ff_buf_rdy	<= 1'b1;
+							end
+						end
+						else begin
+							ff_mem_ptr		<= 19'd0;
+						end
+					end
 				end
-			end
-		end
-		else begin
-			ff_bus_valid <= 1'b0;
-		end
-	end
-
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_byte_counter <= 18'd0;
-		end
-		else if( ff_adpcm_valid && adpcm_ready && (ff_adpcm_access == c_access_cpu) && (ff_read_state == c_read_state_request) ) begin
-			//	Upon receiving an access request, address increment
-			if( ff_byte_counter == { reg_stop_address, 5'd31 } ) begin
-				ff_byte_counter		<= { reg_start_address, 5'd0 };
-			end
-			else begin
-				ff_byte_counter		<= ff_byte_counter + 18'd1;
-			end
-		end
-		else if( !bus_cs || !bus_valid ) begin
-		end
-		else if( bus_write ) begin
-			case( ff_reg_select )
+				8'h08: begin
+					reg_64k					<= bus_wdata[1];
+					reg_rom					<= bus_wdata[0];
+				end
 				8'h09: begin
-					//	START ADDR (L)
-					ff_byte_counter		<= { reg_start_address[12:8], bus_wdata, 5'd0 };
+					reg_start_address[7:0]	<= bus_wdata;
 				end
 				8'h0A: begin
-					//	START ADDR (H)
-					ff_byte_counter		<= { bus_wdata[4:0], reg_start_address[7:0], 5'd0 };
+					reg_start_address[15:8]	<= bus_wdata;
 				end
 				8'h0B: begin
-					//	STOP ADDR (L)
-					ff_byte_counter		<= { reg_start_address, 5'd0 };
+					reg_stop_address[7:0]	<= bus_wdata;
 				end
 				8'h0C: begin
-					//	STOP ADDR (H)
-					ff_byte_counter		<= { reg_start_address, 5'd0 };
+					reg_stop_address[15:8]	<= bus_wdata;
+				end
+				8'h0F: begin
+					reg_adpcm_data			<= bus_wdata;
+					if( w_mode_mem_write ) begin
+						ff_read_delay		<= 2'd0;
+						if( w_write_ptr <= w_stop_ptr ) begin
+							if( w_write_ptr == w_stop_ptr ) begin
+								//	Last byte: EOS, and the pointer wraps to the start address.
+								ff_eos		<= 1'b1;
+								ff_mem_ptr	<= w_start_ptr;
+							end
+							else begin
+								ff_mem_ptr	<= w_write_ptr + 19'd1;
+							end
+							if( reg_rom ) begin
+								ff_buf_rdy	<= 1'b1;
+							end
+							else begin
+								ff_buf_rdy				<= 1'b0;
+								ff_cpu_write_pending	<= 1'b1;
+								ff_cpu_write_address	<= mask_address( w_write_ptr, reg_64k );
+								ff_cpu_write_data		<= bus_wdata;
+							end
+						end
+					end
+					else if( w_mode_cpu_synth ) begin
+						ff_buf_rdy			<= 1'b0;
+					end
+				end
+				8'h10: begin
+					reg_delta_n[7:0]		<= bus_wdata;
+				end
+				8'h11: begin
+					reg_delta_n[15:8]		<= bus_wdata;
+				end
+				8'h12: begin
+					reg_envelope_control	<= bus_wdata;
+				end
+				8'hFF: begin
+					reg_pan					<= bus_wdata;
 				end
 				default: begin
 					//	hold
 				end
-			endcase
+				endcase
+			end
+			else if( w_status_read ) begin
+				ff_rdata	<= w_status;
+			end
+			else if( w_data_read ) begin
+				if( !w_mode_mem_read ) begin
+					ff_rdata	<= 8'h00;
+				end
+				else if( ff_read_delay != 2'd0 ) begin
+					//	Two dummy reads after setting R#07
+					ff_rdata		<= reg_adpcm_data;
+					ff_read_delay	<= ff_read_delay - 2'd1;
+					ff_buf_rdy		<= 1'b1;
+				end
+				else if( w_ptr_over ) begin
+					ff_rdata	<= 8'h00;
+					ff_eos		<= 1'b1;
+				end
+				else begin
+					ff_rdata			<= ff_prefetch_data;
+					ff_mem_ptr			<= ff_mem_ptr + 19'd1;
+					ff_prefetch_valid	<= 1'b0;
+					//	BUF_RDY returns to 1 when the next data has been prefetched.
+					ff_buf_rdy			<= (ff_mem_ptr == w_stop_ptr);
+				end
+			end
+			else if( w_reg_read ) begin
+				ff_rdata	<= 8'hFF;
+			end
 		end
 	end
 
+	assign bus_rdata	= ff_rdata;
+	assign bus_rdata_en	= ff_rdata_en;
+
+	// ---------------------------------------------------------
+	//	ADPCM memory arbitration (CPU write > playback > prefetch)
+	// ---------------------------------------------------------
+	assign w_mem_idle			= ~ff_mem_valid & ~ff_mem_wait_data;
+	assign w_prefetch_busy		= (ff_mem_valid | ff_mem_wait_data) & (ff_mem_owner == c_owner_prefetch);
+	assign w_need_prefetch		= w_mode_mem_read & ~reg_rom & ~ff_prefetch_valid & ~w_prefetch_busy & ~w_ptr_over;
+	assign w_issue_cpu_write	= w_mem_idle & ff_cpu_write_pending;
+	assign w_issue_core			= w_mem_idle & ~ff_cpu_write_pending & ff_core_pending;
+	assign w_issue_prefetch		= w_mem_idle & ~ff_cpu_write_pending & ~ff_core_pending & w_need_prefetch;
+	assign w_prefetch_done		= ff_mem_wait_data & adpcm_rdata_en & (ff_mem_owner == c_owner_prefetch);
+	assign w_cpu_write_done		= ff_mem_valid & adpcm_ready & ff_mem_write;
+
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_adpcm_data	<= 8'd0;
-			ff_adpcm_wdata	<= 8'd0;
-			ff_adpcm_address	<= 24'd0;
-			ff_adpcm_access	<= c_access_adpcm;
-			ff_adpcm_valid	<= 1'b0;
-			ff_adpcm_write	<= 1'b0;
-			ff_adpcm_read	<= 1'b0;
-			ff_core_pending	<= 1'b0;
-			ff_core_address	<= 24'd0;
+			ff_mem_valid		<= 1'b0;
+			ff_mem_write		<= 1'b0;
+			ff_mem_wait_data	<= 1'b0;
+			ff_mem_owner		<= c_owner_core;
+			ff_mem_address		<= 18'd0;
+			ff_mem_wdata		<= 8'd0;
+			ff_core_pending		<= 1'b0;
+			ff_core_address		<= 18'd0;
+			ff_core_data		<= 8'd0;
 		end
 		else begin
-			if( !w_adpcm_oe_n ) begin
+			if( !w_adpcm_oe_n && w_mode_play ) begin
 				ff_core_pending	<= 1'b1;
-				ff_core_address	<= w_core_address;
+				ff_core_address	<= mask_address( w_core_address[18:0], reg_64k );
+			end
+			else if( w_issue_core ) begin
+				ff_core_pending	<= 1'b0;
 			end
 
-			if( ff_adpcm_valid ) begin
+			if( ff_mem_valid ) begin
 				if( adpcm_ready ) begin
-					ff_adpcm_valid <= 1'b0;
+					ff_mem_valid		<= 1'b0;
+					ff_mem_wait_data	<= ~ff_mem_write;
 				end
 			end
-			else if( ff_adpcm_read ) begin
+			else if( ff_mem_wait_data ) begin
 				if( adpcm_rdata_en ) begin
-					ff_adpcm_read <= 1'b0;
-					if( ff_adpcm_access == c_access_adpcm ) begin
-						ff_adpcm_data <= adpcm_rdata;
+					ff_mem_wait_data	<= 1'b0;
+					if( ff_mem_owner == c_owner_core ) begin
+						ff_core_data	<= adpcm_rdata;
 					end
 				end
 			end
-			else if( bus_cs && bus_valid && bus_address && (ff_reg_select == 8'h0F) &&
-					(bus_write || (ff_read_state == c_read_state_request)) ) begin
-				ff_adpcm_address	<= { 6'd0, ff_byte_counter };
-				ff_adpcm_wdata	<= bus_wdata;
-				ff_adpcm_access	<= c_access_cpu;
-				ff_adpcm_valid	<= 1'b1;
-				ff_adpcm_write	<= bus_write;
-				ff_adpcm_read	<= ~bus_write;
+			else if( w_issue_cpu_write ) begin
+				ff_mem_valid		<= 1'b1;
+				ff_mem_write		<= 1'b1;
+				ff_mem_owner		<= c_owner_cpu_write;
+				ff_mem_address		<= ff_cpu_write_address;
+				ff_mem_wdata		<= ff_cpu_write_data;
 			end
-			else if( ff_core_pending ) begin
-				ff_adpcm_address	<= ff_core_address;
-				ff_adpcm_access	<= c_access_adpcm;
-				ff_adpcm_valid	<= 1'b1;
-				ff_adpcm_write	<= 1'b0;
-				ff_adpcm_read	<= 1'b1;
-				ff_core_pending	<= !w_adpcm_oe_n;
+			else if( w_issue_core ) begin
+				if( reg_rom ) begin
+					ff_core_data		<= 8'd0;
+				end
+				else begin
+					ff_mem_valid		<= 1'b1;
+					ff_mem_write		<= 1'b0;
+					ff_mem_owner		<= c_owner_core;
+					ff_mem_address		<= ff_core_address;
+				end
+			end
+			else if( w_issue_prefetch ) begin
+				ff_mem_valid		<= 1'b1;
+				ff_mem_write		<= 1'b0;
+				ff_mem_owner		<= c_owner_prefetch;
+				ff_mem_address		<= mask_address( ff_mem_ptr, reg_64k );
 			end
 		end
 	end
 
-	// Read status for distinguishing dummy reads from actual reads on ADPCM memory
-	always @( posedge clk ) begin
-		if( !reset_n ) begin
-			ff_read_state <= c_read_state_request;
-			ff_rdata <= 8'hFF;
-		end
-		else if( (ff_read_state == c_read_state_request) && (ff_adpcm_access == c_access_cpu) && adpcm_rdata_en ) begin
-			ff_read_state <= c_read_state_data;
-			ff_rdata <= adpcm_rdata;
-		end
-		else if( !bus_cs || !bus_valid ) begin
-			//	hold
-		end
-		else if( bus_write ) begin
-			case( ff_reg_select )
-				8'h09, 8'h0A, 8'h0B, 8'h0C: begin
-					ff_read_state <= c_read_state_request;
-					ff_rdata <= 8'hFF;
-				end
-				default: begin
-					//	hold
-				end
-			endcase
-		end
-		else if( ff_reg_select == 8'h0F ) begin
-			if( ff_read_state == c_read_state_data ) begin
-				ff_read_state <= c_read_state_request;
-				ff_rdata <= 8'hFF;
-			end
-		end
-	end
-
-	//	CPU access interface
-	assign bus_rdata	= !bus_address ? { opl2_status[7:4], ff_read_state, 2'b11, w_flag }:
-						  (ff_reg_select == 8'h0F) ? ff_rdata : 8'hFF;
-	assign bus_rdata_en	= ~bus_write & ff_bus_valid;
-
-	//	ADPCM RAM interface
-	assign adpcm_write	= ff_adpcm_write;
-	assign adpcm_valid	= ff_adpcm_valid;
-	assign adpcm_address	= ff_adpcm_address;
-	assign adpcm_wdata	= ff_adpcm_wdata;
+	assign adpcm_write		= ff_mem_write;
+	assign adpcm_valid		= ff_mem_valid;
+	assign adpcm_address	= { 6'd0, ff_mem_address };
+	assign adpcm_wdata		= ff_mem_wdata;
 endmodule

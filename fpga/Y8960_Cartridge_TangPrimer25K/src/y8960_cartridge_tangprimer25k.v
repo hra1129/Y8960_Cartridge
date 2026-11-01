@@ -90,7 +90,7 @@ module y8960cartridge_tangprimer25k (
 );
 	wire 			clk_171m;				//	171.81816MHz for serial clock (for 3.579545MHz)
 	wire 			clk_42m;				//	42.95454MHz for system bus clock
-	wire 			clk_24m;				//	24.576MHz for I2S audio
+	wire 			clk_24m;				//	24.16193MHz for I2S audio
 	wire			w_reset_n;
 	wire	[15:0]	w_bus_address;
 	wire			w_bus_io;
@@ -176,6 +176,11 @@ module y8960cartridge_tangprimer25k (
 	wire	[3:0]	w_led;
 	wire signed	[23:0]	w_audio_l;
 	wire signed	[23:0]	w_audio_r;
+	wire			w_audio_valid;
+	wire			w_audio_request;
+	wire			w_audio_reset_n;
+	wire	[23:0]	w_i2s_audio_l;
+	wire	[23:0]	w_i2s_audio_r;
 
 	wire	[17:0]	w_cpu_address;
 	wire			w_cpu_valid;
@@ -683,14 +688,29 @@ module y8960cartridge_tangprimer25k (
 		.opm_volume			( w_opm_volume				),
 		.master_volume		( w_master_volume			),
 		.audio_l_out		( w_audio_l					),
-		.audio_r_out		( w_audio_r					)
+		.audio_r_out		( w_audio_r					),
+		.audio_valid		( w_audio_valid				)
+	);
+
+	audio_cdc u_audio_cdc (
+		.clk_src			( clk_42m					),
+		.clk_dst			( clk_24m					),
+		.reset_n			( w_reset_n					),
+		.src_valid			( w_audio_valid				),
+		.src_l				( w_audio_l					),
+		.src_r				( w_audio_r					),
+		.dst_request		( w_audio_request			),
+		.dst_reset_n		( w_audio_reset_n			),
+		.dst_l				( w_i2s_audio_l				),
+		.dst_r				( w_i2s_audio_r				)
 	);
 
 	i2s_audio u_i2s (
 		.clk				( clk_24m					),
-		.reset_n			( w_reset_n					),
-		.sound_l_in			( w_audio_l					),
-		.sound_r_in			( w_audio_r					),
+		.reset_n			( w_audio_reset_n			),
+		.sound_l_in			( w_i2s_audio_l				),
+		.sound_r_in			( w_i2s_audio_r				),
+		.sample_request		( w_audio_request			),
 		.i2s_audio_din		( audio_sdata				),
 		.i2s_audio_lrclk	( audio_lrclk				),
 		.i2s_audio_bclk		( audio_bclk				)
