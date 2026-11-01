@@ -81,7 +81,7 @@ namespace Y8960UpdWin
 		{
 			reason = null;
 			if( !scan.Succeeded ) {
-				reason = "Y8960 Cartridge (TangPrimer25K) が見つかりません。";
+				reason = UiText.DeviceNotFound;
 				return false;
 			}
 			var names = Regex.Matches( scan.Output, @"\bGW\d[A-Z]*-\d+[A-Z0-9]*\b", RegexOptions.IgnoreCase )
@@ -92,9 +92,9 @@ namespace Y8960UpdWin
 			var count = Regex.Match( scan.Output, @"(\d+)\s+device\(s\)\s+found", RegexOptions.IgnoreCase );
 			bool single = !count.Success || count.Groups[ 1 ].Value == "1";
 			if( !names.Contains( Device ) || !sameFamily || !single ) {
-				reason = "TangPrimer25K (GW5A-25A) を確認できません。\r\n検出: "
-					+ ( names.Length == 0 ? "FPGA 型番なし" : string.Join( ", ", names ) )
-					+ ( count.Success ? "\r\n" + count.Value : "" );
+				reason = string.Format( UiText.NotConfirmedFormat,
+					names.Length == 0 ? UiText.NoModelDetected : string.Join( ", ", names ),
+					count.Success ? "\r\n" + count.Value : "" );
 				return false;
 			}
 			return true;
@@ -144,7 +144,7 @@ namespace Y8960UpdWin
 				}
 			}
 			catch( Exception ex ) {
-				emit( "Error: programmer_cli を起動できません: " + ex.Message );
+				emit( UiText.CliStartFailedPrefix + ex.Message );
 				result.ExitCode = -1;
 			}
 			lock( sync ) {

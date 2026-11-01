@@ -60,7 +60,7 @@ namespace Y8960UpdWin
 			MaximizeBox = false;
 			StartPosition = FormStartPosition.CenterScreen;
 			AutoScaleMode = AutoScaleMode.Font;
-			Font = new Font( "Yu Gothic UI", 9F );
+			Font = new Font( UiText.FontName, 9F );
 			ClientSize = new Size( 600, 420 );
 			AllowDrop = true;
 			DragEnter += OnDragEnter;
@@ -76,13 +76,13 @@ namespace Y8960UpdWin
 			}
 
 			var separator = new Label { BorderStyle = BorderStyle.Fixed3D, Location = new Point( 0, 362 ), Size = new Size( 600, 2 ) };
-			_back.Text = "< 戻る";
+			_back.Text = UiText.BackButton;
 			_back.SetBounds( 296, 378, 90, 28 );
 			_back.Click += OnBack;
-			_next.Text = "次へ >";
+			_next.Text = UiText.NextButton;
 			_next.SetBounds( 392, 378, 90, 28 );
 			_next.Click += OnNext;
-			_close.Text = "キャンセル";
+			_close.Text = UiText.CancelButton;
 			_close.SetBounds( 498, 378, 90, 28 );
 			_close.Click += ( s, e ) => Close();
 			Controls.AddRange( new Control[] { separator, _back, _next, _close } );
@@ -99,9 +99,8 @@ namespace Y8960UpdWin
 		private Panel CreateFilePage()
 		{
 			var page = new Panel();
-			page.Controls.Add( Title( "1. 更新ファイルの選択" ) );
-			page.Controls.Add( Caption( "Config と BIOS の両ファイルを選択してください（両方を更新します）。\r\n"
-				+ "それぞれの欄へ入力・ドロップするか、[参照...] で選択してください。", 20, 56, 560, 44 ) );
+			page.Controls.Add( Title( UiText.FilePageTitle ) );
+			page.Controls.Add( Caption( UiText.FilePageCaption, 20, 56, 560, 44 ) );
 
 			page.Controls.Add( Caption( "Config (Y8960CFG.BIN)", 20, 103, 560, 20 ) );
 			_filePath.SetBounds( 20, 126, 468, 23 );
@@ -111,7 +110,7 @@ namespace Y8960UpdWin
 			_filePath.TextChanged += ( s, e ) => { _image = null; _fileInfo.Text = ""; };
 			page.Controls.Add( _filePath );
 
-			var browse = new Button { Text = "参照..." };
+			var browse = new Button { Text = UiText.BrowseButton };
 			browse.SetBounds( 496, 125, 84, 26 );
 			browse.Click += OnBrowse;
 			page.Controls.Add( browse );
@@ -123,7 +122,7 @@ namespace Y8960UpdWin
 			_biosPath.DragDrop += OnDragDrop;
 			_biosPath.TextChanged += ( s, e ) => { _biosImage = null; _fileInfo.Text = ""; };
 			page.Controls.Add( _biosPath );
-			var browseBios = new Button { Text = "参照..." };
+			var browseBios = new Button { Text = UiText.BrowseButton };
 			browseBios.SetBounds( 496, 191, 84, 26 );
 			browseBios.Click += ( s, e ) => BrowseImage( _biosPath, true );
 			page.Controls.Add( browseBios );
@@ -136,12 +135,11 @@ namespace Y8960UpdWin
 		private Panel CreateConnectPage()
 		{
 			var page = new Panel();
-			page.Controls.Add( Title( "2. Y8960 Cartridge の接続" ) );
-			var message = Caption( "Y8960 Cartridge を接続してください。", 20, 60, 560, 28 );
+			page.Controls.Add( Title( UiText.ConnectPageTitle ) );
+			var message = Caption( UiText.ConnectPrompt, 20, 60, 560, 28 );
 			message.Font = new Font( Font.FontFamily, 12F, FontStyle.Bold );
 			page.Controls.Add( message );
-			page.Controls.Add( Caption( "TangPrimer25K の USB コネクタと PC を USB ケーブルで接続してから [次へ] をクリックしてください。\r\n"
-				+ "GOWIN Programmer (GUI) を起動している場合は、終了してから実行してください。", 20, 100, 560, 48 ) );
+			page.Controls.Add( Caption( UiText.ConnectCaption, 20, 100, 560, 48 ) );
 
 			_connectStatus.SetBounds( 20, 160, 560, 70 );
 			_connectStatus.ForeColor = Color.Firebrick;
@@ -150,7 +148,7 @@ namespace Y8960UpdWin
 			_cliPathLabel.SetBounds( 20, 300, 470, 40 );
 			_cliPathLabel.ForeColor = SystemColors.GrayText;
 			page.Controls.Add( _cliPathLabel );
-			var change = new LinkLabel { Text = "CLI の変更..." };
+			var change = new LinkLabel { Text = UiText.ChangeCliLink };
 			change.SetBounds( 496, 300, 84, 20 );
 			change.LinkClicked += OnChangeCli;
 			page.Controls.Add( change );
@@ -160,11 +158,10 @@ namespace Y8960UpdWin
 		private Panel CreateWritePage()
 		{
 			var page = new Panel();
-			page.Controls.Add( Title( "3. 書込み" ) );
-			page.Controls.Add( Caption( "Config・BIOS・両バージョン情報の順に消去・書込み・ベリファイします。\r\n"
-				+ "MSX の電源は切り、USB 給電で実行してください。完了まで USB を抜かないでください。", 20, 52, 560, 40 ) );
+			page.Controls.Add( Title( UiText.WritePageTitle ) );
+			page.Controls.Add( Caption( UiText.WritePageCaption, 20, 52, 560, 40 ) );
 
-			_start.Text = "書込み開始";
+			_start.Text = UiText.StartWriteButton;
 			_start.SetBounds( 20, 100, 120, 30 );
 			_start.Click += OnStart;
 			page.Controls.Add( _start );
@@ -227,7 +224,7 @@ namespace Y8960UpdWin
 			_next.Visible = _page < 2;
 			_start.Enabled = !_busy && !_completed;
 			_close.Enabled = !_busy;
-			_close.Text = _completed ? "完了" : "キャンセル";
+			_close.Text = _completed ? UiText.DoneButton : UiText.CancelButton;
 		}
 
 		// ---------------------------------------------------------------------
@@ -255,9 +252,9 @@ namespace Y8960UpdWin
 		private void BrowseImage( TextBox target, bool bios )
 		{
 			using( var dialog = new OpenFileDialog() ) {
-				dialog.Title = bios ? "Y8960BIOS.BIN を選択" : "Y8960CFG.BIN を選択";
-				dialog.Filter = bios ? "Y8960 BIOS image (*.bin;*.rom)|*.bin;*.rom|すべてのファイル (*.*)|*.*"
-					: "Y8960 Config image (*.bin)|*.bin|すべてのファイル (*.*)|*.*";
+				dialog.Title = bios ? UiText.SelectBiosFileTitle : UiText.SelectConfigFileTitle;
+				dialog.Filter = bios ? UiText.BiosFileFilter
+					: UiText.ConfigFileFilter;
 				string current = target.Text.Trim().Trim( '"' );
 				if( File.Exists( current ) ) {
 					dialog.InitialDirectory = Path.GetDirectoryName( current );
@@ -284,13 +281,13 @@ namespace Y8960UpdWin
 		{
 			string path = target.Text.Trim().Trim( '"' );
 			if( path.Length == 0 || !File.Exists( path ) ) {
-				ShowError( bios ? "BIOS ファイルが見つかりません。" : "Config ファイルが見つかりません。", "Cannot open the file." );
+				ShowError( bios ? UiText.BiosFileNotFound : UiText.ConfigFileNotFound, "Cannot open the file." );
 				return null;
 			}
 			string error;
 			ConfigImage image = ConfigImage.Load( path, bios, out error );
 			if( image == null ) {
-				ShowError( bios ? "BIOS ファイルとして使用できません。" : "Config ファイルとして使用できません。", error );
+				ShowError( bios ? UiText.BiosFileNotUsable : UiText.ConfigFileNotUsable, error );
 				return null;
 			}
 			return image;
@@ -311,7 +308,7 @@ namespace Y8960UpdWin
 		private async Task<bool> CheckConnectionAsync()
 		{
 			_connectStatus.ForeColor = SystemColors.ControlText;
-			_connectStatus.Text = "接続を確認しています...";
+			_connectStatus.Text = UiText.CheckingConnection;
 			SetBusy( true );
 			CliResult scan;
 			try {
@@ -341,7 +338,7 @@ namespace Y8960UpdWin
 			_progressText.Text = "";
 			_result.Text = "";
 			_log.Clear();
-			_version.Text = "書き込む Config: " + _image.VersionText + "\r\n書き込む BIOS: " + _biosImage.VersionText;
+			_version.Text = UiText.ConfigToWrite + _image.VersionText + "\r\n" + UiText.BiosToWrite + _biosImage.VersionText;
 		}
 
 		private async void OnStart( object sender, EventArgs e )
@@ -370,7 +367,7 @@ namespace Y8960UpdWin
 				AppendLog( "BIOS Ver: " + _biosImage.VersionText );
 
 				// Recheck the target immediately before the first destructive operation.
-				_stepName = "接続確認";
+				_stepName = UiText.StepConnectionCheck;
 				CliResult scan = await _cli.ScanAsync( OnCliLine );
 				string reason;
 				if( !ProgrammerCli.IsTargetDevice( scan, out reason ) ) {
@@ -401,7 +398,7 @@ namespace Y8960UpdWin
 				_progress.Complete( BiosStepEnd );
 
 				AppendLog( "Version update" );
-				_stepName = "バージョン情報";
+				_stepName = UiText.StepVersion;
 				_progress.BeginStep( BiosStepEnd, VersionStepEnd - BiosStepEnd, 0.1 );
 				CliResult version = await _cli.WriteBinaryAsync( versionFile, ConfigImage.VersionBlockAddress, OnCliLine );
 				if( !version.Succeeded ) {
@@ -411,21 +408,20 @@ namespace Y8960UpdWin
 				_progress.Complete( VersionStepEnd );
 
 				// Reload the FPGA from the updated ConfigROM. Failure here does not affect the written data.
-				_stepName = "FPGA 再起動";
+				_stepName = UiText.StepReprogram;
 				_progress.BeginStep( VersionStepEnd, 100.0 - VersionStepEnd, 0.1 );
 				CliResult reprogram = await _cli.ReprogramAsync( OnCliLine );
 				_progress.Complete( 100.0 );
 				UpdateProgressBar();
 
 				_completed = true;
-				_version.Text = "書き込んだ Config: " + _image.VersionText + "\r\n書き込んだ BIOS: " + _biosImage.VersionText;
+				_version.Text = UiText.WrittenConfig + _image.VersionText + "\r\n" + UiText.WrittenBios + _biosImage.VersionText;
 				_progressText.Text = "Config data and BIOS have been updated.";
 				_result.ForeColor = Color.DarkGreen;
-				_result.Text = "書き込みが正常に完了しました";
+				_result.Text = UiText.WriteCompleted;
 				if( !reprogram.Succeeded ) {
 					AppendLog( "Reprogram failed: " + reprogram.Tail( 1 ) );
-					_showMessage( "書き込みは正常に完了しましたが、FPGA の再起動に失敗しました。\r\n"
-						+ "USB ケーブルを抜き差しして、Y8960 Cartridge を再起動してください。",
+					_showMessage( UiText.ReprogramFailedMessage,
 						MessageBoxIcon.Information );
 				}
 			}
@@ -433,7 +429,7 @@ namespace Y8960UpdWin
 				_result.ForeColor = Color.Firebrick;
 				_result.Text = "Update error.";
 				AppendLog( ex.Message );
-				ShowError( "更新処理に失敗しました。Flash が未完成の可能性があります。", "Update error.\r\n" + ex.Message );
+				ShowError( UiText.UpdateFailed, "Update error.\r\n" + ex.Message );
 			}
 			finally {
 				_timer.Stop();
@@ -444,10 +440,10 @@ namespace Y8960UpdWin
 					}
 				}
 				catch( IOException ex ) {
-					AppendLog( "一時ファイルを削除できません: " + ex.Message );
+					AppendLog( UiText.TempDeleteFailedPrefix + ex.Message );
 				}
 				catch( UnauthorizedAccessException ex ) {
-					AppendLog( "一時ファイルを削除できません: " + ex.Message );
+					AppendLog( UiText.TempDeleteFailedPrefix + ex.Message );
 				}
 			}
 		}
@@ -467,15 +463,13 @@ namespace Y8960UpdWin
 			}
 			_result.ForeColor = Color.Firebrick;
 			_result.Text = english;
-			_progressText.Text = configStep ? _stepName + " の書き込みに失敗しました。バージョン領域は更新していません。"
-											: "バージョン情報の書き込みに失敗しました。";
+			_progressText.Text = configStep ? string.Format( UiText.WriteFailedFormat, _stepName )
+											: UiText.VersionWriteFailed;
 			AppendLog( english );
 			AppendLog( "exit code = " + result.ExitCode );
 			AppendLog( "command   = " + result.CommandLine );
 
-			ShowError( "書き込みに失敗しました。\r\n"
-				+ "Flash 内の ConfigROM が未完成の可能性があるため、再度書込みを試行するか、\r\n"
-				+ "GOWIN Programmer で書き込んでください。",
+			ShowError( UiText.WriteFailedMessage,
 				english + "\r\n\r\n" + result.Tail( 6 ) );
 		}
 
@@ -503,10 +497,10 @@ namespace Y8960UpdWin
 			}
 			string phase;
 			switch( _progress.Phase ) {
-			case CliPhase.Erasing:		phase = "消去中";		break;
-			case CliPhase.Programming:	phase = "書込み中";		break;
-			case CliPhase.Verifying:	phase = "ベリファイ中";	break;
-			default:					phase = "準備中";		break;
+			case CliPhase.Erasing:		phase = UiText.PhaseErasing;		break;
+			case CliPhase.Programming:	phase = UiText.PhaseWriting;		break;
+			case CliPhase.Verifying:	phase = UiText.PhaseVerifying;	break;
+			default:					phase = UiText.PhasePreparing;		break;
 			}
 			_progressText.Text = string.Format( "{0:0}%  {1} {2}...", value, _stepName, phase );
 		}
@@ -543,9 +537,9 @@ namespace Y8960UpdWin
 			UpdateButtons();
 		}
 
-		private void ShowError( string japanese, string english )
+		private void ShowError( string message, string detail )
 		{
-			_showMessage( japanese + "\r\n\r\n" + english, MessageBoxIcon.Error );
+			_showMessage( UiText.FormatError( message, detail ), MessageBoxIcon.Error );
 		}
 
 		protected override void OnFormClosing( FormClosingEventArgs e )

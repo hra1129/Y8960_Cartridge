@@ -7,6 +7,8 @@
     <StartupObject>Y8960UpdWin.Tests</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Y8960UpdWin\*.cs" Link="App\%(Filename)%(Extension)" />
+    <!-- The glob also matches UiText.En.cs; exclude it so the app sources
+         compile with exactly one UI text table (the Japanese one). -->
+    <Compile Include="..\Y8960UpdWin\*.cs" Exclude="..\Y8960UpdWin\UiText.En.cs" Link="App\%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>
