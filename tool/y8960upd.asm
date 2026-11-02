@@ -19,6 +19,7 @@
 ; -----------------------------------------------------------------------------
 ; History
 ; Oct/18th/2026  t.hara  First release
+; Nov/2nd/2026  t.hara  ZX0 compressed image support
 ; -----------------------------------------------------------------------------
 ;	Build:
 ;		zma.exe y8960upd.asm Y8960UPD.COM
@@ -83,6 +84,9 @@ HEADER_SIZE		:= 48
 SIGNATURE_SIZE	:= 32
 VERSION_SIZE	:= 16
 
+FORMAT_RAW		:= 0
+FORMAT_ZX0		:= 1
+
 VERSION_ADDR_H	:= 0x7D			; 7DFF00h
 VERSION_ADDR_M	:= 0xFF
 CONFIG_MAX_H	:= 0x7D			; Config data must end before 7D0000h
@@ -93,6 +97,7 @@ BUSY_TIMEOUT	:= 600			; JIFFY count (10sec at 60Hz)
 
 BUFFER			:= 0x8000
 BUFFER_SIZE		:= 0x4000
+COMP_BUFFER		:= 0x4000
 
 ; -----------------------------------------------------------------------------
 ;	Entry Point
@@ -232,6 +237,7 @@ update_bios::
 ; output:
 ;    Cf .... 0: success, 1: error (de = error message)
 ;    data_size ... size of the data body (24bit)
+;    image_format ... FORMAT_RAW (raw) or FORMAT_ZX0 (ZX0 block compressed)
 ;    header ...... header of the image file
 ; break:
 ;    all
@@ -274,9 +280,9 @@ open_image::
 			sbc		hl, bc
 			jr		nz, format_error
 
-			; check signature
+			; check signature (bytes 0-30; byte 31 is the format marker)
 			ld		hl, header
-			ld		b, SIGNATURE_SIZE
+			ld		b, SIGNATURE_SIZE - 1
 check_loop:
 			ld		a, [de]
 			cp		a, [hl]
@@ -284,6 +290,14 @@ check_loop:
 			inc		de
 			inc		hl
 			djnz	check_loop
+
+			; format marker (header byte 31)
+			ld		a, [header + SIGNATURE_SIZE - 1]
+			ld		[image_format], a
+			cp		a, FORMAT_ZX0 + 1
+			jr		nc, format_error
+			or		a, a
+			jr		nz, compressed_header
 
 			; data_size = file size - HEADER_SIZE
 			ld		a, [fcb_filsiz + 3]
@@ -300,7 +314,38 @@ check_loop:
 			sbc		a, 0
 			ld		[data_size + 0], a			; [data_size + 0] = bit23-16
 			jr		c, format_error
+			jr		header_done
 
+compressed_header:
+			; read the subheader (the file pointer is at offset 48)
+			ld		hl, 6
+			ld		de, subheader
+			call	read_exact
+			ret		c
+
+			; the original size must fit in 24 bits
+			ld		a, [subheader + 3]
+			or		a, a
+			ld		de, size_error_message
+			scf
+			ret		nz
+			ld		hl, [subheader + 0]
+			ld		[data_size + 1], hl			; [data_size + 1] = bit15-0
+			ld		a, [subheader + 2]
+			ld		[data_size + 0], a			; [data_size + 0] = bit23-16
+
+			; block size must be 1..16384
+			ld		hl, [subheader + 4]
+			ld		[cmp_block_size], hl
+			ld		a, h
+			or		a, l
+			jr		z, format_error
+			ld		bc, BUFFER_SIZE + 1
+			or		a, a
+			sbc		hl, bc
+			jr		nc, format_error
+
+header_done:
 			ld		de, version_message
 			call	puts
 			ld		hl, header + SIGNATURE_SIZE
@@ -359,14 +404,22 @@ no_fraction:
 			ld		[remain_size + 0], hl
 
 chunk_loop:
-			; chunk_size = min( remain_size, BUFFER_SIZE )
+			; completed when no data remains
 			ld		a, [remain_size + 2]
 			ld		hl, [remain_size + 0]
-			or		a, a
-			jr		nz, full_chunk
-			ld		a, h
+			or		a, h
 			or		a, l
 			jp		z, completed
+
+			; chunk_size = min( remain_size, BUFFER_SIZE ) for raw data,
+			; min( remain_size, cmp_block_size ) for compressed data
+			ld		a, [image_format]
+			or		a, a
+			jr		nz, cmp_chunk_size
+			ld		a, [remain_size + 2]
+			or		a, a
+			jr		nz, full_chunk
+			ld		hl, [remain_size + 0]
 			ld		bc, BUFFER_SIZE
 			or		a, a
 			sbc		hl, bc
@@ -374,25 +427,27 @@ chunk_loop:
 			jr		c, set_chunk
 full_chunk:
 			ld		hl, BUFFER_SIZE
+			jr		set_chunk
+cmp_chunk_size:
+			ld		a, [remain_size + 2]
+			or		a, a
+			jr		nz, cmp_full_chunk
+			ld		hl, [remain_size + 0]
+			ld		bc, [cmp_block_size]
+			or		a, a
+			sbc		hl, bc
+			add		hl, bc
+			jr		c, set_chunk
+cmp_full_chunk:
+			ld		hl, [cmp_block_size]
 set_chunk:
 			ld		[chunk_size], hl
 
 			call	display_address
 
-			; read the chunk from the file
-			ld		de, BUFFER
-			ld		c, _SETDTA
-			call	BDOS
-			ld		de, fcb
-			ld		hl, [chunk_size]
-			ld		c, _RDBLK
-			call	BDOS
-			ld		bc, [chunk_size]
-			or		a, a
-			sbc		hl, bc
-			ld		de, read_error_message
-			scf
-			ret		nz
+			; read the chunk into BUFFER (decompressing it if compressed)
+			call	read_chunk
+			ret		c
 
 			; write
 			ld		hl, [cur_address + 0]
@@ -433,6 +488,189 @@ completed:
 			or		a, a
 			ret
 			endscope
+
+; -----------------------------------------------------------------------------
+; read_exact
+; input:
+;    hl .... number of bytes to read
+;    de .... destination address
+; output:
+;    Cf .... 0: success, 1: error (de = read error message)
+; break:
+;    all
+; comment:
+;    Reads exactly hl bytes sequentially from the opened image file.
+; -----------------------------------------------------------------------------
+			scope	read_exact
+read_exact::
+			push	hl
+			ld		c, _SETDTA
+			call	BDOS
+			pop		hl
+			push	hl
+			ld		de, fcb
+			ld		c, _RDBLK
+			call	BDOS
+			pop		bc
+			or		a, a
+			sbc		hl, bc
+			ret		z
+			ld		de, read_error_message
+			scf
+			ret
+			endscope
+
+; -----------------------------------------------------------------------------
+; read_chunk
+; input:
+;    chunk_size ... number of bytes to place in BUFFER (the uncompressed size)
+; output:
+;    Cf .... 0: success, 1: error (de = error message)
+;    BUFFER ....... chunk_size bytes of the data body
+; break:
+;    all
+; comment:
+;    Raw images are read as-is. Compressed images are read frame by frame:
+;    a frame with bit15 of its length word set is a stored (uncompressed)
+;    block, any other frame is one independent ZX0 stream decompressed
+;    from COMP_BUFFER into BUFFER.
+; -----------------------------------------------------------------------------
+			scope	read_chunk
+read_chunk::
+			ld		a, [image_format]
+			or		a, a
+			jr		nz, compressed
+
+			; raw: read chunk_size bytes as-is
+			ld		hl, [chunk_size]
+			ld		de, BUFFER
+			jp		read_exact
+
+compressed:
+			; read the frame word
+			ld		hl, 2
+			ld		de, frame_word
+			call	read_exact
+			ret		c
+
+			ld		hl, [frame_word]
+			bit		7, h
+			jr		nz, stored_frame
+
+			; ZX0 frame: its length must be 1..16384
+			ld		a, h
+			or		a, l
+			jr		z, frame_error
+			push	hl
+			ld		bc, BUFFER_SIZE + 1
+			or		a, a
+			sbc		hl, bc
+			pop		hl
+			jr		nc, frame_error
+			ld		de, COMP_BUFFER
+			call	read_exact
+			ret		c
+
+			ld		hl, COMP_BUFFER
+			ld		de, BUFFER
+			call	dzx0_standard
+
+			; DE must point at BUFFER + chunk_size
+			ld		hl, BUFFER
+			ld		bc, [chunk_size]
+			add		hl, bc
+			or		a, a
+			sbc		hl, de
+			ret		z
+			ld		de, decompress_error_message
+			scf
+			ret
+
+stored_frame:
+			; the stored length (frame word & 0x7FFF) must equal chunk_size
+			ld		a, h
+			and		a, 0x7F
+			ld		h, a
+			ld		bc, [chunk_size]
+			or		a, a
+			sbc		hl, bc
+			jr		nz, frame_error
+			ld		hl, [chunk_size]
+			ld		de, BUFFER
+			jp		read_exact
+
+frame_error:
+			ld		de, format_error_message
+			scf
+			ret
+			endscope
+
+; ZX0D_BEGIN
+; -----------------------------------------------------------------------------
+; dzx0_standard
+;    ZX0 decompressor ("Standard" version, 68 bytes)
+;    by Einar Saukas & Urusergi. Ported to ZMA syntax.
+;    ZX0 is BSD 3-Clause licensed, (C) Einar Saukas.
+; input:
+;    hl .... source address (compressed data)
+;    de .... destination address (decompressed data)
+; output:
+;    de .... end address of the decompressed data
+; -----------------------------------------------------------------------------
+			scope	dzx0
+dzx0_standard::
+			ld		bc, 0xFFFF			; preserve default offset 1
+			push	bc
+			inc		bc
+			ld		a, 0x80
+dzx0s_literals:
+			call	dzx0s_elias			; obtain length
+			ldir						; copy literals
+			add		a, a					; copy from last offset or new offset?
+			jr		c, dzx0s_new_offset
+			call	dzx0s_elias			; obtain length
+dzx0s_copy:
+			ex		[sp], hl				; preserve source, restore offset
+			push	hl						; preserve offset
+			add		hl, de				; calculate destination - offset
+			ldir						; copy from offset
+			pop		hl						; restore offset
+			ex		[sp], hl				; preserve offset, restore source
+			add		a, a					; copy from literals or new offset?
+			jr		nc, dzx0s_literals
+dzx0s_new_offset:
+			pop		bc						; discard last offset
+			ld		c, 0xFE				; prepare negative offset
+			call	dzx0s_elias_loop	; obtain offset MSB
+			inc		c
+			ret		z						; check end marker
+			ld		b, c
+			ld		c, [hl]				; obtain offset LSB
+			inc		hl
+			rr		b						; last offset bit becomes first length bit
+			rr		c
+			push	bc						; preserve new offset
+			ld		bc, 1					; obtain length
+			call	nc, dzx0s_elias_backtrack
+			inc		bc
+			jr		dzx0s_copy
+dzx0s_elias:
+			inc		c						; interlaced Elias gamma coding
+dzx0s_elias_loop:
+			add		a, a
+			jr		nz, dzx0s_elias_skip
+			ld		a, [hl]				; load another group of 8 bits
+			inc		hl
+			rla
+dzx0s_elias_skip:
+			ret		c
+dzx0s_elias_backtrack:
+			add		a, a
+			rl		c
+			rl		b
+			jr		dzx0s_elias_loop
+			endscope
+; ZX0D_END
 
 ; -----------------------------------------------------------------------------
 ; erase_blocks
@@ -1289,7 +1527,7 @@ put_digit:
 ;	Messages
 ; -----------------------------------------------------------------------------
 title_message:
-			ds		"Y8960UPD [Y8960 Cartridge Update Tool] v1.0\r\n"
+			ds		"Y8960UPD [Y8960 Cartridge Update Tool] v1.1\r\n"
 			ds		"Copyright (C)2026 HRA!\r\n\r\n"
 			db		0
 usage_message:
@@ -1347,6 +1585,9 @@ size_error_message:
 			db		0
 read_error_message:
 			ds		"\r\nFile read error.\r\n"
+			db		0
+decompress_error_message:
+			ds		"\r\nDecompress error.\r\n"
 			db		0
 erase_error_message:
 			ds		"\r\nErase error.\r\n"
@@ -1411,6 +1652,14 @@ start_block:
 data_size:
 			db		0					; bit23-16
 			dw		0					; bit15-0
+image_format:
+			db		0					; FORMAT_RAW or FORMAT_ZX0
+cmp_block_size:
+			dw		0
+frame_word:
+			dw		0
+subheader:
+			db		0, 0, 0, 0, 0, 0
 remain_size:
 			dw		0					; bit15-0
 			db		0					; bit23-16

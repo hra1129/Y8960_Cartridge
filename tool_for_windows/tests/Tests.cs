@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +57,7 @@ namespace Y8960UpdWin
 			Directory.CreateDirectory( dir );
 			try {
 				TestImages();
+				TestCompressedImages();
 				TestRepositoryImages();
 				TestScan();
 				TestProgress();
@@ -129,6 +131,110 @@ namespace Y8960UpdWin
 			Check( block.Skip( 0xFF10 ).Take( 16 ).SequenceEqual( bios.VersionBytes ), "BIOS version at 7DFF10" );
 			Check( block.Where( ( b, i ) => i < 0xFF00 || i >= 0xFF20 ).All( b => b == 0xFF ), "Unused version bytes erased" );
 			Check( ConfigImage.BiosAddress + ConfigImage.BiosDataSize == 0x800000, "BIOS flash boundary" );
+		}
+
+		// ZX0 stream for the 3000-byte payload built in TestCompressedImages
+		// (the sentence "Y8960 ZX0 decompression test vector. " repeated),
+		// produced by the official zx0 compressor v2.2 with default settings
+		// and verified against the reference dzx0 decompressor.
+		private const string Zx0Vector = "BaFZODk2MCBaWDAgZGVjb21wcmVz4WlvbiB08aZ0IHZlY29yLuW2QQTVVWA=";
+
+		private static void WriteWord( List<byte> bytes, int value )
+		{
+			bytes.Add( (byte)value );
+			bytes.Add( (byte)( value >> 8 ) );
+		}
+
+		private static void WriteDword( List<byte> bytes, int value )
+		{
+			WriteWord( bytes, value & 0xFFFF );
+			WriteWord( bytes, ( value >> 16 ) & 0xFFFF );
+		}
+
+		// Header (marker byte = 1) + subheader of a compressed image.
+		private static List<byte> CompressedStart( bool bios, string version, int originalSize, int blockSize )
+		{
+			var head = new byte[ ConfigImage.HeaderSize ];
+			Encoding.ASCII.GetBytes( bios ? "Y8960_BIOS_IMAGE" : "Y8960_TP25K_CARTRIDGE" ).CopyTo( head, 0 );
+			head[ ConfigImage.SignatureSize - 1 ] = 1;
+			Encoding.ASCII.GetBytes( version ).CopyTo( head, ConfigImage.SignatureSize );
+			var bytes = new List<byte>( head );
+			WriteDword( bytes, originalSize );
+			WriteWord( bytes, blockSize );
+			return bytes;
+		}
+
+		private static byte[] StoredCompressed( bool bios, byte[] payload, int blockSize, string version )
+		{
+			var bytes = CompressedStart( bios, version, payload.Length, blockSize );
+			for( int i = 0; i < payload.Length; i += blockSize ) {
+				int chunk = Math.Min( blockSize, payload.Length - i );
+				WriteWord( bytes, 0x8000 | chunk );
+				bytes.AddRange( payload.Skip( i ).Take( chunk ) );
+			}
+			return bytes.ToArray();
+		}
+
+		private static byte[] Payload( int size )
+		{
+			var payload = new byte[ size ];
+			for( int i = 0; i < payload.Length; i++ ) {
+				payload[ i ] = (byte)( i * 7 + 3 );
+			}
+			return payload;
+		}
+
+		private static void TestCompressedImages()
+		{
+			string error;
+
+			// Stored frames with a small block size (multiple frames), Config.
+			byte[] payload = Payload( 100 );
+			byte[] stored = StoredCompressed( false, payload, 16, "CFG-z1" );
+			var config = ConfigImage.Parse( stored, false, out error );
+			Check( config != null && config.Data.SequenceEqual( payload ), "Stored-frame compressed Config payload" );
+			Check( config != null && config.VersionText == "CFG-z1", "Stored-frame compressed Config version" );
+
+			// One real ZX0 block (see Zx0Vector), Config.
+			byte[] sentence = Encoding.ASCII.GetBytes( "Y8960 ZX0 decompression test vector. " );
+			var expected = new byte[ 3000 ];
+			for( int i = 0; i < expected.Length; i++ ) {
+				expected[ i ] = sentence[ i % sentence.Length ];
+			}
+			byte[] zx0 = Convert.FromBase64String( Zx0Vector );
+			var zx0Image = CompressedStart( false, "CFG-zx0", expected.Length, expected.Length );
+			WriteWord( zx0Image, zx0.Length );
+			zx0Image.AddRange( zx0 );
+			var zconfig = ConfigImage.Parse( zx0Image.ToArray(), false, out error );
+			Check( zconfig != null && zconfig.Data.SequenceEqual( expected ), "ZX0 compressed Config payload" );
+			Check( zconfig != null && zconfig.VersionText == "CFG-zx0", "ZX0 compressed Config version" );
+
+			// The same ZX0 frame, but the block output length is 2000, not 3000.
+			var mismatch = CompressedStart( false, "", expected.Length, 2000 );
+			WriteWord( mismatch, zx0.Length );
+			mismatch.AddRange( zx0 );
+			Check( ConfigImage.Parse( mismatch.ToArray(), false, out error ) == null, "Reject ZX0 decoded length mismatch" );
+
+			// Stored frames, BIOS, exactly 128KB.
+			byte[] biosPayload = Payload( ConfigImage.BiosDataSize );
+			var biosImage = ConfigImage.Parse( StoredCompressed( true, biosPayload, 16384, "BIOS-z1" ), true, out error );
+			Check( biosImage != null && biosImage.Data.SequenceEqual( biosPayload ), "Stored-frame compressed BIOS payload" );
+
+			// Compressed BIOS whose original size is 128KB - 1.
+			Check( ConfigImage.Parse( StoredCompressed( true, Payload( ConfigImage.BiosDataSize - 1 ), 16384, "" ), true, out error ) == null,
+				"Reject compressed BIOS with short original size" );
+			Check( error == "Invalid data size.", "Compressed BIOS short size error text" );
+
+			// Unknown format marker.
+			var marker2 = StoredCompressed( false, payload, 16, "" );
+			marker2[ ConfigImage.SignatureSize - 1 ] = 2;
+			Check( ConfigImage.Parse( marker2, false, out error ) == null, "Reject format marker 2" );
+
+			// Truncated last frame and trailing garbage.
+			Check( ConfigImage.Parse( stored.Take( stored.Length - 1 ).ToArray(), false, out error ) == null,
+				"Reject truncated frame" );
+			Check( ConfigImage.Parse( stored.Concat( new byte[] { 0 } ).ToArray(), false, out error ) == null,
+				"Reject trailing byte after last frame" );
 		}
 
 		private const string RealScan = "Scanning!\n Target Cable: Gowin USB Cable(FT2CH)/0/None/null@2.5MHz\nDevice Info:\n \tFamily: GW5AR  \n"
