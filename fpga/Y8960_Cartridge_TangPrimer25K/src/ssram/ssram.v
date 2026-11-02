@@ -445,12 +445,12 @@ module ssram (
 				ff_state	<= c_state_dummy5;
 			end
 			c_state_dummy5: begin
-			`ifdef SIM
-				ff_state		<= c_state_read0;
-			`else
-				// Hardware-only: add one nibble turnaround to avoid first data nibble sampling too early.
+				// One nibble turnaround before the data phase. (This was
+				// hardware-only under an `ifdef SIM fork; the fork is
+				// removed so simulation and hardware always take the
+				// same path - the read_wait state also carries the
+				// upper-nibble capture, see the sample block below.)
 				ff_state		<= c_state_read_wait;
-			`endif
 			end
 			c_state_read_wait: begin
 				ff_state		<= c_state_read0;
@@ -481,16 +481,30 @@ module ssram (
 		end
 	end
 
-	// Sample read data on SCLK rising edge
+	// Sample read data at the end of the SCLK high phase (Route A fix).
+	// The capture edge (ff_sclk_div == 1) is the edge that makes the
+	// registered SCLK fall, so the value captured here is the nibble that
+	// was valid during the high phase. The next nibble is launched by the
+	// SRAM in response to that falling edge, which leaves the FPGA only
+	// after this capture, so it cannot be picked up by mistake. This is
+	// the same sampling phase as FPGA_MSXtR's ssram (w_sclk_sample).
+	// (Previously the capture used !ff_sclk_div, half a serial period
+	// earlier, which left the hold-side margin dependent on the board
+	// round-trip delay.)
+	// Note the capture states sit one state earlier than before
+	// (read_wait for the upper nibble, read0 for the lower): this FSM
+	// advances on ff_sclk_div == 1 edges, so the end-of-high-phase
+	// capture for a nibble falls in the state preceding the one the old
+	// mid-phase capture used.
 	always @( posedge clk_serial ) begin
 		if( !n_reset ) begin
 			ff_rdata <= 8'd0;
 		end
 		else begin
-			if( !ff_sclk_div && !ff_ce_n && ff_state == c_state_read0 ) begin
+			if( ff_sclk_div && !ff_ce_n && ff_state == c_state_read_wait ) begin
 				ff_rdata[7:4] <= sram_sio;
 			end
-			else if( !ff_sclk_div && !ff_ce_n && ff_state == c_state_read1 ) begin
+			else if( ff_sclk_div && !ff_ce_n && ff_state == c_state_read0 ) begin
 				ff_rdata[3:0] <= sram_sio;
 			end
 		end
