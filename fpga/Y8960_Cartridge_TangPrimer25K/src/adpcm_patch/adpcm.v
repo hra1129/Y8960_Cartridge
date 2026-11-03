@@ -4,6 +4,7 @@
 //	2026/02/19 t.hara
 //	2026/11/01 t.hara  Y8950 compatible playback start, address units,
 //	                   status flags, memory read/write and R#08.
+//	2026/11/03 t.hara  ADPCM synthesis from CPU (R#07 = 80h).
 // --------------------------------------------------------------------
 
 module adpcm (
@@ -89,6 +90,7 @@ module adpcm (
 	wire			w_mode_mem_read;
 	wire			w_mode_play;
 	wire			w_mode_cpu_synth;
+	wire			w_playing;
 	wire			w_buf_rdy_hold;
 	wire	[18:0]	w_start_ptr;
 	wire	[18:0]	w_stop_ptr;
@@ -107,6 +109,10 @@ module adpcm (
 	wire			w_cpu_write_done;
 	wire			w_core_eos;
 	wire			w_adpcm_oe_n;
+	wire			w_core_nibble_sel;
+	wire			w_core_chon;
+	wire			w_cpu_data_follow;
+	wire			w_cpu_data_used;
 	wire			w_core_enable;
 	wire	[23:0]	w_core_address;
 	wire	[15:0]	w_core_pcm;
@@ -143,6 +149,7 @@ module adpcm (
 	assign w_mode_mem_read		= ~reg_start & ~reg_record &  reg_memory_data;
 	assign w_mode_play			=  reg_start & ~reg_record &  reg_memory_data;
 	assign w_mode_cpu_synth		=  reg_start & ~reg_record & ~reg_memory_data;
+	assign w_playing			=  reg_start & ~reg_record;
 	//	BUF_RDY stays 1 in "no function" and memory transfer modes
 	assign w_buf_rdy_hold		= w_mode_idle | (~reg_start & reg_memory_data);
 
@@ -168,10 +175,11 @@ module adpcm (
 		.clk			( clk								),
 		.cen			( w_core_enable						),
 		.cen55			( cen55								),
-		.acmd_on_b		( w_mode_play						),
+		.acmd_on_b		( w_playing							),
 		.acmd_rep_b		( reg_repeat						),
 		.acmd_rst_b		( 1'b0								),
 		.acmd_up_b		( ff_start_pulse					),
+		.cpu_mode		( ~reg_memory_data					),
 		.alr_b			( 2'b11								),		//	always enable
 		.astart_b		( reg_start_address					),
 		.aend_b			( reg_stop_address					),
@@ -182,12 +190,21 @@ module adpcm (
 		.addr			( w_core_address					),
 		.data			( ff_core_data						),
 		.roe_n			( w_adpcm_oe_n						),
+		.nibble_sel		( w_core_nibble_sel					),
+		.chon			( w_core_chon						),
 		.pcm55_l		( w_core_pcm						),
 		.pcm55_r		(									)
 	);
 
+	//	ADPCM synthesis from CPU (R#07 = 80h):
+	//	While the next nibble to decode is an upper nibble, the decoder data
+	//	follows R#0F. The byte is fixed when the upper nibble is decoded,
+	//	and BUF_RDY is set to request the next byte (same as Y8950).
+	assign w_cpu_data_follow	= w_mode_cpu_synth & (~w_core_chon | ~w_core_nibble_sel);
+	assign w_cpu_data_used		= w_mode_cpu_synth & ~w_adpcm_oe_n & w_core_chon & w_core_nibble_sel;
+
 	//	Y8950: no output while not playing, or when SP-OFF is set.
-	assign w_pcm				= (reg_sp_off | ~w_mode_play) ? 16'd0 : w_core_pcm;
+	assign w_pcm				= (reg_sp_off | ~w_playing) ? 16'd0 : w_core_pcm;
 
 	// ---------------------------------------------------------
 	//	Stereo panning (register FFh)
@@ -280,6 +297,12 @@ module adpcm (
 					ff_prefetch_valid	<= 1'b1;
 					ff_buf_rdy			<= 1'b1;
 				end
+			end
+
+			//	ADPCM synthesis from CPU: the byte in R#0F has been used.
+			//	A R#0F write in the same clock clears BUF_RDY below.
+			if( w_cpu_data_used ) begin
+				ff_buf_rdy				<= 1'b1;
 			end
 
 			//	End of sample in playback mode
@@ -515,6 +538,10 @@ module adpcm (
 				ff_mem_write		<= 1'b0;
 				ff_mem_owner		<= c_owner_prefetch;
 				ff_mem_address		<= mask_address( ff_mem_ptr, reg_64k );
+			end
+
+			if( w_cpu_data_follow ) begin
+				ff_core_data		<= reg_adpcm_data;
 			end
 		end
 	end

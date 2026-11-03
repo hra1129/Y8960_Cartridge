@@ -1454,3 +1454,39 @@
 
 ### 残課題
 - CPU からの直接合成モード (R#07=80h) は未対応。必要なら対応する。
+
+## 2026/11/03: ADPCM の CPU 合成モード (R#07=80h) を実装
+- Y8950 の「CPU からの直接合成」に対応した。動作は openMSX の Y8950Adpcm に合わせた。
+  - R#07 の START=1、REC=0、MEMORY DATA=0 で開始。ADPCM データはサンプルメモリではなく
+    R#0F に書いた値を使う。
+  - 上位ニブル (各バイトの最初のニブル) をデコードした時点で R#0F の値を確定し、BUF_RDY=1 にする。
+    R#0F に書き込むと BUF_RDY=0。CPU は BUF_RDY を待って次のバイトを書く。
+  - データが補給されない場合は、最後に書かれた R#0F の値を使い続ける (openMSX と同じ)。
+  - 終了アドレスの判定はせず、EOS は出ない。R#07 を書き換えるまで鳴り続ける。PCM_BSY=1。
+  - ADPCM メモリ (SRAM) へのアクセスは発生しない。DELTA-N、R#12 (音量)、SP-OFF、PAN は通常再生と同じ。
+  - 注意: 待機中の BUF_RDY は 1 のため、R#07=80h の直後に 1 バイト目を書いてから
+    BUF_RDY 待ちを始める必要がある (Y8950 / openMSX と同じ)。
+- 変更ファイル:
+  - `adpcm_patch/jt10_adpcm_drvB.v` を新規コピー (原本 `src/adpcm` は無変更)。
+    `cpu_mode` 入力を追加し、`nibble_sel`、`chon` を出力。.gprj と各テストのファイル一覧を差し替えた。
+  - `adpcm_patch/jt10_adpcmb_cnt.v`: `cpu_mode` 時は終了アドレス判定を行わない。
+  - `adpcm_patch/adpcm.v`: 再生 (acmd_on_b) と出力ゲートを START & ~REC にした。
+    CPU 合成モードでは、次に上位ニブルをデコードするまでデコーダ入力データが R#0F に追従し、
+    上位ニブルのデコード直後に BUF_RDY をセットする。乗算器の追加はない。
+- 検証 (ModelSim):
+  - 回帰テスト `opl2_patch/test003` を追加。実機と同じ enable タイミングで、R#07=80h の後に
+    test002 と同じ 600 バイトを BUF_RDY ポーリングで R#0F に供給する。
+    1200 ニブルすべてのデコード値が参照と一致すること、ニブル周期 (1728 クロック)、
+    EOS が出ないこと、PCM_BSY=1、SRAM アクセスなし、出力レベル、停止後の PCM_BSY=0 と出力 0 を確認。
+  - 一時的に CPU 合成モードを無効にした RTL では test003 が失敗する (BUF_RDY timeout) ことを確認。
+  - `adpcm_patch/test001`、`adpcm_patch/test002`、`opl2_patch/test001`、`opl2_patch/test002`、
+    トップの `test001` も PASS。
+- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。
+- サンプルプログラム `y8960_adpcm_test/ADCPU.COM` (ソース `adcpu.asm`、`zma adcpu.asm ADCPU.COM`) を追加。
+  - MSX-DOS 用。`ADCPU <file> [/D:xxxx] [/V:xx] [/R]`。ファイル全体をメイン RAM に読み込み、
+    R#07=80h で BUF_RDY を待ちながら 1 バイトずつ R#0F に書いて鳴らす。ESC で停止。
+  - 最初のデコードと CPU の書き込みの競合を避けるため、先頭バイトは START 前と START 後の 2 回書く。
+    最後に詰め物 (80h) を 1 バイト送り、それが取り込まれたら停止する。
+  - BUF_RDY のマスクを外すと /INT が出続けるため、再生中は割り込み禁止。ESC は PPI から直接読む。
+  - ファイルサイズは FCB ではなく RDBLK で実際に読めたバイト数を使う (MSX-DOS 2.20 対策)。
+  - アセンブルのみ確認。実機確認は未実施。

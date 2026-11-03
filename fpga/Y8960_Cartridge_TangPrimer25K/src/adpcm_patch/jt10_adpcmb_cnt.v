@@ -27,6 +27,8 @@
 //     ({aend, 2'b11}, low nibble).
 //   - Playback ends when the address reaches or passes the stop address.
 //   - set_flag (EOS) is also raised at each loop end in repeat mode.
+//   - cpu_mode (2026/11/03): ADPCM synthesis from CPU. The nibble counter
+//     runs without end address check, so EOS is not raised.
 
 module jt10_adpcmb_cnt(
     input               rst_n,
@@ -38,6 +40,7 @@ module jt10_adpcmb_cnt(
     input               clr,
     input               on,
     input               acmd_up_b,
+    input               cpu_mode,
     // Address
     input       [15:0]  astart,
     input       [15:0]  aend,
@@ -111,7 +114,7 @@ always @(posedge clk or negedge rst_n)
             chon <= 'd1;
             clr_dec <= 'd0;
         end else if( chon && adv ) begin
-            if( { addr, nibble_sel } < { 6'd0, aend, 2'b11, 1'b1 } ) begin
+            if( cpu_mode || { addr, nibble_sel } < { 6'd0, aend, 2'b11, 1'b1 } ) begin
                 { addr, nibble_sel } <= { addr, nibble_sel } + 25'd1;
                 set_flag <= 'd0;
             end else if(arepeat) begin

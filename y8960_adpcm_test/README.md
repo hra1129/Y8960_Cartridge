@@ -15,6 +15,7 @@ ADPCM（ドラム）だけにノイズが混じる問題の切り分け用です
 | gen_test.py | このサンプル一式の生成スクリプト | — |
 | ADPLAY.COM | 実機で BIN を再生する MSX-DOS 用ツール（下記） | 1,728 |
 | adplay.asm | ADPLAY のソース（zma、`zma adplay.asm ADPLAY.COM`） | — |
+| ADCPU.COM / adcpu.asm | CPU 直接合成モード（R#07=80h）の再生サンプル（下記） | 1,399 |
 
 ## 再生ツール ADPLAY.COM
 
@@ -123,3 +124,45 @@ of the SRAM path (takes a while to verify; that is normal).
 Interpretation: a mismatch here means data was corrupted on the way
 into or out of the SerialSRAM (the ssram.v path) - the same path the
 cartridge BIOS and the ADPCM playback both use.
+
+## ADCPU.COM - CPU 直接合成モードのサンプル（2026-11-03 追加）
+
+ADPCM の「CPU からの直接合成」モード（R#07 = 80h：START=1、REC=0、
+MEMORY DATA=0）で BIN を再生するサンプルです。サンプルメモリ（SRAM）は
+使用せず、ファイル全体をメイン RAM に読み込み、BUF_RDY を見ながら
+CPU が 1 バイトずつ R#0F に書き込んで鳴らします。
+
+```
+ADCPU SINE1K.BIN            … DELTA-N=8000h で 1 回再生
+ADCPU SWEEP.BIN /R          … リピート再生（ESC で停止）
+ADCPU SINE1K.BIN /D:4000    … DELTA-N を変えて再生
+```
+
+| オプション | 意味 | 既定値 |
+|---|---|---|
+| /D:xxxx | DELTA-N（16進） | 8000 |
+| /V:xx | R#12 音量（16進） | FF |
+| /R | ESC が押されるまでリピート再生 | — |
+
+再生中は ESC キーで止められます（割り込み禁止中のため、キーマトリクスを
+PPI から直接読んでいます）。ソースは adcpu.asm（`zma adcpu.asm ADCPU.COM`）です。
+
+手順（プログラムの処理内容）：
+1. R#07 = 01h（リセット）、R#08 = 00h、R#10/11 = DELTA-N、R#12 = 音量。
+2. R#04 = 80h（フラグクリア）→ R#04 = 10h（EOS はマスク、BUF_RDY はマスク解除）。
+3. 先頭バイトを R#0F に書く → R#07 = 80h で合成開始。
+4. R#0F に先頭バイトをもう一度書く（BUF_RDY を 0 にする）。
+5. 以降は「BUF_RDY = 1 を待つ → 次のバイトを R#0F に書く」を繰り返す。
+6. 最後に詰め物のバイト（80h）を 1 つ書き、それが取り込まれたら
+   （＝最後のバイトの下位ニブルまで再生されたら）R#07 = 01h で停止。
+
+注意点：
+- 1 バイトは 2 サンプル分です。DELTA-N = 8000h（約 24.9kHz）では約 80µs ごとに
+  1 バイトを供給する必要があります。DELTA-N を大きくしすぎると CPU の供給が
+  間に合わなくなり、音が崩れます（間に合わない間は最後に書いた値が繰り返し
+  使われます）。Z80 3.58MHz では DELTA-N = 8000h 程度までを目安にしてください。
+- 読み込めるファイルの大きさは空き TPA に依存します（MSX-DOS2 で約 50KB、
+  DELTA-N = 8000h で約 4 秒）。SINE1K.BIN / SWEEP.BIN はそのまま使えます。
+- ファイルサイズは FCB の値ではなく、実際に読めたバイト数を使っています
+  （MSX-DOS 2.20 の FCB サイズ切り捨て対策。ADTEST v1.2 と同じ理由）。
+- このモードでは EOS は発生せず、ステータスの PCM_BSY は 1 のままです。

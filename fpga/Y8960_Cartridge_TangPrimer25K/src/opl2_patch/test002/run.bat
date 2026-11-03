@@ -13,7 +13,7 @@ vlog ..\..\adpcm\src\jt10_adpcmb_interpol.v
 if errorlevel 1 exit /b 1
 vlog ..\..\adpcm\src\jt10_adpcm_div.v
 if errorlevel 1 exit /b 1
-vlog ..\..\adpcm\src\jt10_adpcm_drvB.v
+vlog ..\..\adpcm_patch\jt10_adpcm_drvB.v
 if errorlevel 1 exit /b 1
 vlog ..\..\adpcm_patch\adpcm.v
 if errorlevel 1 exit /b 1
