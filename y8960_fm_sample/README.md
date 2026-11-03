@@ -1,4 +1,9 @@
-# Y8960 FM Sample (BRAND3)
+# Y8960 FM Sample (BRAND3 / CANCAN)
+
+- [BRAND3](#brand3): OPM + OPL2 による「ブランデンブルク協奏曲 第3番」
+- [CANCAN](#cancan): 全音源 (OPM / OPL2 / ADPCM / OPLL / SCC / SSG) による「天国と地獄」
+
+## BRAND3
 
 Y8960 Cartridge の OPM (YM2151) と OPL2 (YM3812) を使って、
 J.S.Bach「ブランデンブルク協奏曲 第3番 ト長調 BWV 1048」を演奏する MSX-DOS 用サンプルです。
@@ -74,4 +79,85 @@ Brandenburg_No3-BWV_1048.ly は、Rosegarden の
 ## 未実施
 
 - 第3楽章 (Allegro、12/8) は未収録です (パブリックドメインの打ち込みデータが見つからないため)。
-- 実機での音色・音量バランスの確認。
+
+## CANCAN
+
+Y8960 Cartridge の全音源を使って、オッフェンバック「天国と地獄」より
+「地獄のギャロップ」(カンカン) を演奏する MSX-DOS 用サンプルです (約 72 秒)。
+
+```
+A>CANCAN
+```
+
+構成 (ハ長調、2/4 拍子) は次のとおりです。主題 16 小節を、音源を順に替えて演奏します。
+
+| 区間 | 小節 | テンポ (♩=) | 内容 |
+|---|---|---|---|
+| イントロ | 4 | 168 | 全音源の伴奏 + クラッシュとスネアロール |
+| 主題 1〜5 | 各 16 | 168 | SSG → SCC → OPLL → OPL2 → OPM の順にソロ (他の音源は休み) |
+| 主題 6 | 16 | 184 | 全音源 (SSG / SCC のメロディは 1 オクターブ上) |
+| コーダ | 2 | 150 | C - G - C |
+
+ドラム (キック / スネア / クラッシュ) は ADPCM で全編に入ります。
+ドラムの波形は mkcancan.py で合成し、起動時に ADPCM メモリへ転送します。
+
+### パート割り当て
+
+| 音源 | メロディ | ハーモニー | 和音 (裏拍) | ベース |
+|---|---|---|---|---|
+| SSG (SSG2 側) | A | B | - | C |
+| SCC | A (のこぎり波) | B (矩形波) | C, D | E |
+| OPLL | ch0 trumpet | ch1 clarinet | ch2〜4 piano | ch5 acoustic bass |
+| OPL2 | ch1 lead | ch2 lead | ch3〜5 harpsichord | ch6 bass |
+| OPM | ch0 brass | ch1 brass | ch2〜4 electric piano | ch5 bass |
+| ADPCM | ドラム | | | |
+
+ハーモニーは「メロディより短 3 度以上低い和音構成音のうち最も高い音」を自動で付けています。
+定位はメロディとベースが中央、ハーモニーがやや左、和音が左・中央・右です。
+
+### 音源へのアクセス
+
+| 音源 | アクセス方法 |
+|---|---|
+| OPM | I/O 7Eh / 7Fh |
+| OPL2 + ADPCM | I/O C0h / C1h (PAN: F6h〜FEh = ch1〜9、FFh = ADPCM) |
+| OPLL | MMIO 7FF4h / 7FF5h (内蔵 MSX-MUSIC と重ならないように I/O 7Ch / 7Dh は使いません) |
+| SSG | MMIO 7FF0h / 7FF1h の SSG2 側 (R#10h〜1Fh、PAN: 2Ch〜2Eh)。本体 PSG と競合しません |
+| SCC | 9000h = 3Fh で 9800h〜 に SCC レジスタを出し、PAN は 9900h〜9904h |
+
+- 演奏中は割り込みを禁止し、ENASLT でページ 1・2 をカートリッジのスロットに切り替えて、
+  MMIO と SCC へ直接書き込みます (WRSLT は遅く、全音源が一斉に発音する拍で 1 フレームに収まらないため)。
+  そのため演奏中に使うコードとデータはすべて 4000h 未満に置き、
+  起動時の転送にしか使わない ADPCM データだけを最後尾 (4000h をまたいでもよい) に置いています。
+  終了時は RAMAD1 / RAMAD2 (F342h / F343h) のスロットに戻します。
+- SCC と SSG はソフトウェアでエンベロープ (減衰) をかけています。
+- 終了時は全音源をキーオフ・消音し、SCC のバンクレジスタ (9000h) を 02h に戻します。
+
+音色は [cancan.asm](cancan.asm) の `opm_patches` / `opl_patches` / `scc_patches` / `psg_patches`、
+OPLL の音色と音量は [mkcancan.py](mkcancan.py) の `CHANNELS` (patch = INST << 4 | VOL)、
+アレンジは mkcancan.py の `THEME` / `THEME_CHORDS` と `build_song()` で変更できます。
+
+### ファイル
+
+| ファイル | 内容 |
+|---|---|
+| CANCAN.COM | 実行ファイル |
+| cancan.asm | 再生プログラム (Z80) |
+| cancan.inc | 曲データ・音程表・SCC 波形・ADPCM ドラム (mkcancan.py が生成) |
+| mkcancan.py | アレンジ・曲データ生成、ドラム合成と ADPCM エンコード |
+
+### ビルド
+
+```
+python mkcancan.py
+..\tool\zma.exe cancan.asm CANCAN.COM
+```
+
+曲データの形式は BRAND3 と同じです。音源 ch は 00h〜 が OPM、08h〜 が OPL2、20h〜 が OPLL、
+30h〜 が SCC、40h〜 が SSG2、50h が ADPCM (ノート番号 1 = キック、2 = スネア、3 = クラッシュ)、
+FFh が指揮者チャンネルです。
+
+### 原曲と編曲
+
+原曲は J.Offenbach (1819-1880) のオペレッタ「地獄のオルフェ」(1858) で、パブリックドメインです。
+編曲 (主題の採譜、和声付け、構成) はこのサンプルのために作成したものです。
