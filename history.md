@@ -1481,7 +1481,7 @@
   - 一時的に CPU 合成モードを無効にした RTL では test003 が失敗する (BUF_RDY timeout) ことを確認。
   - `adpcm_patch/test001`、`adpcm_patch/test002`、`opl2_patch/test001`、`opl2_patch/test002`、
     トップの `test001` も PASS。
-- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。
+- GOWIN 合成と実機確認はユーザーが実施済み。ADCPU で音が出ることを確認 (2026/11/03)。
 - サンプルプログラム `y8960_adpcm_test/ADCPU.COM` (ソース `adcpu.asm`、`zma adcpu.asm ADCPU.COM`) を追加。
   - MSX-DOS 用。`ADCPU <file> [/D:xxxx] [/V:xx] [/R]`。ファイル全体をメイン RAM に読み込み、
     R#07=80h で BUF_RDY を待ちながら 1 バイトずつ R#0F に書いて鳴らす。ESC で停止。
@@ -1489,4 +1489,4 @@
     最後に詰め物 (80h) を 1 バイト送り、それが取り込まれたら停止する。
   - BUF_RDY のマスクを外すと /INT が出続けるため、再生中は割り込み禁止。ESC は PPI から直接読む。
   - ファイルサイズは FCB ではなく RDBLK で実際に読めたバイト数を使う (MSX-DOS 2.20 対策)。
-  - アセンブルのみ確認。実機確認は未実施。
+  - 実機で ADCPU による再生 (音が出ること) を確認済み (2026/11/03)。
