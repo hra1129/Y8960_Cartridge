@@ -56,8 +56,9 @@
 //-----------------------------------------------------------------------------
 
 module ssg_core #( 
-	parameter		builtin		= 1'b1,
-	parameter		core_number	= 1'b0
+	parameter		builtin		= 1'b1,		//	1: register read enable, 0: read is never answered
+	parameter		core_number	= 1'b0,
+	parameter		read_others	= 1'b1		//	1: answer every read (FFh if not own register), 0: answer only own register reads
 ) (
 	input			clk,
 	input			reset_n,
@@ -152,6 +153,11 @@ module ssg_core #(
 	assign w_wr		= bus_ioreq & bus_valid & bus_write;
 	assign w_rd		= bus_ioreq & bus_valid & ~bus_write;
 
+	//	Read of a register owned by this core: R#0-15 (+16 for core1), gain and pan registers
+	wire			w_own_reg	= (ff_ssg_register_ptr[5:4] == { 1'b0, core_number }) |
+								  ((ff_ssg_register_ptr[5:4] == 2'b10) & (ff_ssg_register_ptr[2] == core_number));
+	wire			w_rd_answer	= w_rd & (read_others | ((bus_address == 2'd2) & w_own_reg));
+
 	generate
 		if( builtin ) begin
 			always @( posedge clk ) begin
@@ -230,7 +236,7 @@ module ssg_core #(
 				if( !reset_n ) begin
 					ff_rdata_en <= 1'b0;
 				end
-				else if( w_rd ) begin
+				else if( w_rd_answer ) begin
 					ff_rdata_en <= enable | ff_rdata_en;
 				end
 				else begin

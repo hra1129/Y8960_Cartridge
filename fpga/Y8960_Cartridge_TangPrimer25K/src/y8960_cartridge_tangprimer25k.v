@@ -483,7 +483,7 @@ module y8960cartridge_tangprimer25k (
 
 	// ---------------------------------------------------------
 	dual_ssg #(
-		.BUILTIN				( 0							)
+		.BUILTIN				( 0							)	//	Cartridge: SSG1 read is blocked (MSX main PSG exists)
 	) u_dual_ssg (
 		.clk					( clk_42m					),
 		.reset_n				( w_reset_n					),

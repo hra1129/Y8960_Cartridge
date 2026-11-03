@@ -1490,3 +1490,22 @@
   - BUF_RDY のマスクを外すと /INT が出続けるため、再生中は割り込み禁止。ESC は PPI から直接読む。
   - ファイルサイズは FCB ではなく RDBLK で実際に読めたバイト数を使う (MSX-DOS 2.20 対策)。
   - 実機で ADCPU による再生 (音が出ること) を確認済み (2026/11/03)。
+
+## 2026/11/03: SSG1 の Read 遮断をパラメータで切り替え
+- 問題: カートリッジ版では MSX 本体の PSG と I/O A0h〜A2h が重なる。`dual_ssg #(.BUILTIN(0))` で
+  core0 (SSG1) は Read に応答しなかったが、core1 (SSG2) はレジスタポインタが SSG1 側 (R#0〜15 など)
+  を指していても A0h〜A2h の Read に FFh で応答していた (bus_rdata_en=1)。BIOS のジョイスティック
+  読み出し (R#14 @A2h) などで本体 PSG とバス競合する。
+- 対策:
+  - `ssg/ssg_core.v` にパラメータ `read_others` を追加。0 のときは「A2h の Read で、ポインタが自コアの
+    レジスタ (R#0〜15 (+16)、gain/pan) を指す場合」だけ応答する。既定値 1 は従来どおり。
+  - `ssg/dual_ssg.v`: core1 の `read_others` に `BUILTIN` を渡す。
+    BUILTIN=1 (MSXtR/MSX2++ 内蔵): SSG1/SSG2 とも Read 可 (従来どおり)。
+    BUILTIN=0 (カートリッジ): SSG1 の Read と A0h/A1h の Read は一切バスを駆動しない。SSG2 の Read は可。
+  - トップ `y8960_cartridge_tangprimer25k.v` は従来どおり `.BUILTIN(0)` (コメントを追記)。
+- 検証 (ModelSim):
+  - 新規 `ssg/test002`: BUILTIN=0/1 の 2 インスタンスに同じバスサイクルを与え、SSG1 の全レジスタ、
+    gain/pan、A0h/A1h の Read でカートリッジ版がバスを駆動しないこと、SSG2 の Read は値が正しいことを確認。PASS。
+    修正を無効にすると 24 件失敗することも確認。
+  - `ssg/test001` (BUILTIN=1、OK 40 件)、トップ `test001` も PASS。
+- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。

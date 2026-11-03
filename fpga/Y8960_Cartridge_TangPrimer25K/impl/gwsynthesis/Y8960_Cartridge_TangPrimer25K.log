@@ -239,7 +239,7 @@ Compiling module 'IKAOPLL_dac'("C:\Users\hra\Documents\github\HRA_product\Y8960_
 Compiling module 'IKAOPLL_sr(WIDTH=9,LENGTH=5)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikaopll\src\IKAOPLL_modules\IKAOPLL_primitives.v":31)
 Compiling module 'dual_ssg(BUILTIN=0)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\dual_ssg.v":48)
 Compiling module 'ssg_core(builtin=0)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\ssg_core.v":58)
-Compiling module 'ssg_core(core_number=1'b1)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\ssg_core.v":58)
+Compiling module 'ssg_core(core_number=1'b1,read_others=0)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ssg\ssg_core.v":58)
 Compiling module 'scc'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc_patch\scc.v":9)
 Compiling module 'IKASCC'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc_patch\IKASCC.v":7)
 Compiling module 'IKASCC_vrc_s(RAMCTRL_ASYNC=1)'("C:\Users\hra\Documents\github\HRA_product\Y8960_Cartridge\fpga\Y8960_Cartridge_TangPrimer25K\src\ikascc_patch\IKASCC_vrc_s.v":27)

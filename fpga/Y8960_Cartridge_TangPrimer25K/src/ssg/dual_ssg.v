@@ -46,6 +46,9 @@
 //-----------------------------------------------------------------------------
 
 module dual_ssg #(
+	//	1: Built-in (MSXtR/MSX2++), SSG1 is the main PSG and its registers are readable.
+	//	0: Cartridge, the MSX main PSG exists. SSG1 (R#0-15) read is blocked to avoid
+	//	   bus conflict, only SSG2 register reads (A2h) are answered.
 	parameter		BUILTIN = 1
 ) (
 	input			clk,
@@ -104,7 +107,8 @@ module dual_ssg #(
 
 	ssg_core #( 
 		.builtin		( 1'b1				),
-		.core_number	( 1'b1				)
+		.core_number	( 1'b1				),
+		.read_others	( BUILTIN			)
 	) ssg_core1 (
 		.clk			( clk				),
 		.reset_n		( reset_n			),
