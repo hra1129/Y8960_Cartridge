@@ -1509,3 +1509,19 @@
     修正を無効にすると 24 件失敗することも確認。
   - `ssg/test001` (BUILTIN=1、OK 40 件)、トップ `test001` も PASS。
 - GOWIN 合成と実機確認は未実施 (ユーザーが行う)。
+
+## 2026/11/03: OPM + OPL2 演奏サンプル BRAND3 (ブランデンブルク協奏曲第3番)
+- 新規 `y8960_fm_sample/`。MSX-DOS 用 `BRAND3.COM`。OPM 7ch + OPL2 5ch で第1楽章 + 第2楽章を演奏 (約 5 分)。
+- 楽譜: suzumidi の MIDI は再配布不可のため不採用。Rosegarden のテストデータ
+  `Brandenburg_No3-BWV_1048.ly` (D. Michael McIntyre、Public Domain、10 パート、137 小節) を使用。
+- `lyparse.py` (LilyPond サブセットのパーサ) と `mksong.py` (→ `brand3.inc` 生成)。
+  データ形式はチャンネル別ストリーム (1 音 1 バイト、音長変更時のみ長さバイト)。19KB。
+- テンポは指揮者チャンネルの F8h コマンドで、「1 フレームあたり tick 数 × 256」を小数アキュムレータで加算。
+  60Hz/50Hz 用の値をデータに持つ (実行時の除算なし)。Allegro: 16 分音符 = 8 フレーム。最終小節で ritardando、
+  楽章間に休み、Adagio の最後はフェルマータ相当。
+- 割り当て: Vn I〜III / Va I〜III → OPM ch0〜5 (L/C/R)、Violone 16' → OPM ch6、Vc I〜III → OPL2 ch1〜3
+  (PAN 48/128/208)、Violone 8' → OPL2 ch4、Cembalo → OPL2 ch5。
+- 検証: Python の Z80 エミュレータ (pip `z80`) で COM を実行し、全 12ch のキーオン音高列が楽譜と一致、
+  同時発音のフレームが一致、50Hz 時の演奏時間 (×5/6)、ESC 停止時の全キーオフを確認。
+- 未実施: 第3楽章 (PD の打ち込みデータが無い。IMSLP の Bach-Gesellschaft 版から打ち込む必要あり)、
+  実機での音色・音量バランス確認。
