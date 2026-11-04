@@ -41,6 +41,7 @@ wire               rhy2x;
 wire        [ 8:0] gain_l;
 wire        [ 8:0] gain_r;
 reg  signed [13:0] op2x_d;
+reg         [ 7:0] pan_d;
 reg                sum_en_d;
 reg                zero_d;
 wire signed [23:0] product_l;
@@ -59,9 +60,11 @@ assign product_r = op2x_d * $signed({1'b0, gain_r});
 assign sample_l  = product_l[22:8];
 assign sample_r  = product_r[22:8];
 
+// pan must be delayed by one slot together with op2x_d. Otherwise the gain
+// of the next slot (= next channel) is applied.
 pan_lut u_pan_lut(
     .i_clk      ( clk       ),
-    .i_pan      ( pan       ),
+    .i_pan      ( pan_d     ),
     .o_gain_l   ( gain_l    ),
     .o_gain_r   ( gain_r    )
 );
@@ -69,10 +72,12 @@ pan_lut u_pan_lut(
 always @(posedge clk) if(cenop) begin
     if(rst) begin
         op2x_d  <= 14'sd0;
+        pan_d   <= 8'd128;
         sum_en_d <= 1'b0;
         zero_d  <= 1'b0;
     end else begin
         op2x_d  <= op2x;
+        pan_d   <= pan;
         sum_en_d <= sum_en;
         zero_d  <= zero;
     end

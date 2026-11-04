@@ -427,9 +427,9 @@ module tb ();
 		$display( "==== Test %0d: Y8950 EG control and internal sound mix ====", test_no );
 		opl2_reg_write( 8'h12, 8'h40 );
 		assert( u_dut.u_adpcm.reg_envelope_control == 8'h40 );
-		check_y8950_mix( 16'sd1000,  -16'sd2000, 16'sd3000, 16'sd500,  16'sd4000,  -16'sd1500 );
-		check_y8950_mix( 16'sd30000, 16'sd30000,  16'sd10000, 16'sd10000, 16'sd32767, 16'sd32767 );
-		check_y8950_mix( -16'sd30000, -16'sd30000, -16'sd10000, -16'sd10000, -16'sd32768, -16'sd32768 );
+		check_y8950_mix( 16'sd1000,  -16'sd2000, 16'sd3000, 16'sd500,  16'sd1750,  -16'sd1875 );
+		check_y8950_mix( 16'sd30000, 16'sd30000,  16'sd32767, 16'sd10000, 16'sd32767, 16'sd32500 );
+		check_y8950_mix( -16'sd30000, -16'sd30000, -16'sd32768, -16'sd10000, -16'sd32768, -16'sd32500 );
 
 		// ---- test_no 6: ADPCM playback memory fetch ----
 		test_no = 6;

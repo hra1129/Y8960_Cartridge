@@ -201,8 +201,11 @@ module opl2 (
 	assign bus_ready			= ff_ready;
 	assign bus_rdata			= ff_rdata_en ? ff_rdata : 8'hFF;
 	assign bus_rdata_en			= ff_rdata_en;
-	assign w_sound_sum_l			= $signed( ff_opl2_sound_out_l ) + $signed( ff_adpcm_sound_out_l );
-	assign w_sound_sum_r			= $signed( ff_opl2_sound_out_r ) + $signed( ff_adpcm_sound_out_r );
+	//	ADPCM full scale (EG=FFh) is about twice one FM channel (FM operator
+	//	+-4095, ADPCM +-32767 >>> 2) so that the drums are not masked.
+	//	6 FM channels + ADPCM = +-32762 fits in 16 bits.
+	assign w_sound_sum_l			= $signed( ff_opl2_sound_out_l ) + ($signed( ff_adpcm_sound_out_l ) >>> 2);
+	assign w_sound_sum_r			= $signed( ff_opl2_sound_out_r ) + ($signed( ff_adpcm_sound_out_r ) >>> 2);
 	assign opl2_sound_out_l		= saturate_16( w_sound_sum_l );
 	assign opl2_sound_out_r		= saturate_16( w_sound_sum_r );
 	assign adpcm_address		= w_adpcm_address[17:0];

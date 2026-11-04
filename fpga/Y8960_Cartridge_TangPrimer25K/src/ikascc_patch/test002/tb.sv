@@ -70,6 +70,73 @@ module tb ();
 		repeat( 36 ) @( posedge clk );
 	endtask
 
+	//	Same timing as msx_slot.v: bus_valid drops 1 clock after bus_ready and
+	//	the address follows the next bus cycle (opcode fetch at 01E5h) at once.
+	task write_slot( input [15:0] address, input [7:0] data );
+		@( posedge clk );
+		bus_address	<= address;
+		bus_wdata	<= data;
+		bus_write	<= 1'b1;
+		bus_cs		<= 1'b1;
+		bus_valid	<= 1'b1;
+		@( posedge clk );
+		while( !bus_ready ) @( posedge clk );
+		bus_cs		<= 1'b0;
+		bus_valid	<= 1'b0;
+		bus_write	<= 1'b0;
+		bus_address	<= 16'h01E5;
+		repeat( 60 ) @( posedge clk );
+	endtask
+
+	//	Z80 memory write on the real slot: /WR is about 12 clocks and msx_slot
+	//	starts the access about 5 clocks after /WR, so bus_valid is dropped after
+	//	7 clocks even without bus_ready. One call takes 'cycle' clocks
+	//	(36 = 3 Z80 states, back-to-back writes such as PUSH).
+	task write_z80( input [15:0] address, input [7:0] data, input int cycle );
+		int		n;
+		reg		r;
+		#1;
+		bus_address	= address;
+		bus_wdata	= data;
+		bus_write	= 1'b1;
+		bus_cs		= 1'b1;
+		bus_valid	= 1'b1;
+		n = 0;
+		forever begin
+			r = bus_ready;
+			@( posedge clk );
+			#1;
+			n++;
+			if( r || n >= 7 ) break;
+		end
+		bus_cs		= 1'b0;
+		bus_valid	= 1'b0;
+		bus_write	= 1'b0;
+		bus_address	= 16'h01E5;
+		repeat( cycle - n - 1 ) @( posedge clk );
+		@( posedge clk );
+	endtask
+
+	//	Same as msx_slot.v: the read data is taken at the first clock of bus_rdata_en.
+	task read_slot( input [15:0] address, output [7:0] data );
+		@( posedge clk );
+		bus_address	<= address;
+		bus_write	<= 1'b0;
+		bus_cs		<= 1'b1;
+		bus_valid	<= 1'b1;
+		data		= 8'hXX;
+		@( posedge clk );
+		while( !bus_ready ) begin
+			if( bus_rdata_en && data === 8'hXX ) data = bus_rdata;
+			@( posedge clk );
+		end
+		if( bus_rdata_en && data === 8'hXX ) data = bus_rdata;
+		bus_cs		<= 1'b0;
+		bus_valid	<= 1'b0;
+		bus_address	<= 16'h01E5;
+		repeat( 60 ) @( posedge clk );
+	endtask
+
 	task read_mem( input [15:0] address, output [7:0] data );
 		@( posedge clk );
 		bus_address	<= address;
@@ -246,6 +313,37 @@ module tb ();
 			$display( "ERROR: real Ch.A right L=%0d R=%0d", $signed( sound_l_out ), $signed( sound_r_out ) );
 			error_count++;
 		end
+
+		//	Oscillation frequency: f = 3.579545MHz / (32 * (FREQ + 1)).
+		//	FREQ = 100h -> 435.2Hz -> about 21.8 cycles in 50ms.
+		//	This detects a wrong polarity of i_MCLK_PCEN_n (the core runs 11x faster).
+		for( int i = 0; i < 16; i++ ) begin
+			write_mem( 16'h9800 + i, 8'h7F );
+		end
+		for( int i = 16; i < 32; i++ ) begin
+			write_mem( 16'h9800 + i, 8'h80 );
+		end
+		write_mem( 16'h9880, 8'h00 );
+		write_mem( 16'h9881, 8'h01 );
+		begin
+			int		crossings;
+			reg		prev_neg;
+			crossings	= 0;
+			prev_neg	= 1'b0;
+			repeat( 2147727 ) begin
+				@( posedge clk );
+				#1;
+				if( prev_neg && $signed( sound_r_out ) > 0 ) crossings++;
+				prev_neg = ( $signed( sound_r_out ) < 0 );
+			end
+			if( crossings >= 20 && crossings <= 23 ) begin
+				$display( "OK   : real Ch.A frequency %0d cycles/50ms", crossings );
+			end
+			else begin
+				$display( "ERROR: real Ch.A frequency %0d cycles/50ms (expected 20-23)", crossings );
+				error_count++;
+			end
+		end
 		write_mem( 16'h9900, 8'd1 );
 
 		//	RAM Mode = 1, BANK2 = #63: SCC and PAN remain accessible.
@@ -334,6 +432,134 @@ module tb ();
 		write_mem( 16'h9000, 8'h00 );
 		write_mem( 16'h9900, 8'd255 );
 		check_pan( "write after window closed", 1, 1, 1, 1, 1 );
+
+		//	CANCAN-like sequence with the msx_slot.v bus timing.
+		write_slot( 16'h9000, 8'h3F );
+		write_slot( 16'h988A, 8'h00 );
+		write_slot( 16'h988F, 8'h1F );
+		for( int i = 0; i < 16; i++ ) begin
+			write_slot( 16'h9800 + i, 8'h7F );
+		end
+		for( int i = 16; i < 32; i++ ) begin
+			write_slot( 16'h9800 + i, 8'h80 );
+		end
+		write_slot( 16'h9900, 8'd128 );
+		write_slot( 16'h9880, 8'h00 );
+		write_slot( 16'h9881, 8'h01 );
+		write_slot( 16'h988A, 8'h0F );
+		if( u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch1.freq === 12'h100 &&
+			u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch1.vol === 4'hF &&
+			u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.test === 8'h00 ) begin
+			$display( "OK   : slot timing FREQ/VOL/TEST" );
+		end
+		else begin
+			$display( "ERROR: slot timing FREQ=%03X VOL=%0d TEST=%02X",
+				u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch1.freq,
+				u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch1.vol,
+				u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.test );
+			error_count++;
+		end
+		begin
+			int		crossings;
+			reg		prev_neg;
+			crossings	= 0;
+			prev_neg	= 1'b0;
+			repeat( 2147727 ) begin
+				@( posedge clk );
+				#1;
+				if( prev_neg && $signed( sound_l_out ) > 0 ) crossings++;
+				prev_neg = ( $signed( sound_l_out ) < 0 );
+			end
+			if( crossings >= 20 && crossings <= 23 ) begin
+				$display( "OK   : slot timing Ch.A frequency %0d cycles/50ms", crossings );
+			end
+			else begin
+				$display( "ERROR: slot timing Ch.A frequency %0d cycles/50ms (expected 20-23)", crossings );
+				error_count++;
+			end
+		end
+
+		//	Wave RAM write/read with the msx_slot.v bus timing (Ch.B).
+		for( int i = 0; i < 32; i++ ) begin
+			write_slot( 16'h9820 + i, 8'h11 * ( i & 15 ) + i );
+		end
+		begin
+			reg		[7:0]	rd;
+			int		ng;
+			ng = 0;
+			for( int i = 0; i < 32; i++ ) begin
+				read_mem( 16'h9820 + i, rd );
+				if( rd !== 8'(8'h11 * ( i & 15 ) + i) ) ng++;
+			end
+			for( int i = 0; i < 32; i += 7 ) begin
+				read_slot( 16'h9820 + i, rd );
+				if( rd !== 8'(8'h11 * ( i & 15 ) + i) ) begin
+					$display( "  read_slot [%04X]=%02X expected %02X", 16'h9820 + i, rd, 8'(8'h11 * ( i & 15 ) + i) );
+					ng++;
+				end
+			end
+			if( ng == 0 ) begin
+				$display( "OK   : slot timing wave RAM write/read" );
+			end
+			else begin
+				$display( "ERROR: slot timing wave RAM write/read %0d mismatch(es)", ng );
+				error_count++;
+			end
+		end
+
+		//	Short /WR (Z80 memory write) at every phase of enable.
+		begin
+			reg		[7:0]	rd;
+			int		ng;
+			ng = 0;
+			for( int ph = 0; ph < 12; ph++ ) begin
+				@( posedge clk );
+				while( !enable ) @( posedge clk );
+				repeat( ph ) @( posedge clk );
+				write_z80( 16'h9000, 8'h00, 36 );
+				write_z80( 16'h9000, 8'h3F, 36 );
+				write_z80( 16'h9840 + ph, 8'hA0 + ph, 36 );
+				write_z80( 16'h9884, 8'h10 + ph, 36 );
+				write_z80( 16'h9885, 8'h02, 36 );
+				write_z80( 16'h988C, 8'(ph), 36 );
+				write_z80( 16'h9902, 8'd10 + ph, 36 );
+				//	Writes closer than a Z80 can do: the 2nd one hits the gap enable.
+				write_z80( 16'h9860 + ph, 8'hC0 + ph, 13 );
+				write_z80( 16'h9870 + ph, 8'hD0 + ph, 36 );
+				repeat( 36 ) @( posedge clk );
+				if( u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch3.freq !== 12'h210 + ph ||
+					u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch3.vol !== 4'(ph) ||
+					u_dut.ff_pan_c !== 8'd10 + ph ) begin
+					$display( "  phase %0d: FREQ=%03X VOL=%0d PAN=%0d", ph,
+						u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch3.freq,
+						u_dut.u_ikascc.IKASCC_SYNC_MODE.u_player_main.u_ctrl_ch3.vol,
+						u_dut.ff_pan_c );
+					ng++;
+				end
+				read_mem( 16'h9840 + ph, rd );
+				if( rd !== 8'hA0 + ph ) begin
+					$display( "  phase %0d: wave [%04X]=%02X", ph, 16'h9840 + ph, rd );
+					ng++;
+				end
+				read_mem( 16'h9860 + ph, rd );
+				if( rd !== 8'hC0 + ph ) begin
+					$display( "  phase %0d: wave [%04X]=%02X", ph, 16'h9860 + ph, rd );
+					ng++;
+				end
+				read_mem( 16'h9870 + ph, rd );
+				if( rd !== 8'hD0 + ph ) begin
+					$display( "  phase %0d: wave [%04X]=%02X", ph, 16'h9870 + ph, rd );
+					ng++;
+				end
+			end
+			if( ng == 0 ) begin
+				$display( "OK   : short /WR at every enable phase" );
+			end
+			else begin
+				$display( "ERROR: short /WR %0d mismatch(es)", ng );
+				error_count++;
+			end
+		end
 
 		if( error_count == 0 ) begin
 			$display( "OK   : all tests passed" );

@@ -149,7 +149,7 @@ module opllex (
 		.o_IMP_NOFLUC_MAG			( 					),		//	no use
 		.o_IMP_FLUC_SIGNED_MO		( 					),		//	no use
 		.o_IMP_FLUC_SIGNED_RO		( 					),		//	no use
-		.i_ACC_SIGNED_MOVOL			( 5'd10				),		//	Melody volume level: -16...15 (SIGNED)
+		.i_ACC_SIGNED_MOVOL			( 5'd15				),		//	Melody volume level: -16...15 (SIGNED)
 		.i_ACC_SIGNED_ROVOL			( 5'd15				),		//	Drum volume level  : -16...15 (SIGNED)
 		.o_ACC_SIGNED_STRB			( 					),		//	no use
 		.o_ACC_SIGNED_L				( sound_l_out		),		//	sound out

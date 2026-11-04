@@ -94,6 +94,9 @@ module tb ();
 			error_count = error_count + 1;
 		end
 		reset_n = 1'b1;
+		//	The SSG DC cut is tested separately at the end.
+		force u_dut.ff_ssg_dc_l = 29'd0;
+		force u_dut.ff_ssg_dc_r = 29'd0;
 
 		ssg_l	= 13'd1000;
 		ssg_r	= 13'd2000;
@@ -103,7 +106,7 @@ module tb ();
 		opl2_r	= -16'sd500;
 		scc_l	= -11'sd50;
 		scc_r	= -11'sd50;
-		check_output( "all sources at 100%", 24'sd128000, 24'sd204800 );
+		check_output( "all sources at 100%", 24'sd1689600, 24'sd3635200 );
 
 		ssg_l	= 13'd1024;
 		ssg_r	= 13'd1024;
@@ -117,7 +120,7 @@ module tb ();
 		opll_volume		= 8'd32;
 		opl2_volume		= 8'd0;
 		scc_volume		= 8'd127;
-		check_output( "independent gains and SCC L/R", 24'sd228352, -24'sd31744 );
+		check_output( "independent gains and SCC L/R", 24'sd3194880, -24'sd966656 );
 
 		ssg_volume		= 8'd0;
 		opll_volume		= 8'd0;
@@ -138,13 +141,13 @@ module tb ();
 		scc_l	= -11'sd50;
 		scc_r	= -11'sd50;
 		master_volume	= 8'd64;
-		check_output( "master volume 50%", 24'sd64000, 24'sd102400 );
+		check_output( "master volume 50%", 24'sd844800, 24'sd1817600 );
 
 		master_volume	= 8'd1;
-		check_output( "master volume 1/128", 24'sd1000, 24'sd1600 );
+		check_output( "master volume 1/128", 24'sd13200, 24'sd28400 );
 
 		master_volume	= 8'd255;
-		check_output( "master volume bit7 clamps to 100%", 24'sd128000, 24'sd204800 );
+		check_output( "master volume bit7 clamps to 100%", 24'sd1689600, 24'sd3635200 );
 
 		master_volume	= 8'd0;
 		check_output( "master volume muted", 24'sd0, 24'sd0 );
@@ -158,10 +161,10 @@ module tb ();
 		scc_l	= 11'sd1023;
 		scc_r	= -11'sd1024;
 		master_volume	= 8'd128;
-		check_output( "full scale at master 100% (L saturated)", 24'sd8388607, -24'sd7864448 );
+		check_output( "full scale at master 100% (L/R saturated)", 24'sd8388607, -24'sd8388608 );
 
 		master_volume	= 8'd96;
-		check_output( "full scale at master 75%", 24'sd6291455, -24'sd5898336 );
+		check_output( "full scale at master 75%", 24'sd6291455, -24'sd6291456 );
 
 		ssg_l	= 13'd0;
 		ssg_r	= 13'd0;
@@ -193,11 +196,58 @@ module tb ();
 		opm_l	= 16'sd32767;
 		opm_r	= -16'sd32768;
 		opm_volume		= 8'd128;
-		check_output( "full scale with OPM at master 100% (saturated)", 24'sd8388607, -24'sd8388608 );
+		check_output( "full scale with OPM at master 100% (L/R saturated)", 24'sd8388607, -24'sd8388608 );
 
 		master_volume	= 8'd96;
 		check_output( "full scale with OPM at master 75%", 24'sd6291455, -24'sd6291456 );
-		if( error_count == 0 ) begin
+
+		//	SSG DC cut (high-pass filter, time constant 2^16 x 12 clocks)
+		opll_l	= 16'sd0;
+		opll_r	= 16'sd0;
+		opl2_l	= 16'sd0;
+		opl2_r	= 16'sd0;
+		scc_l	= 11'sd0;
+		scc_r	= 11'sd0;
+		opm_l	= 16'sd0;
+		opm_r	= 16'sd0;
+		ssg_l	= 13'd0;
+		ssg_r	= 13'd0;
+		master_volume	= 8'd128;
+		check_output( "SSG DC cut: zero input", 24'sd0, 24'sd0 );
+		release u_dut.ff_ssg_dc_l;
+		release u_dut.ff_ssg_dc_r;
+		ssg_l	= 13'd1000;
+		ssg_r	= 13'd500;
+		//	SSG x16 x volume 128 x master 128: 1 LSB = 2048 (DC is still almost 0)
+		repeat( 30 ) @( posedge clk );
+		#1;
+		if( audio_l_out <= 24'sd2048000 && audio_l_out >= 24'sd2043904 && audio_r_out <= 24'sd1024000 && audio_r_out >= 24'sd1019904 ) begin
+			$display( "OK   : SSG DC cut: step response L=%0d R=%0d", audio_l_out, audio_r_out );
+		end
+		else begin
+			$display( "ERROR: SSG DC cut: step response L=%0d R=%0d", audio_l_out, audio_r_out );
+			error_count = error_count + 1;
+		end
+		repeat( 6_300_000 ) @( posedge clk );
+		#1;
+		if( audio_l_out >= 0 && audio_l_out <= 24'sd2048 && audio_r_out >= 0 && audio_r_out <= 24'sd2048 ) begin
+			$display( "OK   : SSG DC cut: settled L=%0d R=%0d", audio_l_out, audio_r_out );
+		end
+		else begin
+			$display( "ERROR: SSG DC cut: not settled L=%0d R=%0d", audio_l_out, audio_r_out );
+			error_count = error_count + 1;
+		end
+		ssg_l	= 13'd0;
+		ssg_r	= 13'd0;
+		repeat( 30 ) @( posedge clk );
+		#1;
+		if( audio_l_out <= -24'sd2043904 && audio_l_out >= -24'sd2048000 && audio_r_out <= -24'sd1019904 && audio_r_out >= -24'sd1024000 ) begin
+			$display( "OK   : SSG DC cut: negative step L=%0d R=%0d", audio_l_out, audio_r_out );
+		end
+		else begin
+			$display( "ERROR: SSG DC cut: negative step L=%0d R=%0d", audio_l_out, audio_r_out );
+			error_count = error_count + 1;
+		end		if( error_count == 0 ) begin
 			$display( "OK   : all tests passed" );
 		end
 		else begin

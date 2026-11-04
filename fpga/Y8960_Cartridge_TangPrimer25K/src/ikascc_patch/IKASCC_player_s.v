@@ -2,6 +2,8 @@
 //	Patch Contents (Y8960 Cartridge)
 //	(1) o_SOUND_CH: per-channel sound output for stereo panning
 //		[7:0]=Ch.A, [15:8]=Ch.B, [23:16]=Ch.C, [31:24]=Ch.D, [39:32]=Ch.E (signed)
+//	(2) FAST_CLOCK is passed to the wavetable memories (posedge RAM). The original
+//		leaves them at the default (negedge RAM), a half-cycle path from the bus.
 // ---------------------------------------------------------
 module IKASCC_player_s #(
     parameter RAM_TYPE = 1,
@@ -40,13 +42,19 @@ wire            rst_n = i_RST_n;
 //////  Test register
 ////
 
+//	Y8960: decode with the address latched together with db_z. The live address
+//	may already belong to the next bus cycle when i_WRRQ is asserted.
 reg     [7:0]   db_z;
-wire            test_wr = i_WRRQ & i_SCCREG_EN & (i_ABLO[7:5] == 3'b111);
+reg     [7:0]   ablo_z;
+reg             sccreg_en_z;
+wire            test_wr = i_WRRQ & sccreg_en_z & (ablo_z[7:5] == 3'b111);
 reg     [7:0]   test;
 always @(posedge emuclk) begin
     if(!rst_n) test <= 8'h00;
     else begin if(!mclkpcen_n) begin
         db_z <= i_DB;
+        ablo_z <= i_ABLO;
+        sccreg_en_z <= i_SCCREG_EN;
         if(test_wr) test <= db_z;
     end end
 end
@@ -92,7 +100,7 @@ wire    [4:0]   ch1_ram_addr_cntr, ch1_ram_addr_cpu;
 wire    [4:0]   ch1_ram_addr = ch1_ram_rdrq ? ch1_ram_addr_cpu : ch1_ram_addr_cntr;
 wire    [7:0]   ch1_ram_d, ch1_ram_q;
 
-IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .INITFILE()) u_mem_ch1 (
+IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .FAST_CLOCK(FAST_CLOCK), .INITFILE()) u_mem_ch1 (
     .i_EMUCLK                   (emuclk                     ),
     .i_MCLK_PCEN_n              (mclkpcen_n                 ),
 
@@ -144,7 +152,7 @@ wire    [4:0]   ch2_ram_addr_cntr, ch2_ram_addr_cpu;
 wire    [4:0]   ch2_ram_addr = ch2_ram_rdrq ? ch2_ram_addr_cpu : ch2_ram_addr_cntr;
 wire    [7:0]   ch2_ram_d, ch2_ram_q;
 
-IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .INITFILE()) u_mem_ch2 (
+IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .FAST_CLOCK(FAST_CLOCK), .INITFILE()) u_mem_ch2 (
     .i_EMUCLK                   (emuclk                     ),
     .i_MCLK_PCEN_n              (mclkpcen_n                 ),
 
@@ -196,7 +204,7 @@ wire    [4:0]   ch3_ram_addr_cntr, ch3_ram_addr_cpu;
 wire    [4:0]   ch3_ram_addr = ch3_ram_rdrq ? ch3_ram_addr_cpu : ch3_ram_addr_cntr;
 wire    [7:0]   ch3_ram_d, ch3_ram_q;
 
-IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .INITFILE()) u_mem_ch3 (
+IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .FAST_CLOCK(FAST_CLOCK), .INITFILE()) u_mem_ch3 (
     .i_EMUCLK                   (emuclk                     ),
     .i_MCLK_PCEN_n              (mclkpcen_n                 ),
 
@@ -286,7 +294,7 @@ always @(posedge emuclk) if(!mclkpcen_n) begin
     if(ch5_wavelatch_tick_pcen) ch5_wavelatch <= ch45_ram_q;
 end
 
-IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .INITFILE()) u_mem_ch45 (
+IKASCC_player_memory_s #(.RAM_TYPE(RAM_TYPE), .FAST_CLOCK(FAST_CLOCK), .INITFILE()) u_mem_ch45 (
     .i_EMUCLK                   (emuclk                     ),
     .i_MCLK_PCEN_n              (mclkpcen_n                 ),
 
@@ -423,10 +431,12 @@ wire            rst_n = i_RST_n;
 
 //delay addr/data
 reg     [7:0]   i_ABLO_Z, i_DB_Z;
+reg             i_SCCREG_EN_Z;
 wire    [7:0]   addr_lo, data;
 always @(posedge emuclk) if(!mclkpcen_n) begin
     i_ABLO_Z <= i_ABLO;
     i_DB_Z <= i_DB;
+    i_SCCREG_EN_Z <= i_SCCREG_EN;
 end
 
 //RAM read/write request
@@ -481,8 +491,11 @@ assign  o_RAM_D = data;
 //////  Frequency register
 ////
 
-wire    freq_lo_wr = i_WRRQ & i_SCCREG_EN & (i_ABLO[7:5] == ADDR_FREQ_BASE[7:5]) & (i_ABLO[3:0] ==  ADDR_FREQ_BASE[3:0]);
-wire    freq_hi_wr = i_WRRQ & i_SCCREG_EN & (i_ABLO[7:5] == ADDR_FREQ_BASE[7:5]) & (i_ABLO[3:0] == (ADDR_FREQ_BASE[3:0] + 4'h1));
+//	Y8960: register writes are decoded with i_ABLO_Z/i_SCCREG_EN_Z (latched with i_DB_Z),
+//	not the live i_ABLO/i_SCCREG_EN (combinational with RAMCTRL_ASYNC = 1), because the
+//	local bus does not hold the address until i_WRRQ.
+wire    freq_lo_wr = i_WRRQ & i_SCCREG_EN_Z & (i_ABLO_Z[7:5] == ADDR_FREQ_BASE[7:5]) & (i_ABLO_Z[3:0] ==  ADDR_FREQ_BASE[3:0]);
+wire    freq_hi_wr = i_WRRQ & i_SCCREG_EN_Z & (i_ABLO_Z[7:5] == ADDR_FREQ_BASE[7:5]) & (i_ABLO_Z[3:0] == (ADDR_FREQ_BASE[3:0] + 4'h1));
 reg     [11:0]  freq;
 always @(posedge emuclk) if(!mclkpcen_n) begin
     if(freq_lo_wr) freq[7:0] <= i_DB_Z;
@@ -549,8 +562,8 @@ wire    [11:0]  fraccntr = {fraccntr_c, fraccntr_b, fraccntr_a};
 ////
 
 wire            freq_changed;
-assign  freq_changed = (~i_WR_n & i_SCCREG_EN & (i_ABLO[7:5] == ADDR_FREQ_BASE[7:5]) & (i_ABLO[3:0] ==  ADDR_FREQ_BASE[3:0])) |
-                       (~i_WR_n & i_SCCREG_EN & (i_ABLO[7:5] == ADDR_FREQ_BASE[7:5]) & (i_ABLO[3:0] == (ADDR_FREQ_BASE[3:0] + 4'h1)));
+//	Y8960: the original used the live /WR and address. Use the write request instead.
+assign  freq_changed = freq_lo_wr | freq_hi_wr;
 
 reg             freq_changed_z;
 always @(posedge emuclk) if(!mclkpcen_n) freq_changed_z <= freq_changed;
@@ -564,7 +577,7 @@ assign  intcntr_set = i_TEST[5] & (freq_changed | freq_changed_z);
 //////  Mute
 ////
 
-wire            mute_wr = i_WRRQ & i_SCCREG_EN & (i_ABLO[7:5] == ADDR_MUTE[7:5]) & (i_ABLO[3:0] ==  ADDR_MUTE[3:0]);
+wire            mute_wr = i_WRRQ & i_SCCREG_EN_Z & (i_ABLO_Z[7:5] == ADDR_MUTE[7:5]) & (i_ABLO_Z[3:0] ==  ADDR_MUTE[3:0]);
 reg             mute;
 always @(posedge emuclk) begin
     if(!i_RST_n) mute <= 1'b0;
@@ -584,7 +597,7 @@ wire            mul_rst = fraccntr_ld;
 wire            mul_rst_pcen = intcntr_cnt | freq_lo_wr | freq_hi_wr; //positive edge enable of originally asynchronous mul_rst
 
 //volume register
-wire    vol_wr = i_WRRQ & i_SCCREG_EN & (i_ABLO[7:5] == ADDR_VOL[7:5]) & (i_ABLO[3:0] ==  ADDR_VOL[3:0]);
+wire    vol_wr = i_WRRQ & i_SCCREG_EN_Z & (i_ABLO_Z[7:5] == ADDR_VOL[7:5]) & (i_ABLO_Z[3:0] ==  ADDR_VOL[3:0]);
 reg     [3:0]  vol;
 always @(posedge emuclk) if(!mclkpcen_n) begin
     if(vol_wr) vol <= i_DB_Z[3:0];

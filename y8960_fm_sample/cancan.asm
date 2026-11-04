@@ -83,6 +83,12 @@ OPM_KEYON		:= 0x78			; M1, C1, M2, C2
 ; -----------------------------------------------------------------------------
 MMIO_SSG		:= 0x7FF0		; 7FF0h: register, 7FF1h: data
 MMIO_OPLL		:= 0x7FF4		; 7FF4h: register, 7FF5h: data
+MIXER_SSG		:= 0x7FF7		; mixer volumes (write only, 128 = x1.0)
+MIXER_OPLL		:= 0x7FF8
+MIXER_OPL2		:= 0x7FF9
+MIXER_SCC		:= 0x7FFA
+MIXER_OPM		:= 0x7FFD
+MIXER_MASTER	:= 0x7FFE
 
 SSG2_TONE		:= 0x10			; SSG2 registers (10h-1Fh)
 SSG2_MIXER		:= 0x17
@@ -98,7 +104,9 @@ OPLL_BANK		:= 0x40			; Y8960 extension
 OPLL_PAN		:= 0x50			; Y8960 extension
 OPLL_KEYON		:= 0x10
 
-SCC_BANK2		:= 0x9000		; bank register of 8000h-9FFFh
+SCC_BANK2		:= 0x9000		; bank register of 8000h-9FFFh (RAM Mode=0)
+SCC_BANK2_RM	:= 0x4FFE		; bank register of 8000h-9FFFh (RAM Mode=1)
+SCC_MODE		:= 0x4FFB		; bit0: RAM Mode
 SCC_BANK_SCC	:= 0x3F
 SCC_BANK_INIT	:= 0x02
 SCC_WAVE		:= 0x9800
@@ -166,6 +174,7 @@ entry_point::
 			jp		c, puts_and_exit
 
 			call	check_pal
+			call	bios_ram_mode_off
 
 			ld		de, loading_message
 			call	puts
@@ -181,6 +190,7 @@ entry_point::
 
 			di
 			call	map_cartridge
+			call	mixer_init
 			call	opm_init
 			call	opll_init
 			call	scc_init
@@ -333,6 +343,44 @@ found:
 			or		a, a
 			ret
 			endscope
+
+; -----------------------------------------------------------------------------
+; bios_ram_mode_off: if the Y8960 BIOS ("MSSE8960" at 4010h) is found in
+;   cur_slot, writes RAM Mode=0 (4FFBh=00h) once.
+;   Temporary workaround: the current BIOS starts DOS with RAM Mode=1, where
+;   9000h (BANK2 of the standard SCC) is ignored. The BIOS sets RAM Mode=1
+;   by itself before it changes the banks, and the SRAM address does not
+;   depend on RAM Mode, so the visible banks are not changed.
+; -----------------------------------------------------------------------------
+			scope	bios_ram_mode_off
+bios_ram_mode_off::
+			ld		hl, 0x4010
+			ld		de, bios_signature
+			ld		b, 8
+sig_loop:
+			push	bc
+			push	de
+			ld		a, [cur_slot]
+			call	RDSLT
+			pop		de
+			pop		bc
+			ex		de, hl
+			cp		a, [hl]
+			ex		de, hl
+			ret		nz
+			inc		hl
+			inc		de
+			djnz	sig_loop
+			ld		a, [cur_slot]
+			ld		hl, SCC_MODE
+			ld		e, 0x00
+			call	WRSLT
+			ei
+			ret
+			endscope
+
+bios_signature:
+			ds		"MSSE8960"
 
 ; -----------------------------------------------------------------------------
 ; check_pal: pal_flag = 80h on a 50Hz machine, 00h on a 60Hz machine
@@ -618,12 +666,13 @@ koff_loop:
 
 ; -----------------------------------------------------------------------------
 ; scc_init: maps the SCC registers to 9800h-, silences all channels
+;   The Y8960 BIOS leaves RAM Mode=1 (4FFBh), where 9000h is ignored and
+;   BANK2 is 4FFEh. Both are written, each one is ignored in the other mode.
 ; -----------------------------------------------------------------------------
 			scope	scc_init
 scc_init::
-			ld		hl, SCC_BANK2
 			ld		e, SCC_BANK_SCC
-			call	cart_write
+			call	set_scc_bank2
 			ld		hl, SCC_VOLUME
 			ld		e, 0
 			ld		b, 5
@@ -633,6 +682,36 @@ vol_loop:
 			djnz	vol_loop
 			ld		hl, SCC_ENABLE
 			ld		e, 0x1F
+			jp		cart_write
+			endscope
+
+; -----------------------------------------------------------------------------
+; mixer_init: sets all mixer volumes to the reset value (128 = x1.0)
+;   The BIOS may change them, and they cannot be read back.
+; -----------------------------------------------------------------------------
+			scope	mixer_init
+mixer_init::
+			ld		e, 128
+			ld		hl, MIXER_SSG
+			ld		b, MIXER_SCC - MIXER_SSG + 1
+loop:
+			call	cart_write
+			inc		hl
+			djnz	loop
+			ld		hl, MIXER_OPM
+			call	cart_write
+			ld		hl, MIXER_MASTER
+			jp		cart_write
+			endscope
+
+; -----------------------------------------------------------------------------
+; set_scc_bank2: E = bank number of 8000h-9FFFh (RAM Mode=0 and RAM Mode=1)
+; -----------------------------------------------------------------------------
+			scope	set_scc_bank2
+set_scc_bank2::
+			ld		hl, SCC_BANK2_RM
+			call	cart_write
+			ld		hl, SCC_BANK2
 			jp		cart_write
 			endscope
 
@@ -659,9 +738,8 @@ shutdown::
 			ld		hl, SCC_ENABLE
 			ld		e, 0
 			call	cart_write
-			ld		hl, SCC_BANK2
 			ld		e, SCC_BANK_INIT
-			call	cart_write
+			call	set_scc_bank2
 			ld		bc, (SSG2_MIXER << 8) | SSG2_MIXER_OFF
 			call	ssg_write
 			ld		bc, (ADPCM_CONTROL1 << 8) | 0x01

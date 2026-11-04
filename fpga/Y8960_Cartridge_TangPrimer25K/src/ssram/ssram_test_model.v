@@ -38,6 +38,7 @@ module ssram_test_model (
 	parameter		MEM_SIZE	= 512 * 1024;	//	512KB
 	parameter		VERBOSE		= 1;			//	0: suppress per-byte messages
 	parameter		T_V			= 7000;			//	Output Valid from Clock Low (23AA04M 143MHz: max 7ns). Unit = simulator resolution (vsim -t 1ps)
+	parameter		T_CSH		= 3000;			//	CS Hold Time from the last SCLK fall (23AA04M 143MHz: min 3ns)
 
 	// ---------------------------------------------------------------
 	//	Memory array
@@ -55,6 +56,8 @@ module ssram_test_model (
 	reg		[3:0]	sio_out;
 	reg				driving;		//	1: this model drives SIO bus
 	integer			count;			//	SCLK rising edge counter
+	time			t_sclk_fall;	//	time of the last SCLK falling edge
+	integer			tcsh_errors;	//	number of write commands that violated TCSH
 
 	// ---------------------------------------------------------------
 	//	Bidirectional SIO bus
@@ -74,6 +77,8 @@ module ssram_test_model (
 		sio_out		= 4'bzzzz;
 		driving		= 1'b0;
 		count		= 0;
+		t_sclk_fall	= 0;
+		tcsh_errors	= 0;
 		for( init_i = 0; init_i < MEM_SIZE; init_i = init_i + 1 ) begin
 			mem[init_i] = 8'd0;
 		end
@@ -83,6 +88,11 @@ module ssram_test_model (
 	//	CS_n deassertion (rising edge) -- end of transaction
 	// ---------------------------------------------------------------
 	always @( posedge cs_n ) begin
+		//	A write is committed only if CS# is held for TCSH after the last SCLK fall.
+		if( quad_mode && cmd == 8'h02 && (sclk !== 1'b0 || ($time - t_sclk_fall) < T_CSH) ) begin
+			tcsh_errors = tcsh_errors + 1;
+			$display( "[SRAM Model] ERROR: TCSH violation at the end of a write (addr=0x%05X, %0t)", addr, $time );
+		end
 		if( !quad_mode ) begin
 			// ------ SPI mode: check for EQIO command ------
 			if( cmd == 8'h38 ) begin
@@ -196,6 +206,10 @@ module ssram_test_model (
 	//	Data is set up on the falling edge so that it is stable
 	//	for the master to sample on the subsequent rising edge.
 	//
+	always @( negedge sclk ) begin
+		t_sclk_fall = $time;
+	end
+
 	always @( negedge sclk ) begin
 		if( !cs_n && quad_mode && cmd == 8'h0B ) begin
 			if( count == 14 ) begin

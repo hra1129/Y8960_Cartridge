@@ -1546,3 +1546,260 @@
   (切り替え中は RAM をゴミで埋めて確認)、最悪フレーム約 44.7k T ステート (NTSC 1 フレーム約 59.7k)、
   50Hz、ESC 停止、終了時に全音源が消音されることを確認。
 - 実機での演奏をユーザーが確認済み (2026/11/03)。
+
+## 2026/11/03: 音源間の音量バランス調整
+- 報告: 全体的に ADPCM が大きく、FM 音源が小さい。
+- 原因 (1ch 最大音量時のピーク、ミキサー入力の 16bit 換算):
+  ADPCM ±32767 (0dB) / OPM ±8191 (-12dB) / OPL2 ±4095 (-18dB) / OPLL ±2550 (-22dB、MOVOL=10) /
+  SCC ±512 (-36dB)。
+  openMSX の Y8950 実装では FM 1ch 最大 ±2047、ADPCM 最大 ±2040 (32767×255>>12) でほぼ同じだが、
+  `opl2_patch/opl2.v` は ADPCM の 16bit フルスケールを FM 出力にそのまま加算しており、約 +18dB 大きかった。
+- 修正 (いずれもシフトのみ。乗算器は増やしていない):
+  - `opl2_patch/opl2.v`: ADPCM を `>>> 3` してから FM と加算 (Y8950 と同じく ADPCM 最大 ≒ FM 1ch)。
+  - `ikaopll_patch/opll.v`: `i_ACC_SIGNED_MOVOL` を 10 → 15 (1ch ±3825、リズムと同じ)。
+  - `mixer/mixier.v`: 1ch ピークを OPM (±8191) に揃える。OPLL ×2、OPL2 ×2、SCC ×64 (従来 ×4)。
+    1ch あたりマスター音量 128 で約 -18dBFS。多数チャンネル同時発音で飽和する場合はマスター音量で下げる想定。
+- 検証 (ModelSim): `mixer/test001` (期待値を新スケールに更新)、`opl2_patch/test001` (Y8950 mix の期待値を更新)、
+  `opl2_patch/test002`/`test003`、`ikaopll_patch/test001`、トップ `test001` すべて PASS。
+- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。
+
+## 2026/11/03: SCC / SSG の音量調整 (音量バランス調整の続き)
+- 報告: CANCAN で ADPCM と OPL2/OPLL/OPM のバランスは改善したが、SCC がほとんど聞こえず、SSG もかなり小さい。
+- 分析:
+  - SCC: 1ch 最大 (vol=15) は ±120、中央定位で ±85 (シミュレーションで実測)。×64 で OPM と同等のピークだったが、
+    OPM は pan_lut を通らず L/R 両方にフルで出る (+3dB) うえ、キャリアが複数あると加算されるため相対的に小さい。
+  - SSG: 13bit 符号なし (DC 成分付き) を ×1 で入力していた。1ch の AC 振幅は ±512 で、OPM より約 -24dB。
+  - 参考: openMSX の既定バランスは PSG 1ch ≒ SCC 1ch ≒ FM 1ch (PSG 0.5×21000、SCC 0.93×11500、FM-PAC 1.0×13000)。
+- 修正 (`mixer/mixier.v`、乗算器の追加なし):
+  - SSG に DC カットを追加。1 次ハイパス `dc += (x - dc) >> 16` を 3.58MHz (clk/12、L/R は state 0/6) で更新
+    (fc ≒ 8.7Hz)。音量レジスタ書き換えによる PCM 再生 (可聴帯域) は残る。DC オフセットでヘッドルームを食わなくなる。
+  - スケール: SSG ×32 (AC ±512 → ±16384)、SCC ×128 (±120 → ±15360)。OPLL/OPL2 ×2、OPM ×1 は変更なし。
+- 検証 (ModelSim): `mixer/test001` を更新 (従来ケースは DC 状態を force で 0 に固定して期待値を再計算、
+  DC カットのステップ応答・収束・負方向ステップのテストを追加)。全 PASS。トップ `test001` も PASS。
+- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。大きすぎる場合は mixier.v のシフト量で調整する。
+## 2026/11/03: SCC がプツプツノイズにしか聞こえない問題の修正
+- 報告: SSG は改善したが、SCC はプツプツノイズが聞こえるだけで楽器音に聞こえない。
+- 原因: `ikascc_patch/scc.v` で IKASCC の `i_MCLK_PCEN_n` (負論理のクロックイネーブル) に正論理の `enable` を
+  そのまま接続していた。IKASCC が 12 クロック中 11 クロックで動作 (約 39.4MHz) し、発振周波数が 11 倍になっていた。
+  高音域はエイリアスまたは可聴域外になり、ソフトウェアエンベロープによる音量変化だけがクリックとして聞こえていた。
+  前回 SCC を ×128 にしたことで目立つようになった。OPLL (`opll.v`) と OPM (`opm.v`) は `~w_core_enable` で正しく接続済み。
+- 修正: `scc.v` で `.i_MCLK_PCEN_n( ~enable )` に変更。
+- 検証 (ModelSim): FREQ=100h (期待 435.2Hz) のゼロクロス回数が、修正前 478 回/100ms、修正後 43 回/100ms。
+  `ikascc_patch/test002` に発振周波数チェック (50ms で 20〜23 周期) を追加。`ikascc_patch/test001`/`test002`、
+  トップ `test001` すべて PASS。
+- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。
+## 2026/11/03: SCC が鳴らない問題の修正 (極性修正の続き)
+- 報告: 極性修正後、SCC の音が出ない。
+- CANCAN 側: SCC 関連 (バンク 3Fh、波形、PAN、周波数、音量、988Fh=1Fh) の書き込み順序・アドレス、
+  `cancan.inc` の波形・周波数テーブル、song_table の割り当て (30h-34h) を確認。ソフト側の問題は見つからず。
+- 原因: IKASCC 同期版は、CS を検出した enable (T0) の次の enable (T1、約 280ns 後) にレジスタへ書き込むが、
+  `IKASCC_player_s.v` の周波数・音量・チャンネル enable・test レジスタのデコードは T1 時点の生の `i_ABLO` と
+  `i_SCCREG_EN` (RAMCTRL_ASYNC=1 のため生アドレスの組み合わせ回路) を使っていた。`msx_slot.v` は `bus_ready` の
+  次のクロックで valid を下げ、アドレスは次のバスサイクルの値に追従するため、T1 には別アドレスになっていて
+  書き込みが失われていた。極性が逆のときは T1 が T0 の 1 クロック後だったため偶然書けていた。
+  波形 RAM (T0 で処理) とバンクレジスタ (T0 でラッチしたアドレスを使用) は影響なし。
+  また、次のアドレスの下位が E0h 以上だと test レジスタへ誤書き込みする危険もあった。
+- 修正 (`ikascc_patch/IKASCC_player_s.v`): T0 で `i_ABLO_Z`/`i_DB_Z` と一緒に `i_SCCREG_EN_Z` をラッチし、
+  周波数・音量・mute・test レジスタの書き込みデコードをラッチ値で行う。`freq_changed` は生の /WR とアドレスではなく
+  書き込み要求 (`freq_lo_wr | freq_hi_wr`) から生成する。
+- 検証 (ModelSim): `ikascc_patch/test002` に msx_slot と同じバスタイミング (ready の次のクロックで valid を下げ、
+  アドレスを 01E5h に変える) の書き込み・読み出しタスクを追加し、CANCAN と同じ手順の書き込みで FREQ/VOL/TEST、
+  発振周波数、波形 RAM の書き込み・読み出しを確認。修正前の player_s では失敗し、修正後は PASS。
+  `ikascc_patch/test001`、トップ `test001` も PASS。
+- GOWIN 合成と実機確認は未実施 (ユーザーが行う)。
+
+## 2026/11/03: SCC が鳴らない問題の調査 (継続中)
+- 報告: 上記修正後も実機で SCC が鳴らない (前回の録音と同じ状況)。
+- シミュレーション (ModelSim): `ikascc_patch/test001` の実機相当 Z80 バスモデル (/WR Low は約 1T) を一時コピーし、
+  msx_slot → address_decode → scc の経路で CANCAN と同じ書き込みを流して確認。
+  - bankreg2=3Fh、FREQ=100h、VOL=14、mute=1 と正しく書き込まれ、波形 RAM も期待値どおり。
+  - ch1 の出力は波形どおりに変化し、`scc.v` の `sound_l_out` も -68 〜 +62 で 50ms あたり 21 周期 (期待値約 22) 発振。
+  - 書き込みを止めていない ch2-5 は vol/freq がリセットされないためシミュレーションでは X になり、パン合成結果を
+    X にする (実機は FF 初期値 0 のため問題にならないはず)。
+  - このバスモデルでは「短い /WR で書き込みが落ちる」現象は再現しなかった。実機の信号タイミングとの差はあり得るため、
+    仮説は未確認 (SCCDIAG の読み戻し結果で判断する)。
+- 合成結果 (impl、11/03 22:52、最新ソースで合成済み): タイミング違反なし (TNS=0)。ただし clk_42m の最悪経路は
+  `ff_slot_address` → `u_mem_chN/ramstyle_block.wavedata_ram` (posedge → negedge の半周期経路) でスラック 0.000。
+  原本 IKASCC は `IKASCC_player_memory_s` に FAST_CLOCK を渡していないため、低速クロック用の negedge 版
+  (block_slow) で合成されている。波形 RAM は FF (u_mem_ch1: REG 272) で実装。
+- ミキサー (`mixier.v`)、`msx_slot.v` の SCC 音量 (初期値 128)、トップの接続、アドレスデコードに問題は見つからず。
+- 実機での切り分け用に `y8960_fm_sample/sccdiag.asm` (SCCDIAG.COM) を作成:
+  7FFAh=80h (SCC ミキサー音量)、9000h=3Fh、ch.A 波形 RAM に鋸波を書き込んで読み戻し、ch.A を約 440Hz・音量 15 で
+  約 3 秒鳴らし、読み戻し値と OK/NG を表示する。
+- TODO: SCCDIAG の実機結果で切り分ける。
+  - 読み戻し NG → 書き込み/読み出し経路 (msx_slot、IKASCC の波形 RAM) の問題。
+  - 読み戻し OK で無音 → 発振・出力側 (negedge 波形 RAM のタイミング、パン合成、ミキサー) の問題。
+    FAST_CLOCK=1 (posedge の block_fast) を patch 側で渡す対策を検討する。
+- SCCDIAG の実機結果: 無音、Wave RAM: NG。読み戻し値 (F3 E1 F3 AF 32 83 F9 35 ...) は Y8960 BASIC ROM の
+  バンク 2 付近のコード (`tool/bios/y8960bas.rom` の 058ACh 付近とほぼ一致、ビルド差あり) で、9800h が SCC ではなく
+  マッパー SRAM を読んでいた = BANK2 が 3Fh になっていない。
+- 原因 (確定): Y8960 BASIC ROM が `ld a,1 / ld (4FFBh),a` で RAM Mode=1 にし (ROM 内 14 か所)、そのまま DOS が起動する。
+  RAM Mode=1 では BANK2 のレジスタは 4FFEh で、9000h への書き込みは無視されるため、CANCAN / SCCDIAG の
+  `9000h=3Fh` が効いていなかった。FPGA 側の問題ではなかった。
+- 修正 (ソフト側):
+  - `cancan.asm`: `set_scc_bank2` を追加し、4FFEh (RAM Mode=1) と 9000h (RAM Mode=0) の両方に BANK2 を書く
+    (それぞれ他方のモードでは無視される)。scc_init で 3Fh、shutdown で 02h。RAM Mode 自体は変更しない
+    (BIOS が RAM Mode=1 を前提にしており、SRAM アドレスも RAM Mode で変わるため)。
+  - `sccdiag.asm`: 同様に 4FFEh と 9000h の両方に書く。
+  - CANCAN.COM / SCCDIAG.COM を再ビルド。
+- 課題: BIOS が RAM Mode=1 のまま DOS / ゲームに制御を渡すと、9000h=3Fh で SCC を使う一般の SCC 対応ソフトが
+  SCC を使えない。BIOS の終了時に RAM Mode=0 に戻すかどうか要検討 (ユーザー判断)。
+- 今回の FPGA 修正 (`scc.v` の極性、`IKASCC_player_s.v` のアドレスラッチ) はシミュレーションで効果を確認済みなので維持。
+
+## 2026/11/03 作業終了時点の状況 (SCC が鳴らない件)
+- 状況: 原因は BIOS が RAM Mode=1 のまま DOS を起動していたことと判明。CANCAN.COM / SCCDIAG.COM は
+  4FFEh と 9000h の両方に BANK2 を書くよう修正・再ビルド済みだが、実機では未確認。
+- BIOS 担当者に「RAM Mode=0 に戻してから DOS を起動できないか」を確認中 (ユーザー経由)。
+- 本日の未コミット変更 (コミットはユーザーが行う):
+  - FPGA: `mixer/mixier.v` (SSG DC カット、各音源スケール)、`opl2_patch/opl2.v` (ADPCM >>>3)、
+    `ikaopll_patch/opll.v` (MOVOL=15)、`ikascc_patch/scc.v` (i_MCLK_PCEN_n の極性)、
+    `ikascc_patch/IKASCC_player_s.v` (レジスタ書き込みデコードをラッチ値で行う)、各テストベンチ。
+  - ソフト: `y8960_fm_sample/cancan.asm`、`sccdiag.asm` (新規)、README.md、CANCAN.COM、SCCDIAG.COM。
+- 次回やること:
+  1. 実機で SCCDIAG を実行し、`Wave RAM: OK` と 440Hz の発音を確認する。
+  2. CANCAN.COM で SCC が楽器音として鳴るか、音量バランス (SCC ×128、SSG ×32) が適切かを確認する。
+     必要なら `mixier.v` のシフト量で調整する。
+  3. BIOS 担当者の回答を受けて、RAM Mode の扱いを決める。RAM Mode=0 で DOS が起動するようになれば、
+     一般の SCC 対応ソフト (9000h=3Fh) もそのまま動く。サンプルの 4FFEh への書き込みは両対応のため残してよい。
+  4. FPGA の SCC 修正 (極性、アドレスラッチ) を入れた合成結果で、他の音源やバスアクセスに問題がないかを確認する。
+
+## 2026/11/04: CANCAN に RAM Mode=0 への暫定切り替えを追加
+- BIOS 担当者が、DOS 起動前に RAM Mode=0 に戻すことを約束した。それまでの暫定対応として、CANCAN の冒頭で
+  Y8960 BIOS を検出したら RAM Mode=0 にする。
+- `cancan.asm`: `bios_ram_mode_off` を追加。find_and_enable で見つけたスロットの 4010h から 8 バイトを RDSLT で読み、
+  "MSSE8960" (Y8960 BIOS の各バンク +0010h にあるシグネチャ) と一致したら WRSLT で 4FFBh=00h を 1 回書く。
+- 安全性の根拠:
+  - SRAM アドレスは `scc_ma[17:13]` (バンク番号) だけで決まり、RAM Mode では変わらない。バンクレジスタの値も
+    保持されるので、切り替えても見えている内容は変わらない。
+  - BIOS は バンク切り替えの前に必ず `ld (4FFBh),1` を書いている (ROM 内 14 か所)。RAM Mode=0 でも 4FFBh への
+    書き込みは有効なので、BIOS が動けば自分で RAM Mode=1 に戻す。
+  - BANK0 (4000h-5FFFh) は常に読み出し専用なので、4FFBh への書き込みが SRAM を壊すことはない。
+- `set_scc_bank2` (4FFEh と 9000h の両方に書く) はそのまま残す。RAM Mode=0 では 4FFEh への書き込みは無視される。
+- CANCAN.COM を再ビルド (`bios_ram_mode_off` は 021Dh、4000h 未満)。実機では未確認。
+- BIOS が修正されたら、`bios_ram_mode_off` は不要になる (残しても害はない)。
+
+## 2026/11/04: SCC のメモリ書き込み取りこぼしを修正 (ポステッドライト)
+- 実機での症状: 起動ごとに SCC が鳴ったり鳴らなかったりする。鳴っても SCC パートだけでたらめな演奏になる。
+- 原因: scc.v が `bus_ready = cs & enable` で、enable (3.58MHz, 12 クロックごと) が来るまで書き込みを受け付けなかった。
+  Z80 のメモリ書き込みでは /WR が約 280ns (12 クロック) しかなく、msx_slot のアクセス開始は /WR から約 5 クロック後。
+  enable が来る前に /WR が終わると valid が落ちて書き込みが消える (12 位相中 5 位相)。カートリッジと本体のクロックは
+  非同期で位相がゆっくり動くので、起動ごとにバンク切り替えや周波数・音量の書き込みが消えたり消えなかったりする。
+  I/O 書き込みはウェイトで /WR が長く、他の音源は即座に ready を返すので影響しない。
+  (以前は enable の極性が逆で、ほぼ毎クロック enable だったので顕在化していなかった)
+- 修正 (`ikascc_patch/scc.v`): 書き込みは即座に ready を返してアドレス・データをラッチし (ff_wr_pending)、次の enable で
+  IKASCC と PAN レジスタに渡す。IKASCC は enable でサンプルした /CS の立ち下がりで書き込みを検出するため、書き込みの次の
+  enable では /CS を非アクティブにする (ff_wr_gap)。その期間に来た書き込みは、さらに次の enable で渡す。
+  /CS は o_ROMCS_n (scc_bank) のために組み合わせのまま。読み出しは従来どおり enable で ready。
+- test002 に `write_z80` (valid を最大 7 クロックで落とす) を追加し、enable の 12 位相すべてで FREQ/VOL/PAN/波形 RAM を
+  確認。修正前は位相 0-4 で FAIL、修正後は PASS。ikascc test001・test002、トップ test001 すべて PASS。
+- 合成と実機確認は未実施。
+
+## 2026/11/04 朝 作業終了時点の状況
+- scc.v のポステッドライト修正を合成したところ、タイミング違反が出た。ユーザーが合成パラメーターを変えて再合成中。
+  - パラメーターで解消しない場合は、scc.v の追加ロジックを見直す必要がある。候補は次のとおり。
+    - `w_core_address` / `w_core_wdata` のマルチプレクサが IKASCC の入力に直結している。
+    - `w_core_cs` → IKASCC_vrc_s の `o_ROMCS_n` → scc_bank という組み合わせ経路が長くなった。
+    - 以前から、波形 RAM が立ち下がりエッジ版のため半周期の経路でスラックが 0ns だった。
+  - タイミングレポートで、違反している経路の始点と終点を確認するところから再開する。
+- 実機確認は未実施（帰宅後）。
+  - CANCAN.COM（RAM Mode=0 暫定コード入り）と新しい FPGA で、起動を繰り返しても SCC が毎回正しく鳴るか。
+  - SCCDIAG の結果と、SCC の音量バランス（×128）。
+- メモリマップド I/O（7FF0h-7FFFh）にある他の音源ポートも、短い /WR で取りこぼさないか気になる。
+  ソースを読んだ範囲での見立ては次のとおり（シミュレーション未確認）。
+  - OPLL（opll.v）: `w_capture = cs & valid & ~seen & (queue != 8)`。enable を待たずに即座にキューへ入れるので大丈夫そう。
+    ただし、キュー（8 段）が満杯のときは capture せず /WAIT も出さないので、その間の書き込みは消える可能性がある。
+  - OPM（opm.v）: 即座にキューへ入れる。満杯時は wait_n で待たせる仕組みがあるので大丈夫そう。
+  - OPL2（opl2.v）: `ff_ready` は書き込みでは 1 のままなので即座に受け付ける（読み出し待ち中を除く）。
+  - SSG（ssg_core.v）: `bus_ready = bus_valid` で即座に受け付ける。
+  - ミキサー音量・IO_EN（msx_slot.v / y8960_address_decode.v）: 即座に受け付ける。
+  - 次回、test002 の `write_z80` と同じ「valid を最大 7 クロックで落とす」書き込みで、各ポートを確認するテストを
+    トップ階層か各モジュールに追加する。OPLL はキュー満杯時の扱いも確認する。
+
+## 2026/11/04 夜: SCC 波形 RAM のタイミング違反を修正
+- 合成結果: clk_42m で Setup 違反 474 本 (WNS -1.509ns, TNS -388.858ns)。全経路が
+  `u_msx_slot/ff_slot_address` → IKASCC 波形 RAM (CE/D) の立ち上がり→立ち下がり (半周期 11.6ns) 経路。
+- 原因: 波形 RAM が `negedge` 版 (`block_slow`) になっていた。原本 IKASCC.v は IMPL_TYPE=0 で FAST_CLOCK=1 を
+  IKASCC_player_s に渡すが、player_s が IKASCC_player_memory_s に FAST_CLOCK を渡していない (原本の渡し忘れ)。
+  RAMCTRL_ASYNC=1 なので、アドレスデコード → /CS → ram_wrrq / アドレス選択 → RAM が組み合わせで半周期に入る。
+  以前からスラック 0ns で、ポステッドライトのマルチプレクサ追加で違反になった。
+- 修正:
+  - `ikascc_patch/IKASCC_player_s.v`: 4 つの memory に `.FAST_CLOCK(FAST_CLOCK)` を渡す (posedge RAM、全周期 23.3ns)。
+  - `ikascc_patch/scc.v`: posedge RAM では CPU 読み出しデータが 1 クロック遅れるので、読み出しの `bus_ready` と
+    `bus_rdata_en` を `ff_rd_seen` (アクセス 2 クロック目から 1) で遅らせる。読み出しの ready は enable を待たなくなった。
+- ikascc test001・test002 (read_slot / write_z80 含む)、トップ test001 すべて PASS。再合成と実機確認は未実施。
+- 実機確認: 再合成後、SCC が毎回正しく鳴ることを確認した。
+
+## 2026/11/04 夜: ADPCM が小さく聞こえる件
+- 症状: SCC が鳴るようになったら、ADPCM が以前より小さく聞こえる（FM パートでも）。
+- ADPCM の経路（opl2.v の ADPCM、sram_arbiter、mixier.v）は変更していない。今日の FPGA 変更は SCC だけ。
+- 仮説: SCC が初めて鳴るようになり相対的に小さく聞こえる。SCC ×128 は SCC が鳴らない状態で決めた値で、
+  CANCAN の SCC 5ch は OPM 1ch フル出力の約 6 倍と見積もられ大きすぎる。ALL パートでは 24bit 飽和の可能性もある。
+- 切り分け: CANCAN の scc_init でミキサー SCC 音量 (7FFAh) を 64 に設定（shutdown で 128 に戻す）。
+  これで良ければ mixier.v の SCC 倍率を ×128 → ×64 に変更し、CANCAN の設定は外す。- 結果: SCC を 64 にしても ADPCM だけ控えめなまま。SCC の相対音量が原因ではない。
+- 最新 BIOS (tool/bios/y8960bas.rom) のミキサー書き込みを調査:
+  - 初期化で 7FFEh/7FF7h-7FFAh/7FFDh にすべて 80h (128) を書く。
+  - そのほかは、スタックに退避した値を書き戻す処理と、CALL 拡張命令 (引数 6 個、129 以上はエラー) だけ。
+  - 7FF6h/7FFFh への書き込みは I/O Enabler で、音量には関係しない。
+  - BIOS が音量を 128 以外のまま残す経路は見当たらない。
+- ADPCM の経路 (opl2.v/adpcm.v/sram_arbiter.v/mixier.v) は、バランス良好と確認した 11/03 の版から変わっていない。
+- CANCAN: SCC 64 の試験設定を外し、mixer_init で 6 本のミキサー音量 (7FF7h-7FFAh, 7FFDh, 7FFEh) を
+  すべて 128 に設定するようにした (書き込み専用で読み戻せないため、終了時の復元はしない)。
+- ADPCM が小さく聞こえる原因は未特定。- 実機 (mixer_init 版): SSG と SCC が大きく、ADPCM のスネアが潰れて聞こえる。録音 (d:\RECORD\A\20250602020610.WAV) を解析した:
+  - 区間 RMS: SSG 0.111 / SCC 0.139 / OPLL 0.089 / OPL2 0.075 / OPM 0.048。ALL 区間はピーク 0.98 (飽和寸前)。
+  - 高域 (2 階差分) の 99.9% 値: SCC 区間 0.25 / SSG 0.17 / OPM 0.03。SCC と SSG の倍音がスネア帯域を覆っている。
+  - OPM 1ch フル出力 = 1 とした見積もり: スネア 22000 (>>>3, x2, 中央 0.7) ≒ 0.47、SSG 1ch ≒ 2、SCC 1ch ≒ 1.3。
+  - SCC 書き込み (9800h-) は SRAM 調停を通らないので、ADPCM の読み出しには影響しない。
+- 修正 (要再合成):
+  - `mixer/mixier.v`: SSG x32 → x16、SCC x128 → x64。
+  - `opl2_patch/opl2.v`: ADPCM `>>>3` → `>>>2` (OPL2 6ch + ADPCM = ±32762 で 16bit に収まる)。
+  - mixer test001 と opl2 test001 の期待値を新倍率で更新し、両方 PASS。- 再合成後の実機 (SSG x16, SCC x64, ADPCM >>>2): 「すごくノイズ」。録音 (Desktop\20250602023404.WAV) を解析:
+  - キック/スネアの打点ごとに約 0.22 秒、平坦で大きな広帯域ノイズ (RMS 0.17)。以前の録音は打点から減衰する正常な形。
+  - ADPCM データが壊れてデコーダが乱数状の値を出している特徴。音量 2 倍だけではこの波形にならない。
+  - タイミング違反なし。ただし SerialSRAM (SQI, SCLK 85.9MHz) の sram_sio に I/O タイミング制約がなく、
+    配置配線ごとに取り込み余裕が変わる可能性がある (前回の「スネアが潰れた」もその一端かもしれない)。
+- 切り分け: CANCAN に adpcm_verify を追加。ロード後にメモリ読み出しモードで 2 回読み戻し、不一致数を 16 進で表示。
+  2 回とも同じ数 → 書き込みで破損。回ごとに違う → 読み出しが不安定。0 → データは正常 (再生経路を調べる)。- 実機の adpcm_verify: 3074h 3074h (12444 バイト中 12404 不一致、2 回とも同数)。ほぼ全バイト破損で、書き込み時点で壊れている。
+  BIOS (SerialSRAM 上) は起動できているので読み出しは動いている。
+- 怪しい点: 今朝タイミング違反対策で PnR の Map_Option を 2 → 1 に変更している (impl/..._process_config.json)。
+  SerialSRAM の sio/sclk は I/O タイミング制約がなく、書き込みのセットアップは SCLK 半周期 (約 5.8ns) しかない。
+  ssram/arbiter/adpcm の RTL は ADPCM が正常だった 11/03 から変わっていない。
+- 次: Map_Option を 2 に戻して再合成し、verify が 0000 になるか確認する。直れば SRAM I/O の制約を追加する。
+## 2026/11/04 夜: ADPCM メモリ破損の原因特定 (SerialSRAM の TCSH 違反)
+- Map_Option を 2 に戻しても verify は 306Ah 306Ah (ほぼ全バイト不一致) で直らず。配置の問題ではなかった。
+- トップレベル RTL で CANCAN と同じ手順 (メモリ書き込みモードでロード → 読み戻し ×2) を再現 (src/test002 として追加)。
+  論理は正しく、書き込み・読み戻しとも全一致。
+- 原因: ssram.v の単発 BYTE WRITE 終了時、最後の SCLK 立ち下がりと CE# 立ち上がりが同じクロックエッジだった。
+  23AA04M の TCSH (CS Hold Time) は min 3ns なのに実質 0ns。パッドのスキューで CE# が先に上がると書き込みが確定しない。
+  - ブートコピーはバースト書き込みなので最後の 1 バイト以外は確定し、BIOS は正常に起動する。
+  - ADPCM の書き込みは全て単発書き込みなので、ほぼ全滅する。ビルドごとに症状が変わったのもスキュー依存のため。
+  - CPU からの SRAM 単発書き込み (RAM Mode など) も同じ影響を受けていたはず。
+- 修正: ssram.v に c_state_write2 を追加。write1 で SCLK を止めて CE# は Low のまま、次のステートで CE# を上げる (TCSH 約 11.6ns)。
+- ssram_test_model.v に TCSH チェックを追加 (書き込みコマンドの CS# 立ち上がりで検査し、tcsh_errors を数える)。
+  - 修正前の ssram.v では 201 件の違反 (ADPCM 200 + ブートコピーの最終バイト)、修正後は 0 件。
+- 回帰: src/test001 PASS、src/test002 PASS。
+  ssram/test001 と test002 は以前から古いポート構成のためロードエラー (今回の変更とは無関係)。
+- 未修正: 読み出し終了 (read2) と EQIO 終了でも同じエッジで CE# を上げているが、読み出しは動作しているので変更していない。
+- 次: 再合成して CANCAN の verify が 0000 0000 になるか確認する。直ったら音量バランス (SSG ×16, SCC ×64, ADPCM >>>2) を再評価し、
+  verify 診断コードを削除する。
+## 2026/11/04 夜: 実機確認 OK
+- ssram.v の TCSH 修正を合成した実機で、ADPCM が正常に鳴ることを確認。音量バランスも期待通り (SSG ×16, SCC ×64, ADPCM >>>2 で確定)。
+- CANCAN から verify 診断コード (adpcm_verify / print_verify / put_hex16 と関連変数・メッセージ) を削除。mixer_init は残す。
+- 残課題:
+  - MMIO 音源の短い /WR のテスト (OPLL キュー満杯を含む)。
+  - 修正版 BIOS が出たら、CANCAN の bios_ram_mode_off を残すか判断する。
+  - ssram の読み出し終了・EQIO 終了でも CE# と最後の SCLK 立ち下がりが同じエッジ (動作はしているが TCSH は満たしていない)。
+  - ssram/test001, test002 が古いポート構成のままでロードできない。
+- 次回 (11/05): FM 音源 (OPL2 7FF2h-7FF3h / OPM) を Memory Mapped I/O 経由で鳴らして、正しく鳴るか確認する。
+  CANCAN の OPL2 は現在 I/O ポート (C0h/C1h) でアクセスしている。MMIO 版の確認手段 (CANCAN の切り替え、または専用サンプル) を検討する。
+## 2026/11/05 朝: OPL2 PAN が 1ch ずれる不具合の修正
+- 外部から指摘: v0.9.10 で OPL2 の PAN レジスタ (F6h-FEh) が 1ch ずれて効く (ch1←F7h, ch2←F8h, …, ch8←FEh, ch9←F6h)。
+  SSG / SCC / OPLL の PAN は正常。
+- 原因: opl2_patch/jtopl_acc.v で、op2x_d / sum_en_d / zero_d は cenop で 1 スロット遅延させているのに、
+  pan は遅延なしで pan_lut (毎 clk 更新) に入れていた。そのため op2x_d に掛かるゲインが次スロット (= 次 ch) の PAN になっていた。
+- 修正: jtopl_acc.v に pan_d (cenop で pan を取り込む、リセット値 128) を追加し、pan_lut には pan_d を入力。
+- テスト: opl2_patch/test004 を追加 (1ch ずつ鳴らし、その ch の PAN=0、他 ch=255 で L のみに出ることを確認)。
+  - 修正前は全 ch が R に出て FAIL (不具合を再現)、修正後は全 ch L=4085 / R≒5 で PASS。
+  - 注意: シミュレーションでは一度もキーオンしていないスロットの op_result が X になり、アキュムレータ全体が X になる。
+    test004 では初期化時に全 ch を一度キーオン/オフしている。
+  - 回帰: opl2_patch/test001 (PAN ゲイン含む)、test002、test003 すべて PASS。
+- 次: 再合成して実機で OPL2 の PAN を確認 (リズムモード、ADPCM の FFh も)。その後 FM 音源の MMIO アクセス確認。

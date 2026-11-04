@@ -519,7 +519,7 @@
                                         "SubInsts": [
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2_patch/jtopl_acc.v",
-                                                "InstLine": 62,
+                                                "InstLine": 65,
                                                 "InstName": "u_pan_lut",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/pan/pan_lut.v",
                                                 "ModuleLine": 4,
@@ -527,7 +527,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2_patch/jtopl_acc.v",
-                                                "InstLine": 82,
+                                                "InstLine": 87,
                                                 "InstName": "u_acc_l",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2/src/jtopl_single_acc.v",
                                                 "ModuleLine": 26,
@@ -535,7 +535,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2_patch/jtopl_acc.v",
-                                                "InstLine": 91,
+                                                "InstLine": 96,
                                                 "InstName": "u_acc_r",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/opl2/src/jtopl_single_acc.v",
                                                 "ModuleLine": 26,
@@ -1526,12 +1526,12 @@
                 "InstLine": 511,
                 "InstName": "u_scc",
                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc.v",
-                "ModuleLine": 9,
+                "ModuleLine": 11,
                 "ModuleName": "scc",
                 "SubInsts": [
                     {
                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc.v",
-                        "InstLine": 83,
+                        "InstLine": 153,
                         "InstName": "u_ikascc",
                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC.v",
                         "ModuleLine": 7,
@@ -1550,28 +1550,28 @@
                                 "InstLine": 171,
                                 "InstName": "IKASCC_SYNC_MODE.u_player_main",
                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                "ModuleLine": 6,
+                                "ModuleLine": 8,
                                 "ModuleName": "IKASCC_player_s",
                                 "SubInsts": [
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 95,
+                                        "InstLine": 103,
                                         "InstName": "u_mem_ch1",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 678,
+                                        "ModuleLine": 691,
                                         "ModuleName": "IKASCC_player_memory_s"
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 112,
+                                        "InstLine": 120,
                                         "InstName": "u_ctrl_ch1",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 380,
+                                        "ModuleLine": 388,
                                         "ModuleName": "IKASCC_player_control_s",
                                         "SubInsts": [
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 502,
+                                                "InstLine": 515,
                                                 "InstName": "u_cyccntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1579,7 +1579,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 510,
+                                                "InstLine": 523,
                                                 "InstName": "u_fraccntr_a",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1587,7 +1587,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 518,
+                                                "InstLine": 531,
                                                 "InstName": "u_fraccntr_b",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1595,7 +1595,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 527,
+                                                "InstLine": 540,
                                                 "InstName": "u_fraccntr_c",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1603,7 +1603,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 536,
+                                                "InstLine": 549,
                                                 "InstName": "u_intcntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1613,23 +1613,23 @@
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 147,
+                                        "InstLine": 155,
                                         "InstName": "u_mem_ch2",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 678,
+                                        "ModuleLine": 691,
                                         "ModuleName": "IKASCC_player_memory_s"
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 164,
+                                        "InstLine": 172,
                                         "InstName": "u_ctrl_ch2",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 380,
+                                        "ModuleLine": 388,
                                         "ModuleName": "IKASCC_player_control_s",
                                         "SubInsts": [
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 502,
+                                                "InstLine": 515,
                                                 "InstName": "u_cyccntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1637,7 +1637,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 510,
+                                                "InstLine": 523,
                                                 "InstName": "u_fraccntr_a",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1645,7 +1645,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 518,
+                                                "InstLine": 531,
                                                 "InstName": "u_fraccntr_b",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1653,7 +1653,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 527,
+                                                "InstLine": 540,
                                                 "InstName": "u_fraccntr_c",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1661,7 +1661,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 536,
+                                                "InstLine": 549,
                                                 "InstName": "u_intcntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1671,23 +1671,23 @@
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 199,
+                                        "InstLine": 207,
                                         "InstName": "u_mem_ch3",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 678,
+                                        "ModuleLine": 691,
                                         "ModuleName": "IKASCC_player_memory_s"
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 216,
+                                        "InstLine": 224,
                                         "InstName": "u_ctrl_ch3",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 380,
+                                        "ModuleLine": 388,
                                         "ModuleName": "IKASCC_player_control_s",
                                         "SubInsts": [
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 502,
+                                                "InstLine": 515,
                                                 "InstName": "u_cyccntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1695,7 +1695,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 510,
+                                                "InstLine": 523,
                                                 "InstName": "u_fraccntr_a",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1703,7 +1703,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 518,
+                                                "InstLine": 531,
                                                 "InstName": "u_fraccntr_b",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1711,7 +1711,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 527,
+                                                "InstLine": 540,
                                                 "InstName": "u_fraccntr_c",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1719,7 +1719,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 536,
+                                                "InstLine": 549,
                                                 "InstName": "u_intcntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1729,23 +1729,23 @@
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 289,
+                                        "InstLine": 297,
                                         "InstName": "u_mem_ch45",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 678,
+                                        "ModuleLine": 691,
                                         "ModuleName": "IKASCC_player_memory_s"
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 306,
+                                        "InstLine": 314,
                                         "InstName": "u_ctrl_ch4",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 380,
+                                        "ModuleLine": 388,
                                         "ModuleName": "IKASCC_player_control_s",
                                         "SubInsts": [
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 502,
+                                                "InstLine": 515,
                                                 "InstName": "u_cyccntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1753,7 +1753,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 510,
+                                                "InstLine": 523,
                                                 "InstName": "u_fraccntr_a",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1761,7 +1761,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 518,
+                                                "InstLine": 531,
                                                 "InstName": "u_fraccntr_b",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1769,7 +1769,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 527,
+                                                "InstLine": 540,
                                                 "InstName": "u_fraccntr_c",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1777,7 +1777,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 536,
+                                                "InstLine": 549,
                                                 "InstName": "u_intcntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1787,15 +1787,15 @@
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "InstLine": 337,
+                                        "InstLine": 345,
                                         "InstName": "u_ctrl_ch5",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                        "ModuleLine": 380,
+                                        "ModuleLine": 388,
                                         "ModuleName": "IKASCC_player_control_s",
                                         "SubInsts": [
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 502,
+                                                "InstLine": 515,
                                                 "InstName": "u_cyccntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1803,7 +1803,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 510,
+                                                "InstLine": 523,
                                                 "InstName": "u_fraccntr_a",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1811,7 +1811,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 518,
+                                                "InstLine": 531,
                                                 "InstName": "u_fraccntr_b",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1819,7 +1819,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 527,
+                                                "InstLine": 540,
                                                 "InstName": "u_fraccntr_c",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1827,7 +1827,7 @@
                                             },
                                             {
                                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/IKASCC_player_s.v",
-                                                "InstLine": 536,
+                                                "InstLine": 549,
                                                 "InstName": "u_intcntr",
                                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc/src/IKASCC_modules/IKASCC_primitives.v",
                                                 "ModuleLine": 1,
@@ -1841,7 +1841,7 @@
                     },
                     {
                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikascc_patch/scc.v",
-                        "InstLine": 154,
+                        "InstLine": 224,
                         "InstName": "u_pan_lut",
                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/pan/pan_lut.v",
                         "ModuleLine": 4,

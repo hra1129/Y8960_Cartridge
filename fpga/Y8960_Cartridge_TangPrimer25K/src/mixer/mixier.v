@@ -105,20 +105,58 @@ module mixier (
 	assign w_master_out		= w_product_raw[30:7];
 	assign w_master_state	= (ff_state == 4'd5) || (ff_state == 4'd11);
 
+	//	SSG DC cut: the SSG output is unsigned (0 to max level), so its DC
+	//	offset is removed by a 1st order high-pass filter with shifts only.
+	//	  dc <= dc + (x - dc) / 2^16 at 3.58MHz (clk/12): fc = about 8.7Hz
+	//	ff_ssg_dc_* is unsigned Q13.16.
+	reg			[28:0]	ff_ssg_dc_l;
+	reg			[28:0]	ff_ssg_dc_r;
+	wire		[12:0]	w_ssg_in;
+	wire		[28:0]	w_ssg_dc;
+	wire signed	[29:0]	w_ssg_diff;
+	wire signed	[13:0]	w_ssg_ac;
+
+	assign w_ssg_in		= (ff_state == 4'd0) ? ssg_l : ssg_r;
+	assign w_ssg_dc		= (ff_state == 4'd0) ? ff_ssg_dc_l : ff_ssg_dc_r;
+	assign w_ssg_diff	= $signed({ 1'b0, w_ssg_in, 16'd0 }) - $signed({ 1'b0, w_ssg_dc });
+	assign w_ssg_ac		= w_ssg_diff[29:16];
+
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_ssg_dc_l	<= 29'd0;
+			ff_ssg_dc_r	<= 29'd0;
+		end
+		else if( ff_state == 4'd0 ) begin
+			ff_ssg_dc_l	<= ff_ssg_dc_l + { {15{w_ssg_ac[13]}}, w_ssg_ac };
+		end
+		else if( ff_state == 4'd6 ) begin
+			ff_ssg_dc_r	<= ff_ssg_dc_r + { {15{w_ssg_ac[13]}}, w_ssg_ac };
+		end
+	end
+
+	//	Source level normalization (1ch peak, OPM = +-8191 as reference):
+	//	  SSG : 10bit per channel, AC +-512 after DC cut -> x16
+	//	  OPLL: 9bit x MOVOL(15) = +-3825 -> x2
+	//	  OPL2: 13bit operator         = +-4095 -> x2
+	//	  SCC : 8bit per channel       = +-120  -> x64
+	//	SSG (square wave) and SCC are about the same peak as FM 1ch. Their rich
+	//	harmonics mask the ADPCM drums when they are louder.
+	//	|w_sample| < 2^19 and the sum of 5 sources < 2^20, so the sum of
+	//	the products (x128) always fits in ff_acc (28bit).
 	always @(*) begin
 		w_sample	= 24'sd0;
 		w_volume	= 8'd128;
 		case( ff_state )
-			4'd0:  begin w_sample = $signed({ 11'd0, ssg_l });					w_volume = ssg_volume;		end
-			4'd1:  begin w_sample = { {8{opll_l[15]}}, opll_l };				w_volume = opll_volume;		end
-			4'd2:  begin w_sample = { {8{opl2_l[15]}}, opl2_l };				w_volume = opl2_volume;		end
-			4'd3:  begin w_sample = { {11{scc_l[10]}}, scc_l, 2'd0 };			w_volume = scc_volume;		end
+			4'd0:  begin w_sample = { {6{w_ssg_ac[13]}}, w_ssg_ac, 4'd0 };		w_volume = ssg_volume;		end
+			4'd1:  begin w_sample = { {7{opll_l[15]}}, opll_l, 1'd0 };			w_volume = opll_volume;		end
+			4'd2:  begin w_sample = { {7{opl2_l[15]}}, opl2_l, 1'd0 };			w_volume = opl2_volume;		end
+			4'd3:  begin w_sample = { {7{scc_l[10]}}, scc_l, 6'd0 };			w_volume = scc_volume;		end
 			4'd4:  begin w_sample = { {8{opm_l[15]}}, opm_l };					w_volume = opm_volume;		end
 			4'd5:  begin w_sample = ff_mix;										w_volume = master_volume;	end
-			4'd6:  begin w_sample = $signed({ 11'd0, ssg_r });					w_volume = ssg_volume;		end
-			4'd7:  begin w_sample = { {8{opll_r[15]}}, opll_r };				w_volume = opll_volume;		end
-			4'd8:  begin w_sample = { {8{opl2_r[15]}}, opl2_r };				w_volume = opl2_volume;		end
-			4'd9:  begin w_sample = { {11{scc_r[10]}}, scc_r, 2'd0 };			w_volume = scc_volume;		end
+			4'd6:  begin w_sample = { {6{w_ssg_ac[13]}}, w_ssg_ac, 4'd0 };		w_volume = ssg_volume;		end
+			4'd7:  begin w_sample = { {7{opll_r[15]}}, opll_r, 1'd0 };			w_volume = opll_volume;		end
+			4'd8:  begin w_sample = { {7{opl2_r[15]}}, opl2_r, 1'd0 };			w_volume = opl2_volume;		end
+			4'd9:  begin w_sample = { {7{scc_r[10]}}, scc_r, 6'd0 };			w_volume = scc_volume;		end
 			4'd10: begin w_sample = { {8{opm_r[15]}}, opm_r };					w_volume = opm_volume;		end
 			4'd11: begin w_sample = ff_mix;										w_volume = master_volume;	end
 			default: ;

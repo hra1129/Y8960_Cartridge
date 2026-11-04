@@ -70,6 +70,7 @@ module ssram (
 	localparam	[5:0]	c_state_init_rstio2	= 6'd33;
 	localparam	[5:0]	c_state_burst_wait	= 6'd34;
 	localparam	[5:0]	c_state_restart		= 6'd35;
+	localparam	[5:0]	c_state_write2		= 6'd36;
 	localparam [13:0]	c_powerup_wait_count = 14'd10000;	// 116us at 85.9MHz SCLK timing tick
 
 	//	clk domain
@@ -396,10 +397,18 @@ module ssram (
 					ff_sclk_en	<= 1'b0;
 				end
 				else begin
-					//	finish: BYTE WRITE
-					ff_state	<= c_state_idle;
-					ff_ce_n		<= 1'b1;
+					//	SCLK falls at this edge. Keep CE# low with SCLK stopped for
+					//	one more SCLK period to meet TCSH (CS hold time, 3ns min).
+					//	Raising CE# at the same edge as the last SCLK fall made the
+					//	write depend on the pad skew, and the byte was lost.
+					ff_state	<= c_state_write2;
+					ff_sclk_en	<= 1'b0;
 				end
+			end
+			c_state_write2: begin
+				//	finish: BYTE WRITE
+				ff_state	<= c_state_idle;
+				ff_ce_n		<= 1'b1;
 			end
 			c_state_burst_wait: begin
 				if( w_valid ) begin
