@@ -139,6 +139,12 @@ wire signed [23:0]  dac_acc_product_l = dac_acc_mono * $signed({1'b0, dac_acc_ga
 wire signed [23:0]  dac_acc_product_r = dac_acc_mono * $signed({1'b0, dac_acc_gain_r});
 wire signed [16:0]  dac_acc_sample_l = dac_acc_product_l >>> 8;
 wire signed [16:0]  dac_acc_sample_r = dac_acc_product_r >>> 8;
+//  The real chip outputs every rhythm sample twice on RO (the percussion shift
+//  register replays it in the modulator slots), so rhythm has twice the gain of
+//  melody at the pins. The replay slots carry the PAN of melody channels, so
+//  they are not accumulated here; instead the rhythm sample is doubled.
+wire signed [16:0]  dac_acc_add_l = ro_ctrl_z ? (dac_acc_sample_l <<< 1) : dac_acc_sample_l;
+wire signed [16:0]  dac_acc_add_r = ro_ctrl_z ? (dac_acc_sample_r <<< 1) : dac_acc_sample_r;
 
 pan_lut u_pan_lut (
     .i_clk      ( emuclk           ),
@@ -180,8 +186,8 @@ always @(posedge emuclk) if(!phi1ncen_n) begin
         else o_ACC_SIGNED_R <= dac_acc_r[15:0];
     end
     else begin if(dac_acc_en) begin
-        dac_acc_l <= dac_acc_l + dac_acc_sample_l;
-        dac_acc_r <= dac_acc_r + dac_acc_sample_r;
+        dac_acc_l <= dac_acc_l + dac_acc_add_l;
+        dac_acc_r <= dac_acc_r + dac_acc_add_r;
     end end
 end
 

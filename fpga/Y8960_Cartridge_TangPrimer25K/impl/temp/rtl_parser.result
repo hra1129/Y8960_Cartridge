@@ -1463,7 +1463,7 @@
                                     },
                                     {
                                         "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/ikaopll_patch/IKAOPLL_modules/IKAOPLL_dac.v",
-                                        "InstLine": 143,
+                                        "InstLine": 149,
                                         "InstName": "u_pan_lut",
                                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/pan/pan_lut.v",
                                         "ModuleLine": 4,

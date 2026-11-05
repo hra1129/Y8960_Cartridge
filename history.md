@@ -1803,3 +1803,24 @@
     test004 では初期化時に全 ch を一度キーオン/オフしている。
   - 回帰: opl2_patch/test001 (PAN ゲイン含む)、test002、test003 すべて PASS。
 - 次: 再合成して実機で OPL2 の PAN を確認 (リズムモード、ADPCM の FFh も)。その後 FM 音源の MMIO アクセス確認。
+- 実機で OPL2 PAN の修正を確認し、v0.9.11 としてリリース (https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.11)。
+- 次: FM 音源 (OPL2 / OPM / OPLL) の Memory Mapped I/O アクセス確認。
+
+## 2026/11/05 夜: OPLL リズム音のレベルが実チップの半分
+- 外部から指摘: 実チップは RO 出力の時点でリズムがメロディの 2 倍のゲインになっている (MO:RO は外部で 1:1 に混ぜる)。
+  Y8960 ではアキュムレータ出力を使っているので 2 倍になっていないのではないか。
+- シミュレーションで確認 (1 フレーム 18 サイクルを観測):
+  - リズム 5 サンプルは cyc13-17 で生成されて累算される。percussion SR が同じ値を次フレームの cyc0,1,2,6,7 で RO に再送する
+    (実チップの RO はリズムを 2 回出力)。しかし dac_acc_en=0 なので再送分は累算されない。メロディは cyc3-5, 9-11 で 1 回ずつ。
+  - よってアキュムレータではリズムが実チップの半分。指摘どおり。
+  - 再送サイクルの PAN はメロディ ch の値なので、再送サイクルを累算する方式は PAN が崩れる。
+- 修正: ikaopll_patch/IKAOPLL_modules/IKAOPLL_dac.v で、ro_ctrl_z のサイクルの加算値を 2 倍 (<<<1) にした (dac_acc_add_l/r)。乗算器の追加なし。
+  実チップは前フレームと今フレームのサンプルの和なので厳密には 2 タップの平均だが、ゲインは同じ。
+- 確認: プローブでリズムのサイクルだけ addL = 2 × smpL、メロディはそのまま。ikaopll_patch/test001 PASS。
+- 注意: メロディ 6ch とリズム 5ch がすべて最大だと 16bit 飽和の可能性がある (アキュムレータは 17bit で飽和処理あり)。
+- 次: 再合成して実機でリズムのバランスを確認。
+- 確認用に OPLL サンプル OPLLRHY.COM を作成 (y8960_fm_sample/opllrhy.asm, mkopllrhy.py, opllrhy.inc)。
+  - ドラムデモ (BD → SD → TOM → CYM → HH → 全部、各 1 小節) の後、メロディ 6ch + リズムの 8 ビート曲 (A-B-A + エンディング、約 64 秒)。
+  - OPLL は MMIO 7FF4h/7FF5h。演奏方式は CANCAN と同じ。リズムの F-Number は MSX-MUSIC と同じ値、音量は全て最大。
+  - ビルド: python mkopllrhy.py → ..\tool\zma.exe opllrhy.asm OPLLRHY.COM (2845 バイト)。実機未確認。
+- 次: 再合成した FPGA で OPLLRHY を鳴らし、リズムとメロディのバランスを確認。

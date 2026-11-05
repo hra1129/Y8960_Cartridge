@@ -1,7 +1,8 @@
-# Y8960 FM Sample (BRAND3 / CANCAN)
+# Y8960 FM Sample (BRAND3 / CANCAN / OPLLRHY)
 
 - [BRAND3](#brand3): OPM + OPL2 による「ブランデンブルク協奏曲 第3番」
 - [CANCAN](#cancan): 全音源 (OPM / OPL2 / ADPCM / OPLL / SCC / SSG) による「天国と地獄」
+- [OPLLRHY](#opllrhy): OPLL のリズム音 5 種 + メロディ 6ch によるオリジナル曲 (リズム音量の確認用)
 
 ## BRAND3
 
@@ -161,6 +162,65 @@ FFh が指揮者チャンネルです。
 
 原曲は J.Offenbach (1819-1880) のオペレッタ「地獄のオルフェ」(1858) で、パブリックドメインです。
 編曲 (主題の採譜、和声付け、構成) はこのサンプルのために作成したものです。
+
+## OPLLRHY
+
+Y8960 Cartridge の OPLL だけを使い、リズム音 5 種 (BD / SD / TOM / CYM / HH) と
+メロディ 6ch で 8 ビートのオリジナル曲を演奏する MSX-DOS 用サンプルです (約 64 秒)。
+リズム音とメロディの音量バランスの確認用です。ESC で停止します。
+
+```
+A>OPLLRHY
+```
+
+構成 (ハ長調、4/4 拍子、♩=120) は次のとおりです。
+
+| 区間 | 小節 | 内容 |
+|---|---|---|
+| ドラムデモ | 6 | BD → SD → TOM → CYM → HH を 1 小節ずつ単独で鳴らし、最後に 5 種同時 |
+| A | 8 | メロディ + 8 ビート (BD / SD / HH、頭にクラッシュ、最後にフィル) |
+| B | 8 | ライドを CYM に替えたパターン |
+| A | 8 | 再現 |
+| エンディング | 2 | C の和音 + BD・CYM |
+
+### パート割り当て
+
+| ch | パート | 音色 | 定位 |
+|---|---|---|---|
+| 0 | メロディ | flute | 中央 |
+| 1 | ハーモニー | clarinet | やや左 |
+| 2〜4 | 和音 (4 分) | piano | 左 / 中央 / 右 |
+| 5 | ベース (8 分) | acoustic bass | 中央 |
+| 7〜9 | リズム | BD / SD・HH / TOM・CYM | 中央 |
+
+- リズムの F-Number は MSX-MUSIC と同じ値 (16h〜18h = 20h, 50h, C0h / 26h〜28h = 05h, 05h, 01h)、
+  音量は全て最大 (36h〜38h = 00h) です。
+- リズムは 0Eh で「鳴らす楽器のビットだけ一度 0 にしてから 1 にする」書き方で、
+  他の楽器の減衰を止めずに打ち直します (音符の終わりにキーオフはしません)。
+- OPLL は MMIO 7FF4h / 7FF5h でアクセスします。演奏方法 (割り込み禁止、ページ 1・2 の切り替え、
+  VSYNC 待ち) は CANCAN と同じです。
+
+音色・音量・定位は [mkopllrhy.py](mkopllrhy.py) の `CHANNELS`、リズムの音量と定位は
+`RHYTHM_VOLUME` / `RHYTHM_PAN`、アレンジはテーマとドラムパターンの定義で変更できます。
+
+### ファイル
+
+| ファイル | 内容 |
+|---|---|
+| OPLLRHY.COM | 実行ファイル |
+| opllrhy.asm | 再生プログラム (Z80) |
+| opllrhy.inc | 曲データ・リズム初期化表・音程表 (mkopllrhy.py が生成) |
+| mkopllrhy.py | 作曲・曲データ生成 |
+
+### ビルド
+
+```
+python mkopllrhy.py
+..\tool\zma.exe opllrhy.asm OPLLRHY.COM
+```
+
+曲データの形式は CANCAN と同じです。音源 ch は 20h〜25h が OPLL ch0〜5、60h がリズム
+(ノート番号 = 鳴らす楽器のビット 10h BD | 08h SD | 04h TOM | 02h CYM | 01h HH)、FFh が指揮者チャンネルです。
 
 ## SCCDIAG.COM (SCC 診断)
 
