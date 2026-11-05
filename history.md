@@ -1824,3 +1824,17 @@
   - OPLL は MMIO 7FF4h/7FF5h。演奏方式は CANCAN と同じ。リズムの F-Number は MSX-MUSIC と同じ値、音量は全て最大。
   - ビルド: python mkopllrhy.py → ..\tool\zma.exe opllrhy.asm OPLLRHY.COM (2845 バイト)。実機未確認。
 - 次: 再合成した FPGA で OPLLRHY を鳴らし、リズムとメロディのバランスを確認。
+- 実機で OPLLRHY によりリズム音量の修正を確認し、v0.9.12 としてリリース (https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.12)。
+- 次: FM 音源 (OPL2 / OPM / OPLL) の Memory Mapped I/O アクセス確認。
+
+## MMIOTEST (Memory Mapped I/O テストプログラム)
+
+- y8960_fm_sample/mmiotest.asm, mkmmiotest.py, mmiotest.inc, MMIOTEST.COM を新規作成。
+- 7FFFh=00h で OPL2/OPM/SSG の I/O を切り離し、MMIO (7FF0h〜7FFFh) だけで
+  SSG1 / SSG2 / OPLL ch1 / OPLL リズム / OPL2 ch1 / OPM ch1 を鳴らす (ド・ミ・ソ・ド、PAN 左・右・中央・中央)。
+- ADPCM は MMIO でメモリへ書き込み (ソフトウェアウェイト)、I/O C0h/C1h で読み戻して比較し OK/NG を表示、
+  その後 PAN 左・右・中央で再生。
+- 7FF6h (OPLL I/O Enabler) は読み出せないため変更しない。終了時・ESC 中断時は 7FFFh を起動前の値に戻す。
+- Z80 エミュレータで MMIO 書き込み列・音程・PAN・verify (正常/不一致)・ESC 中断を確認済み。
+- README.md に MMIOTEST の節を追加。
+- TODO: 実機確認。

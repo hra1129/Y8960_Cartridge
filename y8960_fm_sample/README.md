@@ -1,8 +1,9 @@
-# Y8960 FM Sample (BRAND3 / CANCAN / OPLLRHY)
+# Y8960 FM Sample (BRAND3 / CANCAN / OPLLRHY / MMIOTEST)
 
 - [BRAND3](#brand3): OPM + OPL2 による「ブランデンブルク協奏曲 第3番」
 - [CANCAN](#cancan): 全音源 (OPM / OPL2 / ADPCM / OPLL / SCC / SSG) による「天国と地獄」
 - [OPLLRHY](#opllrhy): OPLL のリズム音 5 種 + メロディ 6ch によるオリジナル曲 (リズム音量の確認用)
+- [MMIOTEST](#mmiotest): Memory Mapped I/O による SSG / OPLL / OPL2 / OPM / ADPCM の制御確認
 
 ## BRAND3
 
@@ -221,6 +222,52 @@ python mkopllrhy.py
 
 曲データの形式は CANCAN と同じです。音源 ch は 20h〜25h が OPLL ch0〜5、60h がリズム
 (ノート番号 = 鳴らす楽器のビット 10h BD | 08h SD | 04h TOM | 02h CYM | 01h HH)、FFh が指揮者チャンネルです。
+
+## MMIOTEST
+
+SSG1 / SSG2 / OPLL / OPL2 / OPM / ADPCM を Memory Mapped I/O (7FF0h〜7FFFh) だけで鳴らし、
+MMIO 経由の制御が正しく行われるかを耳で確認する MSX-DOS 用テストプログラムです。ESC で停止します。
+
+```
+A>MMIOTEST
+```
+
+テスト中は I/O Enabler2 (7FFFh) を 00h にして、OPL2 / OPM / SSG / TIMER の I/O ポートを切り離します。
+そのため、鳴る音はすべて MMIO への書き込みによるものです。終了時に 7FFFh は起動前の値に戻します。
+I/O Enabler1 (7FF6h、OPLL の I/O 7Ch / 7Dh) は読み出せないので変更しません (テストでは I/O 7Ch / 7Dh は使いません)。
+
+| 順 | 音源 | MMIO | 内容 |
+|---|---|---|---|
+| 1 | SSG1 Ch.A | 7FF0h / 7FF1h (R#00h〜、PAN R#28h) | ド・ミ・ソ・ド (PAN 左・右・中央・中央) |
+| 2 | SSG2 Ch.A | 7FF0h / 7FF1h (R#10h〜、PAN R#2Ch) | 同上 |
+| 3 | OPLL ch1 | 7FF4h / 7FF5h (piano、PAN R#50h) | 同上 |
+| 4 | OPLL リズム | 7FF4h / 7FF5h | BD → SD → TOM → CYM → HH → 全部 |
+| 5 | OPL2 ch1 | 7FF2h / 7FF3h (PAN R#F6h) | ド・ミ・ソ・ド (PAN 左・右・中央・中央) |
+| 6 | OPM ch1 | 7FFBh / 7FFCh (PAN は R#20h の RL) | 同上 |
+| 7 | ADPCM メモリ書き込み | 7FF2h / 7FF3h | 約 8KB のチャイム音をアドレス 0 から書き込み、I/O C0h / C1h で読み戻して比較 |
+| 8 | ADPCM 再生 | 7FF2h / 7FF3h (PAN R#FFh) | チャイム音を PAN 左・右・中央で 3 回 |
+
+- 7 の結果は `verify (I/O C0h/C1h): OK`、不一致があれば `NG, errors=XXXXh (first at XXXXh: wrote XXh, read XXh)` と表示します。
+  MMIO ではステータスを読めないため、書き込みは BUF_RDY を見ずに 1 バイトごとにソフトウェアウェイトを入れています。
+  読み戻しだけは OPL2 の I/O ポートを一時的に有効にして行います (MSX-AUDIO を挿しているとポートが競合するので外してください)。
+- MMIO を使うため、演奏中はページ 1 をカートリッジのスロットに切り替えます (ページ 2 は RAM のまま)。
+  Y8960 BIOS がある場合は CANCAN と同じく RAM Mode=0 にします。
+
+### ファイル
+
+| ファイル | 内容 |
+|---|---|
+| MMIOTEST.COM | 実行ファイル |
+| mmiotest.asm | テストプログラム (Z80) |
+| mmiotest.inc | 音程表・ADPCM サンプル (mkmmiotest.py が生成) |
+| mkmmiotest.py | 音程表と ADPCM サンプルの生成 (mkcancan.py の関数を使用) |
+
+### ビルド
+
+```
+python mkmmiotest.py
+..\tool\zma.exe mmiotest.asm MMIOTEST.COM
+```
 
 ## SCCDIAG.COM (SCC 診断)
 
