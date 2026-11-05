@@ -1837,4 +1837,4 @@
 - 7FF6h (OPLL I/O Enabler) は読み出せないため変更しない。終了時・ESC 中断時は 7FFFh を起動前の値に戻す。
 - Z80 エミュレータで MMIO 書き込み列・音程・PAN・verify (正常/不一致)・ESC 中断を確認済み。
 - README.md に MMIOTEST の節を追加。
-- TODO: 実機確認。
+- 実機で全テスト (SSG1/SSG2/OPLL/リズム/OPL2/OPM/ADPCM) の発音を確認済み。
