@@ -3,15 +3,14 @@ if not exist work (
 	vlib work
 	if errorlevel 1 exit /b 1
 )
-vlog ..\..\adpcm\src\jt10_adpcmb.v
+vlog ..\..\adpcm_patch\jt10_adpcmb.v
 if errorlevel 1 exit /b 1
 vlog ..\..\adpcm_patch\jt10_adpcmb_cnt.v
 if errorlevel 1 exit /b 1
 vlog ..\..\adpcm\src\jt10_adpcmb_gain.v
 if errorlevel 1 exit /b 1
-vlog ..\..\adpcm\src\jt10_adpcmb_interpol.v
+vlog ..\..\adpcm_patch\jt10_adpcmb_interpol.v
 if errorlevel 1 exit /b 1
-vlog ..\..\adpcm\src\jt10_adpcm_div.v
 if errorlevel 1 exit /b 1
 vlog ..\..\adpcm_patch\jt10_adpcm_drvB.v
 if errorlevel 1 exit /b 1

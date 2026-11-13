@@ -24,6 +24,9 @@
 //     The address counter runs without end, and the wrapper supplies
 //     the data written to R#0F instead of the sample memory.
 //   - nibble_sel and chon are exported for the wrapper.
+//   - (2026/11/13) the DELTA-N phase of u_cnt drives the patched
+//     interpolator (exact linear interpolation).
+//     chon is given to the interpolator to clear it while the channel is off.
 
 module jt10_adpcm_drvB(
     input           rst_n,
@@ -56,6 +59,7 @@ module jt10_adpcm_drvB(
 
 wire adv;           // advance to next reading
 wire clr_dec;
+wire [15:0] phase;
 
 // `ifdef SIMULATION
 // real fsample;
@@ -88,7 +92,8 @@ jt10_adpcmb_cnt u_cnt(
     .clr_flag    ( clr_flag        ),
     .flag        ( flag            ),
     .clr_dec     ( clr_dec         ),
-    .adv         ( adv             )
+    .adv         ( adv             ),
+    .phase       ( phase           )
 );
 
 reg [3:0] din;
@@ -113,8 +118,10 @@ jt10_adpcmb_interpol u_interpol(
     .rst_n  ( rst_n          ),
     .clk    ( clk            ),
     .cen    ( cen            ),
-    .cen55  ( cen55  && chon ),
+    .cen55  ( cen55          ),
+    .chon   ( chon           ),
     .adv    ( adv            ),
+    .phase  ( phase          ),
     .pcmdec ( pcmdec         ),
     .pcmout ( pcminter       )
 );

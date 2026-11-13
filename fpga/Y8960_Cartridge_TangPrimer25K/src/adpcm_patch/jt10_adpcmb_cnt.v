@@ -29,6 +29,8 @@
 //   - set_flag (EOS) is also raised at each loop end in repeat mode.
 //   - cpu_mode (2026/11/03): ADPCM synthesis from CPU. The nibble counter
 //     runs without end address check, so EOS is not raised.
+//   - phase (2026/11/13): the DELTA-N accumulator is exported for the
+//     interpolator.
 
 module jt10_adpcmb_cnt(
     input               rst_n,
@@ -53,11 +55,14 @@ module jt10_adpcmb_cnt(
     input               clr_flag,
     output  reg         clr_dec,
 
-    output  reg         adv
+    output  reg         adv,
+    output      [15:0]  phase
 );
 
 // Counter
 reg [15:0] cnt;
+
+assign phase = cnt;
 
 always @(posedge clk or negedge rst_n)
     if(!rst_n) begin

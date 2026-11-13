@@ -34,12 +34,11 @@ vlog ..\ikascc_patch\IKASCC_vrc_s.v
 vlog ..\ikascc_patch\scc.v
 vlog ..\ikascc_patch\scc_bank.v
 
-vlog ..\adpcm\src\jt10_adpcm_div.v
 vlog ..\adpcm_patch\jt10_adpcm_drvB.v
-vlog ..\adpcm\src\jt10_adpcmb.v
+vlog ..\adpcm_patch\jt10_adpcmb.v
 vlog ..\adpcm_patch\jt10_adpcmb_cnt.v
 vlog ..\adpcm\src\jt10_adpcmb_gain.v
-vlog ..\adpcm\src\jt10_adpcmb_interpol.v
+vlog ..\adpcm_patch\jt10_adpcmb_interpol.v
 vlog ..\adpcm_patch\adpcm.v
 
 vlog ..\opl2_patch\jtopl.v

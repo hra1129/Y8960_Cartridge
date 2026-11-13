@@ -259,7 +259,7 @@ module adpcm (
 			reg_stop_address		<= 16'd0;
 			reg_adpcm_data			<= 8'd0;
 			reg_delta_n				<= 16'd0;
-			reg_envelope_control	<= 8'd0;
+			reg_envelope_control	<= 8'd255;
 			reg_pan					<= 8'd128;
 			ff_eos					<= 1'b0;
 			ff_buf_rdy				<= 1'b1;
