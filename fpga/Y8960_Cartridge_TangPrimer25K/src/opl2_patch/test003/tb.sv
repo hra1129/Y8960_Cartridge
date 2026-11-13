@@ -287,7 +287,8 @@ module tb ();
 
 		//	Stop
 		write_reg( 8'h07, 8'h00 );
-		repeat( c_cen55_clks * 4 ) @( posedge clk );
+		//	adpcm_lpf output settles to 0 after 25 samples
+		repeat( c_cen55_clks * 30 ) @( posedge clk );
 		read_status( st );
 		if( st[0] ) $fatal( 1, "PCM_BSY must be 0 after stop (status %02h)", st );
 		if( u_dut.ff_adpcm_sound_out_l !== 16'd0 || u_dut.ff_adpcm_sound_out_r !== 16'd0 ) begin

@@ -67,7 +67,7 @@ module tb ();
 		input signed [15:0] expected_l,
 		input signed [15:0] expected_r
 	);
-		force u_dut.w_pcm = pcm;
+		force u_dut.w_lpf_pcm = pcm;
 		repeat( 6 ) @( posedge clk );
 		#1;
 		if( adpcm_sound_out_l == expected_l && adpcm_sound_out_r == expected_r ) begin

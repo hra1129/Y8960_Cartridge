@@ -5,6 +5,7 @@
 //	2026/11/01 t.hara  Y8950 compatible playback start, address units,
 //	                   status flags, memory read/write and R#08.
 //	2026/11/03 t.hara  ADPCM synthesis from CPU (R#07 = 80h).
+//	2026/11/13 t.hara  Output low pass filter (adpcm_lpf).
 // --------------------------------------------------------------------
 
 module adpcm (
@@ -117,6 +118,7 @@ module adpcm (
 	wire	[23:0]	w_core_address;
 	wire	[15:0]	w_core_pcm;
 	wire	[15:0]	w_pcm;
+	wire	[15:0]	w_lpf_pcm;
 	wire	[8:0]	w_pan_gain_l;
 	wire	[8:0]	w_pan_gain_r;
 	wire	[8:0]	w_pan_gain;
@@ -207,6 +209,17 @@ module adpcm (
 	assign w_pcm				= (reg_sp_off | ~w_playing) ? 16'd0 : w_core_pcm;
 
 	// ---------------------------------------------------------
+	//	Output low pass filter (instead of the analog LPF of Y8950)
+	// ---------------------------------------------------------
+	adpcm_lpf u_lpf (
+		.clk			( clk								),
+		.reset_n		( reset_n							),
+		.cen55			( cen55								),
+		.pcm_in			( w_pcm								),
+		.pcm_out		( w_lpf_pcm							)
+	);
+
+	// ---------------------------------------------------------
 	//	Stereo panning (register FFh)
 	// ---------------------------------------------------------
 	pan_lut u_pan_lut (
@@ -218,7 +231,7 @@ module adpcm (
 
 	//	One multiplier is shared by Lch and Rch alternately.
 	assign w_pan_gain			= ff_pan_phase ? w_pan_gain_r : w_pan_gain_l;
-	assign w_pan_product		= $signed( w_pcm ) * $signed( { 1'b0, w_pan_gain } );
+	assign w_pan_product		= $signed( w_lpf_pcm ) * $signed( { 1'b0, w_pan_gain } );
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin

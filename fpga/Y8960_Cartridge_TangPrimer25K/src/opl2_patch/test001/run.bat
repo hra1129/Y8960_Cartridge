@@ -9,6 +9,8 @@ vlog ..\..\adpcm\src\jt10_adpcmb_gain.v
 vlog ..\..\adpcm_patch\jt10_adpcmb_interpol.v
 vlog ..\..\adpcm_patch\jt10_adpcm_drvB.v
 
+vlog ..\..\adpcm_patch\adpcm_lpf.v
+if errorlevel 1 exit /b 1
 vlog ..\..\adpcm_patch\adpcm.v
 
 vlog ..\jtopl.v

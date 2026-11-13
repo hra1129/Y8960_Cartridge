@@ -8,7 +8,7 @@ module tb ();
 	reg					clk;
 	reg					reset_n;
 	reg					cen55;
-	reg		[4:0]		ff_cen_cnt;
+	reg		[7:0]		ff_cen_cnt;
 	reg					bus_cs;
 	reg					bus_address;
 	reg					bus_write;
@@ -67,15 +67,16 @@ module tb ();
 
 	always #(clk_base/2) clk = ~clk;
 
-	//	cen55 is accelerated for simulation (1/32 clk)
+	//	cen55 is accelerated for simulation (1/256 clk)
+	//	adpcm_lpf needs 197 clk per sample.
 	always @( posedge clk ) begin
 		if( !reset_n ) begin
-			ff_cen_cnt	<= 5'd0;
+			ff_cen_cnt	<= 8'd0;
 			cen55		<= 1'b0;
 		end
 		else begin
-			ff_cen_cnt	<= ff_cen_cnt + 5'd1;
-			cen55		<= (ff_cen_cnt == 5'd31);
+			ff_cen_cnt	<= ff_cen_cnt + 8'd1;
+			cen55		<= (ff_cen_cnt == 8'd255);
 		end
 	end
 
@@ -337,7 +338,7 @@ module tb ();
 		write_reg( 8'h07, 8'hA0 );
 		read_status( st );
 		check( "PCM_BSY during playback", st & 8'h01, 8'h01 );
-		repeat( 100 ) @( posedge clk );
+		repeat( 3 * 256 ) @( posedge clk );
 		check( "chon", u_dut.u_adpcm.u_cnt.chon, 1'b1 );
 
 		timeout = 0;
@@ -371,7 +372,8 @@ module tb ();
 		write_reg( 8'h04, 8'h80 );
 		read_status( st );
 		check( "R#04 bit7 after playback (idle: BUF_RDY)", st, 8'h8E );
-		repeat( 10 ) @( posedge clk );
+		//	adpcm_lpf output settles to 0 after 25 samples
+		repeat( 26 * 256 ) @( posedge clk );
 		check( "output is 0 after playback L", adpcm_sound_out_l, 16'd0 );
 		check( "output is 0 after playback R", adpcm_sound_out_r, 16'd0 );
 
@@ -380,7 +382,7 @@ module tb ();
 		max_abs_r = 0;
 		monitor_play = 1'b1;
 		write_reg( 8'h07, 8'hA8 );
-		repeat( 3000 ) @( posedge clk );
+		repeat( 30 * 256 ) @( posedge clk );
 		monitor_play = 1'b0;
 		check( "SP-OFF |L|", max_abs_l, 0 );
 		write_reg( 8'h07, 8'h01 );

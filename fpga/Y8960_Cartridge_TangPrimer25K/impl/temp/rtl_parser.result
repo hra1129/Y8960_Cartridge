@@ -552,12 +552,12 @@
                         "InstLine": 121,
                         "InstName": "u_adpcm",
                         "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/adpcm_patch/adpcm.v",
-                        "ModuleLine": 10,
+                        "ModuleLine": 11,
                         "ModuleName": "adpcm",
                         "SubInsts": [
                             {
                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/adpcm_patch/adpcm.v",
-                                "InstLine": 173,
+                                "InstLine": 175,
                                 "InstName": "u_adpcm",
                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/adpcm_patch/jt10_adpcm_drvB.v",
                                 "ModuleLine": 31,
@@ -599,7 +599,15 @@
                             },
                             {
                                 "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/adpcm_patch/adpcm.v",
-                                "InstLine": 212,
+                                "InstLine": 214,
+                                "InstName": "u_lpf",
+                                "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/adpcm_patch/adpcm_lpf.v",
+                                "ModuleLine": 26,
+                                "ModuleName": "adpcm_lpf"
+                            },
+                            {
+                                "InstFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/adpcm_patch/adpcm.v",
+                                "InstLine": 225,
                                 "InstName": "u_pan_lut",
                                 "ModuleFile": "C:/Users/hra/Documents/github/HRA_product/Y8960_Cartridge/fpga/Y8960_Cartridge_TangPrimer25K/src/pan/pan_lut.v",
                                 "ModuleLine": 4,

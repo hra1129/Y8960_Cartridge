@@ -9,6 +9,8 @@ vlog ..\jt10_adpcmb_cnt.v
 vlog ..\..\adpcm\src\jt10_adpcmb_gain.v
 vlog ..\jt10_adpcmb_interpol.v
 vlog ..\..\pan\pan_lut.v
+vlog ..\adpcm_lpf.v
+if errorlevel 1 exit /b 1
 vlog ..\adpcm.v
 if errorlevel 1 exit /b 1
 vlog -sv tb.sv
