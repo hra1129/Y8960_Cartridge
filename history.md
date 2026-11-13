@@ -1901,3 +1901,5 @@
   1/256 clk に変更し、停止後のゼロ確認待ちを LPF の 25 サンプル分延長。opl2_patch/test003 も同様に待ちを延長。
   既存回帰テスト (adpcm_patch 001-003, opl2_patch 001-004, src/test001-002) は全て PASS。
 - 次: GOWIN で合成しリソース・タイミングを確認、実機で SMORES や CANCAN の音質を確認。
+- 実機で確認し v0.9.14 としてリリース (https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.14)。
+  SMORES の「ブー」(約 100 Hz, データ由来) は残るが、CANCAN 等は LPF により聴きやすくなった。
