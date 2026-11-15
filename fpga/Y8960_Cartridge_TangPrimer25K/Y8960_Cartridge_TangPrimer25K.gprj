@@ -66,8 +66,8 @@
         <File path="src/opl2/src/jtopl_pg_rhy.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_pg_sum.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_pm.v" type="file.verilog" enable="1"/>
-        <File path="src/opl2/src/jtopl_reg.v" type="file.verilog" enable="1"/>
-        <File path="src/opl2/src/jtopl_reg_ch.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/jtopl_reg.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/jtopl_reg_ch.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_sh.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_sh_rst.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_single_acc.v" type="file.verilog" enable="1"/>

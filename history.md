@@ -1976,4 +1976,13 @@
 
 ### 残差 (未修正、Nuked との差)
 - BD モジュレータ: ch6 CON=1 のとき jtopl は BD モジュレータも出力に加算する (Nuked はキャリアのみ)。
-- HH/TOM (ch7/ch8 モジュレータ): jtopl は ch7/ch8 の FB 設定でフィードバックがかかる (Nuked は変調なし)。
+- HH/TOM (ch7/ch8 モジュレータ): jtopl は ch7/ch8 の FB 設定でフィードバックがかかる (Nuked は変調なし)。## 2026/11/15 jtopl リズム音の差分修正
+
+v0.9.15 リリース後に確認した Nuked-OPL3 との差 (BD モジュレータ音の不要な混入、および HH/TOM への不要な FB) を修正した。原本 `src/opl2/src` は変更せず、`jtopl_reg.v` と `jtopl_reg_ch.v` を `src/opl2_patch` へコピーして修正した。
+
+- `jtopl_reg.v`: rhythm mode の BD modulator slot 12 では `con_I=0` に固定し、modulator 自体は BD carrier の FM 用に維持しつつ、`op=0, con=0` により出力ミックスから除外する。
+- `jtopl_reg_ch.v`: rhythm mode かつ group 2 の subslot 0/1 (ch7/ch8 modulator = HH/TOM) に限り `fb=0`。他チャンネル/キャリアの FB 設定は維持。
+- Gowin gprj と関連 run.bat 6 本をパッチ版参照に変更。
+- `opl2_patch/test004` に回帰チェックを追加。BD mod slot 12 で `pre_con=1` でも `con_I=0`、HH/TOM modulators で FB=0、その他対象スロットで FB=5 が維持されることを確認。
+
+検証: `opl2_patch/test001-004` と `src/test001-002` の計6テストが PASS、すべて Errors=0/Warnings=0。test004 の PAN / rhythm 両チェック PASS。Gowin 合成と実機確認は未実施。

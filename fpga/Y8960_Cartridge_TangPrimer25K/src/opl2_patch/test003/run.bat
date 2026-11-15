@@ -66,9 +66,9 @@ vlog ..\..\opl2\src\jtopl_pg_sum.v
 if errorlevel 1 exit /b 1
 vlog ..\..\opl2\src\jtopl_pm.v
 if errorlevel 1 exit /b 1
-vlog ..\..\opl2\src\jtopl_reg.v
+vlog ..\jtopl_reg.v
 if errorlevel 1 exit /b 1
-vlog ..\..\opl2\src\jtopl_reg_ch.v
+vlog ..\jtopl_reg_ch.v
 if errorlevel 1 exit /b 1
 vlog ..\..\opl2\src\jtopl_sh.v
 if errorlevel 1 exit /b 1

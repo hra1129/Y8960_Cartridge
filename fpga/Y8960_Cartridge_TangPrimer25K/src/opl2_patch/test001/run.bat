@@ -37,8 +37,8 @@ vlog ..\..\opl2\src\jtopl_pg_inc.v
 vlog ..\..\opl2\src\jtopl_pg_rhy.v
 vlog ..\..\opl2\src\jtopl_pg_sum.v
 vlog ..\..\opl2\src\jtopl_pm.v
-vlog ..\..\opl2\src\jtopl_reg.v
-vlog ..\..\opl2\src\jtopl_reg_ch.v
+vlog ..\jtopl_reg.v
+vlog ..\jtopl_reg_ch.v
 vlog ..\..\opl2\src\jtopl_sh.v
 vlog ..\..\opl2\src\jtopl_sh_rst.v
 vlog ..\..\opl2\src\jtopl_single_acc.v

@@ -31,6 +31,11 @@ module tb ();
 	reg					measure;
 	integer				max_l;
 	integer				max_r;
+	integer				fb_zero_seen;
+	integer				fb_active_seen;
+	integer				bd_mod_seen;
+	reg					rhythm_monitor;
+	integer				rhythm_errors;
 
 	opl2 u_dut (
 		.clk				( clk				),
@@ -83,6 +88,40 @@ module tb ();
 		end
 	end
 
+	always @( negedge clk ) begin
+		if( rhythm_monitor && reset_n ) begin
+			if( u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.rhy_en &&
+				u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.group == 2'b10 &&
+				(u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.sub == 3'd1 ||
+				 u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.sub == 3'd2) ) begin
+				fb_zero_seen = fb_zero_seen + 1;
+				if( u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.fb !== 3'd0 ) begin
+					$display( "[ERROR] HH/TOM feedback was not disabled" );
+					rhythm_errors = rhythm_errors + 1;
+				end
+			end
+			if( u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.rhy_en &&
+				u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.group == 2'b10 &&
+				(u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.sub == 3'd3 ||
+				 u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.sub == 3'd4) ) begin
+				fb_active_seen = fb_active_seen + 1;
+				if( u_dut.u_opl2.u_base.u_mmr.u_reg.u_reg_ch.fb !== 3'd5 ) begin
+					$display( "[ERROR] non-HH/TOM feedback was changed" );
+					rhythm_errors = rhythm_errors + 1;
+				end
+			end
+			if( u_dut.u_opl2.u_base.slot[12] &&
+				u_dut.u_opl2.u_base.u_mmr.u_reg.rhy_oen ) begin
+				bd_mod_seen = bd_mod_seen + 1;
+				if( u_dut.u_opl2.u_base.u_mmr.u_reg.pre_con !== 1'b1 ||
+					u_dut.u_opl2.u_base.con_I !== 1'b0 ) begin
+					$display( "[ERROR] BD modulator was not excluded from the output sum" );
+					rhythm_errors = rhythm_errors + 1;
+				end
+			end
+		end
+	end
+
 	// ---------------------------------------------------------
 	//	Bus tasks
 	// ---------------------------------------------------------
@@ -124,6 +163,11 @@ module tb ();
 		test_passed		= 1'b0;
 		measure			= 1'b0;
 		errors			= 0;
+		fb_zero_seen	= 0;
+		fb_active_seen	= 0;
+		bd_mod_seen		= 0;
+		rhythm_monitor	= 1'b0;
+		rhythm_errors	= 0;
 		slot_offset[0] = 8'h00; slot_offset[1] = 8'h01; slot_offset[2] = 8'h02;
 		slot_offset[3] = 8'h08; slot_offset[4] = 8'h09; slot_offset[5] = 8'h0A;
 		slot_offset[6] = 8'h10; slot_offset[7] = 8'h11; slot_offset[8] = 8'h12;
@@ -170,6 +214,23 @@ module tb ();
 			write_reg( 8'h43 + slot_offset[ch], 8'h3F );
 			write_reg( 8'hF6 + ch, 8'd255 );
 		end
+
+		// Rhythm mode: retain BD channel CON=1, but suppress BD modulator output
+		// and disable feedback only for the HH/TOM modulators (channels 7/8).
+		write_reg( 8'hC6, 8'h0B );
+		write_reg( 8'hC7, 8'h0B );
+		write_reg( 8'hC8, 8'h0B );
+		write_reg( 8'hBD, 8'h20 );
+		rhythm_monitor = 1'b1;
+		#200us;
+		rhythm_monitor = 1'b0;
+		if( fb_zero_seen == 0 || fb_active_seen == 0 || bd_mod_seen == 0 ) begin
+			$display( "[ERROR] Rhythm checks were not exercised: fb_zero=%0d fb_active=%0d bd_mod=%0d",
+				fb_zero_seen, fb_active_seen, bd_mod_seen );
+			rhythm_errors = rhythm_errors + 1;
+		end
+		if( rhythm_errors != 0 ) $fatal( 1, "[RESULT] OPL2 rhythm test: FAIL (%0d errors)", rhythm_errors );
+		$display( "[RESULT] OPL2 rhythm test: PASS (HH/TOM feedback disabled, BD modulator excluded)" );
 
 		if( errors != 0 ) $fatal( 1, "[RESULT] OPL2 PAN test: FAIL (%0d errors)", errors );
 		$display( "[RESULT] OPL2 PAN test: PASS" );
