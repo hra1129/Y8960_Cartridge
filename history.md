@@ -1903,3 +1903,56 @@
 - 次: GOWIN で合成しリソース・タイミングを確認、実機で SMORES や CANCAN の音質を確認。
 - 実機で確認し v0.9.14 としてリリース (https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.14)。
   SMORES の「ブー」(約 100 Hz, データ由来) は残るが、CANCAN 等は LPF により聴きやすくなった。
+
+## 2026/11/15: jt12 最新版 (2026/Nov/15th) を adpcm_patch に反映
+
+- 上流 src/adpcm/src/ の変更点 (interpol, div は変更なし):
+  - jt10_adpcm_drvB.v: roe_n と din に非同期リセットを追加し、cen のときだけ更新するよう変更。
+    このため roe_n の Low 期間が 1 clk から 1 cen (12 clk) に延びた。コメントアウトされた SIMULATION ブロックを削除。
+  - jt10_adpcmb_cnt.v: flag のクリアがセットより優先に変更 (if(clr_flag) ... else if(set) ...)。
+  - jt10_adpcmb.v / jt10_adpcmb_gain.v: 書式のみ。
+- adpcm_patch/jt10_adpcm_drvB.v, jt10_adpcmb_cnt.v, jt10_adpcmb.v に上記を反映 (Y8960 独自の変更は維持)。
+  gain はパッチ版がなく、上流をそのまま使用。
+- 上流の変更で adpcm.v 側が壊れる 2 点を修正:
+  - EOS: 従来 .clr_flag(1'b1) で「セットがクリアに勝つ」ことを利用して 1 clk パルスを得ていたが、
+    クリア優先になると flag が立たず EOS が出なくなる。.clr_flag(w_core_eos) に変更
+    (flag が 1 clk 立って次の clk で落ちる。last_set により再セットされない)。
+  - roe_n: 1 cen 幅になったため、そのままでは CPU 合成モードで BUF_RDY が 12 clk 間セットされ続けたり
+    (R#0F 書き込みによるクリアが負ける)、メモリ読み出し要求が重複したりする。
+    roe_n の立ち下がりで 1 clk パルス w_core_read を作り、w_cpu_data_used とメモリ読み出し要求に使用。
+- 検証: SMORES 再現シミュレーション (通常再生 + GRAPH 押下中の START/RESET 連打) の出力が
+  更新前と完全一致 (15522 サンプル, 差分 0)。既存回帰テスト (adpcm_patch 001-003, opl2_patch 001-004,
+  src/test001-002) は全て PASS (EOS は adpcm_patch/test002, CPU 合成は opl2_patch/test003 で確認)。
+- 次: GOWIN で合成し、実機で ADPCM 再生・EOS・CPU 合成モードを確認。
+## 2026/11/15 jtopl (OPL2/Y8950) の精度修正 (外部アドバイス対応)
+
+外部からのアドバイス (FB オーバーフロー / EG 速度 / RR / KSR) を Nuked-OPL3 と照合し、すべて妥当と確認したうえで修正した。
+原本 `src/opl2/src` は変更せず、`src/opl2_patch` 側を修正・追加。
+
+### 修正内容
+- `jtopl_op.v` : FB の `fb1+fb0` を 14bit (OPW+1) で加算するように変更。13bit では -6dB を超えるとラップしていた。
+  - シフト量は 9-FB のまま (実機/Nuked と同じ)。**upstream PR #16 (10-FB への変更) は取り込まないこと。**
+- `jtopl_eg_cnt.v` (新規パッチ) : `eg_cnt` を 2 サンプルに 1 回だけ進める (`eg_half`)。従来は EG が 2 倍速だった。
+- `jtopl_eg_ctrl.v` (新規パッチ) : リリースの rate を `{rrate,1'b1}` → `{rrate,1'b0}` (+2 されていた)。
+- `jtopl_eg_step.v` (新規パッチ) : KSR のシフトを `ksr?1:3` → `ksr?0:2`。
+- `jtopl_eg_pure.v` (新規パッチ) : eg_cnt を半速にしたことで rate 52 以上 (rate_lo≠0) が最大 1.75 倍遅くなるため、
+  rate[5:2]=12..15 の減衰ステップを Nuked の 2 サンプル分に合わせて再定義 (`dr_sum` を 5bit 化)。
+- gprj と各 run.bat (opl2_patch/test001-004, src/test001-002) で上記パッチ版を参照するよう変更。
+
+### 検証 (セッション内 Nuked-OPL3 Python 移植との比較)
+- EG: 9 ケース (AR/DR/SL/RR/KSR/BLOCK 各種) で RTL/Nuked の時間比
+  - 修正前: 0.43〜1.74
+  - 修正後: decay/release 0.97〜1.03、attack 1.00〜1.14。RR=0 で減衰しなくなった (修正前はゆっくり減衰していた)。
+- FB: AR=15, MULT=1, fnum=1A3h, block=3 で FB=1〜7 のモジュレータ出力を 3000 サンプル比較
+  - 修正後: 全 FB でキーオン直後の過渡区間 (下記アタック差によるもの) 以降はビット完全一致。
+  - 修正前: FB1〜5 は不一致が継続。FB6/7 は修正前後で同一出力 (ラップ誤差が位相の整数周期になるため影響なし)。
+- 回帰テスト 9 本 (adpcm_patch/test001-003, opl2_patch/test001-004, src/test001-002) すべて PASS。
+
+### 既知の残差 (未修正)
+- アタックの丸め: jtopl は `eg/16+1`、Nuked は切り上げ → アタック時間が 0〜14% 長い。
+- 即時アタック: jtopl は rate≥62 のみ、Nuked は rate_hi=15 (rate 60/61 含む)。
+- jtopl の keycode は NTS を無視 (`note_sel` 未使用)。
+- jtopl には `eg_off` 時の 0x1ff へのジャンプが無い。
+
+### TODO
+- [ ] 実機で確認: FB を使う音色の音質、減衰/リリースの長さ、リズム音のリリース。

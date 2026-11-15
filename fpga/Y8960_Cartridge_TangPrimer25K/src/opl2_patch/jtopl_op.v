@@ -20,6 +20,9 @@
     Version: 1.0
     Date: 19-6-2020
 
+    Y8960 (2026/11/15): the feedback sum of the two previous outputs is
+    OPW+1 bits so that it does not wrap around. The shift stays 9-FB.
+
 */
 
 
@@ -139,15 +142,18 @@ wire signed [OPW-1:0] fb0 = prev[OPW-1:0];
 // REGISTER/CYCLE 1
 // Creation of phase modulation (FM) feedback signal, before shifting
 reg signed [OPW-1:0] modmux_I;
-reg signed [OPW-1:0] fbmod_I;
+reg signed [OPW  :0] fbsum_I;
+reg signed [OPW  :0] fbmod_I;
 
 always @(*) begin
-    modmux_I = op_d ? op_result : fb1+fb0;
+    modmux_I = op_result;
+    // The sum of two outputs needs OPW+1 bits, or it wraps around above -6dB
+    fbsum_I  = {fb1[OPW-1], fb1} + {fb0[OPW-1], fb0};
     // OPL-L shifts by 8-FB
-    // OPL3  shifts by 9-FB
+    // OPL3  shifts by 9-FB (keep 9-FB, same as the real chip)
     // OPLL seems to use lower resolution for OPW so it makes
     // sense that it shifts by one fewer
-    fbmod_I  = modmux_I>>>(4'd9-{1'b0,fb_I_d});
+    fbmod_I  = fbsum_I>>>(4'd9-{1'b0,fb_I_d});
 end
 
 reg signed [9:0] phasemod_I;

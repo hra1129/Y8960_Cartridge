@@ -6,6 +6,8 @@
 //	                   status flags, memory read/write and R#08.
 //	2026/11/03 t.hara  ADPCM synthesis from CPU (R#07 = 80h).
 //	2026/11/13 t.hara  Output low pass filter (adpcm_lpf).
+//	2026/11/15 t.hara  Follow jt12 2026/Nov/15th version (roe_n is one cen
+//	                   wide, clr_flag has priority over the flag set).
 // --------------------------------------------------------------------
 
 module adpcm (
@@ -110,6 +112,8 @@ module adpcm (
 	wire			w_cpu_write_done;
 	wire			w_core_eos;
 	wire			w_adpcm_oe_n;
+	wire			w_core_read;
+	reg				ff_adpcm_oe_n;
 	wire			w_core_nibble_sel;
 	wire			w_core_chon;
 	wire			w_cpu_data_follow;
@@ -188,7 +192,7 @@ module adpcm (
 		.adeltan_b		( reg_delta_n						),
 		.aeg_b			( reg_envelope_control				),
 		.flag			( w_core_eos						),		//	one clock pulse
-		.clr_flag		( 1'b1								),
+		.clr_flag		( w_core_eos						),		//	clear on the next clock
 		.addr			( w_core_address					),
 		.data			( ff_core_data						),
 		.roe_n			( w_adpcm_oe_n						),
@@ -198,12 +202,25 @@ module adpcm (
 		.pcm55_r		(									)
 	);
 
+	//	roe_n of jt10_adpcm_drvB is low for one cen. A memory read request and
+	//	the use of the R#0F byte are taken at its falling edge only.
+	always @( posedge clk ) begin
+		if( !reset_n ) begin
+			ff_adpcm_oe_n	<= 1'b1;
+		end
+		else begin
+			ff_adpcm_oe_n	<= w_adpcm_oe_n;
+		end
+	end
+
+	assign w_core_read			= ~w_adpcm_oe_n & ff_adpcm_oe_n;
+
 	//	ADPCM synthesis from CPU (R#07 = 80h):
 	//	While the next nibble to decode is an upper nibble, the decoder data
 	//	follows R#0F. The byte is fixed when the upper nibble is decoded,
 	//	and BUF_RDY is set to request the next byte (same as Y8950).
 	assign w_cpu_data_follow	= w_mode_cpu_synth & (~w_core_chon | ~w_core_nibble_sel);
-	assign w_cpu_data_used		= w_mode_cpu_synth & ~w_adpcm_oe_n & w_core_chon & w_core_nibble_sel;
+	assign w_cpu_data_used		= w_mode_cpu_synth & w_core_read & w_core_chon & w_core_nibble_sel;
 
 	//	Y8950: no output while not playing, or when SP-OFF is set.
 	assign w_pcm				= (reg_sp_off | ~w_playing) ? 16'd0 : w_core_pcm;
@@ -506,7 +523,7 @@ module adpcm (
 			ff_core_data		<= 8'd0;
 		end
 		else begin
-			if( !w_adpcm_oe_n && w_mode_play ) begin
+			if( w_core_read && w_mode_play ) begin
 				ff_core_pending	<= 1'b1;
 				ff_core_address	<= mask_address( w_core_address[18:0], reg_64k );
 			end

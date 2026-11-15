@@ -19,12 +19,12 @@ vlog ..\jtopl_acc.v
 vlog ..\..\opl2\src\jtopl_csr.v
 vlog +define+SIMULATION ..\..\opl2\src\jtopl_div.v
 vlog ..\..\opl2\src\jtopl_eg.v
-vlog ..\..\opl2\src\jtopl_eg_cnt.v
+vlog ..\jtopl_eg_cnt.v
 vlog ..\..\opl2\src\jtopl_eg_comb.v
-vlog ..\..\opl2\src\jtopl_eg_ctrl.v
+vlog ..\jtopl_eg_ctrl.v
 vlog ..\..\opl2\src\jtopl_eg_final.v
-vlog ..\..\opl2\src\jtopl_eg_pure.v
-vlog ..\..\opl2\src\jtopl_eg_step.v
+vlog ..\jtopl_eg_pure.v
+vlog ..\jtopl_eg_step.v
 vlog ..\..\opl2\src\jtopl_exprom.v
 vlog ..\..\opl2\src\jtopl_lfo.v
 vlog ..\..\opl2\src\jtopl_logsin.v

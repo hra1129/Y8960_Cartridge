@@ -50,12 +50,12 @@
         <File path="src/opl2/src/jtopl_csr.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_div.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_eg.v" type="file.verilog" enable="1"/>
-        <File path="src/opl2/src/jtopl_eg_cnt.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/jtopl_eg_cnt.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_eg_comb.v" type="file.verilog" enable="1"/>
-        <File path="src/opl2/src/jtopl_eg_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/jtopl_eg_ctrl.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_eg_final.v" type="file.verilog" enable="1"/>
-        <File path="src/opl2/src/jtopl_eg_pure.v" type="file.verilog" enable="1"/>
-        <File path="src/opl2/src/jtopl_eg_step.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/jtopl_eg_pure.v" type="file.verilog" enable="1"/>
+        <File path="src/opl2_patch/jtopl_eg_step.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_exprom.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_lfo.v" type="file.verilog" enable="1"/>
         <File path="src/opl2/src/jtopl_logsin.v" type="file.verilog" enable="1"/>

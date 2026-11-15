@@ -27,6 +27,8 @@
 //   - (2026/11/13) the DELTA-N phase of u_cnt drives the patched
 //     interpolator (exact linear interpolation).
 //     chon is given to the interpolator to clear it while the channel is off.
+//   - (2026/11/15) updated to jt12 2026/Nov/15th version: roe_n and din
+//     have reset and are updated on cen. roe_n is now one cen wide.
 
 module jt10_adpcm_drvB(
     input           rst_n,
@@ -60,18 +62,17 @@ module jt10_adpcm_drvB(
 wire adv;           // advance to next reading
 wire clr_dec;
 wire [15:0] phase;
+reg [3:0] din;
 
-// `ifdef SIMULATION
-// real fsample;
-// always @(posedge acmd_on_b) begin
-//     fsample = adeltan_b;
-//     fsample = fsample/65536;
-//     fsample = fsample * 55.5;
-//     $display("\nINFO: ADPCM-B ON: %X delta N = %6d (%2.1f kHz)", astart_b, adeltan_b, fsample );
-// end
-// `endif
-
-always @(posedge clk) roe_n <= ~(adv & cen55);
+always @(posedge clk or negedge rst_n) begin
+    if( !rst_n ) begin
+        roe_n <= 1'b1;
+        din   <= 0;
+    end else if( cen ) begin
+        roe_n <= ~(adv & cen55);
+        din <= !nibble_sel ? data[7:4] : data[3:0];
+    end
+end
 
 jt10_adpcmb_cnt u_cnt(
     .rst_n       ( rst_n           ),
@@ -95,10 +96,6 @@ jt10_adpcmb_cnt u_cnt(
     .adv         ( adv             ),
     .phase       ( phase           )
 );
-
-reg [3:0] din;
-
-always @(posedge clk) din <= !nibble_sel ? data[7:4] : data[3:0];
 
 wire signed [15:0] pcmdec, pcminter, pcmgain;
 

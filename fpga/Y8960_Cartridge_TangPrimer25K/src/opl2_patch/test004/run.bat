@@ -30,17 +30,17 @@ vlog +define+SIMULATION ..\..\opl2\src\jtopl_div.v
 if errorlevel 1 exit /b 1
 vlog ..\..\opl2\src\jtopl_eg.v
 if errorlevel 1 exit /b 1
-vlog ..\..\opl2\src\jtopl_eg_cnt.v
+vlog ..\jtopl_eg_cnt.v
 if errorlevel 1 exit /b 1
 vlog ..\..\opl2\src\jtopl_eg_comb.v
 if errorlevel 1 exit /b 1
-vlog ..\..\opl2\src\jtopl_eg_ctrl.v
+vlog ..\jtopl_eg_ctrl.v
 if errorlevel 1 exit /b 1
 vlog ..\..\opl2\src\jtopl_eg_final.v
 if errorlevel 1 exit /b 1
-vlog ..\..\opl2\src\jtopl_eg_pure.v
+vlog ..\jtopl_eg_pure.v
 if errorlevel 1 exit /b 1
-vlog ..\..\opl2\src\jtopl_eg_step.v
+vlog ..\jtopl_eg_step.v
 if errorlevel 1 exit /b 1
 vlog ..\..\opl2\src\jtopl_exprom.v
 if errorlevel 1 exit /b 1

@@ -31,6 +31,8 @@
 //     runs without end address check, so EOS is not raised.
 //   - phase (2026/11/13): the DELTA-N accumulator is exported for the
 //     interpolator.
+//   - (2026/11/15) updated to jt12 2026/Nov/15th version: clr_flag has
+//     priority over setting the flag.
 
 module jt10_adpcmb_cnt(
     input               rst_n,
@@ -92,8 +94,11 @@ always @(posedge clk or negedge rst_n)
         last_set <= 'b0;
     end else begin
         last_set <= set_flag;
-        if( clr_flag ) flag <= 1'b0;
-        if( !last_set && set_flag ) flag <= 1'b1;
+        if( clr_flag ) begin
+            flag <= 1'b0;
+        end else if( !last_set && set_flag ) begin
+            flag <= 1'b1;
+        end
     end
 
 // Address
