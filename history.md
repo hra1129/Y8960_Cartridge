@@ -1924,6 +1924,7 @@
   更新前と完全一致 (15522 サンプル, 差分 0)。既存回帰テスト (adpcm_patch 001-003, opl2_patch 001-004,
   src/test001-002) は全て PASS (EOS は adpcm_patch/test002, CPU 合成は opl2_patch/test003 で確認)。
 - 次: GOWIN で合成し、実機で ADPCM 再生・EOS・CPU 合成モードを確認。
+
 ## 2026/11/15 jtopl (OPL2/Y8950) の精度修正 (外部アドバイス対応)
 
 外部からのアドバイス (FB オーバーフロー / EG 速度 / RR / KSR) を Nuked-OPL3 と照合し、すべて妥当と確認したうえで修正した。
@@ -1954,8 +1955,9 @@
 - jtopl の keycode は NTS を無視 (`note_sel` 未使用)。
 - jtopl には `eg_off` 時の 0x1ff へのジャンプが無い。
 
-### TODO
+### 当時の確認項目
 - [ ] 実機で確認: FB を使う音色の音質、減衰/リリースの長さ、リズム音のリリース。
+
 ## 2026/11/15 jtopl 上流 (2026/Nov/15 版) の取り込み
 
 `src/opl2/src` を最新版に更新 (ユーザー作業)。各変更をパイプライン解析とシミュレーションで確認し、以下の方針で取り込んだ。
@@ -1974,9 +1976,11 @@
 - リズムシミュレーション (BD+HH, ch7 CON=0): HH(op13)→acc slot1、BD car(op15)→acc slot3 で、どちらも加算・2 倍されることを確認。
 - 回帰テスト 9 本すべて PASS。
 
-### 残差 (未修正、Nuked との差)
+### 当時の残差 (Nuked との差、次節で修正)
 - BD モジュレータ: ch6 CON=1 のとき jtopl は BD モジュレータも出力に加算する (Nuked はキャリアのみ)。
-- HH/TOM (ch7/ch8 モジュレータ): jtopl は ch7/ch8 の FB 設定でフィードバックがかかる (Nuked は変調なし)。## 2026/11/15 jtopl リズム音の差分修正
+- HH/TOM (ch7/ch8 モジュレータ): jtopl は ch7/ch8 の FB 設定でフィードバックがかかる (Nuked は変調なし)。
+
+## 2026/11/15 jtopl リズム音の差分修正
 
 v0.9.15 リリース後に確認した Nuked-OPL3 との差 (BD モジュレータ音の不要な混入、および HH/TOM への不要な FB) を修正した。原本 `src/opl2/src` は変更せず、`jtopl_reg.v` と `jtopl_reg_ch.v` を `src/opl2_patch` へコピーして修正した。
 
@@ -1986,3 +1990,13 @@ v0.9.15 リリース後に確認した Nuked-OPL3 との差 (BD モジュレー�
 - `opl2_patch/test004` に回帰チェックを追加。BD mod slot 12 で `pre_con=1` でも `con_I=0`、HH/TOM modulators で FB=0、その他対象スロットで FB=5 が維持されることを確認。
 
 検証: `opl2_patch/test001-004` と `src/test001-002` の計6テストが PASS、すべて Errors=0/Warnings=0。test004 の PAN / rhythm 両チェック PASS。Gowin 合成と実機確認は未実施。
+
+## 2026/11/15 作業終了
+
+- jt12 の ADPCM パッチを最新版に追従し、EOS とメモリ読み出しの制御を修正した。
+- jtopl の FB 加算と EG の速度・RR・KSR を修正し、最新版のリズム関連修正を取り込んだ。
+- v0.9.15 は実機で音に問題がなさそうであることを確認し、リリースした。
+- さらに BD モジュレータのミックスと HH/TOM の FB を修正し、v0.9.16 としてリリースした。
+  https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.16
+- 残る jtopl と Nuked の差は、上記「既知の残差」に記載したアタックの丸め・即時アタック範囲・NTS・`eg_off`。
+- v0.9.16 の各修正に対する個別の実機確認結果、および ADPCM の EOS・CPU 合成モードの実機確認結果は未記録。
