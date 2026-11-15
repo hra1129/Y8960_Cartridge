@@ -50,9 +50,10 @@ wire signed [14:0] sample_l;
 wire signed [14:0] sample_r;
 
 // all rhythm channels are amplified by two
-// given the data path latency, slot 16(-1) data enters at slot 6(-1) and so on
-// slots 13~18 (counting from 1 to 18) will enter when bits slot[7:2] are set
-assign rhy2x  = rhy_en && |slot[7:2];
+// given the data path latency, op N data enters at slot (N+6) mod 18
+// rhythm ops 12~17 (counting from 0) will enter when bits slot[5:0] are set
+// Y8960 (2026/11/15): merged upstream fix ([7:2] missed HH and doubled ch0/ch1)
+assign rhy2x  = rhy_en && |slot[5:0];
 assign sum_en = op | con;
 assign op2x   = rhy2x ? {op_result, 1'b0} : {op_result[12],op_result};
 assign product_l = op2x_d * $signed({1'b0, gain_l});
