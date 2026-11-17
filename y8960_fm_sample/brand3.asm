@@ -129,9 +129,33 @@ release_loop:
 ; -----------------------------------------------------------------------------
 			scope	puts_and_exit
 puts_and_exit::
+			push	de
+			call	restore_en2			; before the BDOS calls (CTRL+C)
+			pop		de
 			call	puts
 			ld		c, _TERM0
 			jp		BDOS
+			endscope
+
+; -----------------------------------------------------------------------------
+; restore_en2: restores 7FFFh (I/O Enabler2) of the cartridge to the value
+;   before the start, so that the next run (and other software) sees the
+;   original state.
+; -----------------------------------------------------------------------------
+			scope	restore_en2
+restore_en2::
+			ld		a, [en2_changed]
+			or		a, a
+			ret		z
+			xor		a, a
+			ld		[en2_changed], a
+			ld		a, [saved_en2]
+			ld		e, a
+			ld		a, [cur_slot]
+			ld		hl, 0x7FFF
+			call	WRSLT
+			ei
+			ret
 			endscope
 
 ; -----------------------------------------------------------------------------
@@ -140,6 +164,12 @@ puts_and_exit::
 ; -----------------------------------------------------------------------------
 			scope	sc_detect
 sc_detect::
+			in		a, [SC_ENABLER]		; saves the current state (40h/41h
+			cpl							; return ~ID of the selected device)
+			ld		[saved_sc_enabler], a
+			in		a, [SC_DEVSEL]
+			cpl
+			ld		[saved_sc_devsel], a
 			ld		a, SC_ENABLE_KEY
 			out		[SC_ENABLER], a
 			in		a, [SC_ENABLER]
@@ -150,12 +180,21 @@ sc_detect::
 			in		a, [SC_DEVSEL]
 			cp		a, SC_DEVICE_ACK
 			jr		nz, not_detected
+			call	sc_restore
 			or		a, a
 			ret
 not_detected:
-			xor		a, a
-			out		[SC_ENABLER], a
+			call	sc_restore
 			scf
+			ret
+
+sc_restore:
+			ld		a, [saved_sc_enabler]
+			out		[SC_ENABLER], a
+			cp		a, SC_ENABLE_KEY
+			ret		nz
+			ld		a, [saved_sc_devsel]
+			out		[SC_DEVSEL], a
 			ret
 			endscope
 
@@ -229,21 +268,31 @@ try_slot:
 			ld		hl, 0x7FFF
 			call	RDSLT
 			ld		[saved_en2], a
-			or		a, EN2_OPL2 | EN2_OPM
-			ld		e, a
-			ld		a, [cur_slot]
-			ld		hl, 0x7FFF
-			call	WRSLT
-			ld		a, [cur_slot]
-			ld		hl, 0x7FFF
-			call	RDSLT
-			and		a, EN2_OPL2 | EN2_OPM
+			; bit6-3 of 7FFFh always read 0, and bit0/bit2 hold the written value.
+			; Neither ROM nor RAM behaves like this, and the result does not
+			; depend on the state left by a previous run.
+			ld		e, 0x78
+			call	write_read_en2
+			jr		nz, restore_fail
+			ld		e, 0x78 | EN2_OPL2 | EN2_OPM
+			call	write_read_en2
 			cp		a, EN2_OPL2 | EN2_OPM
 			jr		nz, restore_fail
 			in		a, [OPL_ADDR]
 			and		a, 0x07
 			cp		a, 0x06
-			jr		z, found
+			jr		nz, restore_fail
+			ld		a, [saved_en2]		; keeps the other enable bits
+			and		a, 0x87
+			or		a, EN2_OPL2 | EN2_OPM
+			ld		e, a
+			ld		a, [cur_slot]
+			ld		hl, 0x7FFF
+			call	WRSLT
+			ld		a, 1
+			ld		[en2_changed], a
+			or		a, a
+			ret
 restore_fail:
 			ld		a, [saved_en2]
 			ld		e, a
@@ -252,7 +301,15 @@ restore_fail:
 			call	WRSLT
 			scf
 			ret
-found:
+
+; write_read_en2: writes E to 7FFFh of cur_slot, A = read back value, Zf = (A == 0)
+write_read_en2:
+			ld		a, [cur_slot]
+			ld		hl, 0x7FFF
+			call	WRSLT
+			ld		a, [cur_slot]
+			ld		hl, 0x7FFF
+			call	RDSLT
 			or		a, a
 			ret
 			endscope
@@ -954,6 +1011,12 @@ stopped_message:
 cur_slot:
 			db		0
 saved_en2:
+			db		0
+en2_changed:
+			db		0
+saved_sc_enabler:
+			db		0
+saved_sc_devsel:
 			db		0
 pal_flag:
 			db		0

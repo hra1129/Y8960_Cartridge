@@ -2000,3 +2000,26 @@ v0.9.15 リリース後に確認した Nuked-OPL3 との差 (BD モジュレー�
   https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.16
 - 残る jtopl と Nuked の差は、上記「既知の残差」に記載したアタックの丸め・即時アタック範囲・NTS・`eg_off`。
 - v0.9.16 の各修正に対する個別の実機確認結果、および ADPCM の EOS・CPU 合成モードの実機確認結果は未記録。
+
+## 2026/11/18 サンプルのスロット誤検出と終了時の状態復元
+
+報告: MSX-MUSIC 内蔵機で CANCAN.COM を2回実行すると、2回目に Y8960 を見つけられず正常に再生されない。
+
+原因:
+- `try_slot` は「AB」ヘッダ → 7FFFh に bit0/bit2 を書いて読み戻し → I/O C0h が 06h、の順に判定していた。
+- 1回目の終了時に 7FFFh (OPL2/OPM I/O 有効) と I/O 40h (80h) を戻していなかった。
+- 2回目は C0h が既に Y8960 の OPL2 として応答するため、手前にある内蔵 MSX-MUSIC ROM ("AB"、7FFFh が FFh など) のスロットで判定が通り、誤ったスロットを使っていた。
+
+修正 (`cancan` / `brand3` / `opllrhy` / `mmiotest` / `sccdiag` / `adtest` / `adplay` / `adcpu`):
+- `sc_detect`: 開始時に I/O 40h/41h を読み (反転値 = 選択中の ID)、判定後に書き戻す。Panasonic などのスイッチド I/O 機器の選択状態を壊さない。
+- `try_slot`: 7FFFh に 78h を書いて 00h、78h|有効ビットを書いて有効ビットが読めることで判定する (bit6〜3 は常に 0。ROM でも RAM でもこうはならず、前回の状態にも依存しない)。その後 C0h の確認を行い、元の値に有効ビットを OR して書く。
+- `puts_and_exit`: 最初に `restore_en2` で 7FFFh を起動前の値に戻す (BDOS 呼び出し前なので出力中の CTRL+C でも戻る)。全終了経路がここを通る。
+- RAM Mode・ミキサー・SCC バンクは書き込み専用で読み出せないため、従来どおり (復元しない)。
+- VOLCMP はソースがリポジトリにないため未対応。`tool/y8960upd` はサンプルではないため対象外。
+
+検証:
+- 全8本を zma でアセンブル (Success)。CANCAN の演奏中に使う領域は 4000h 未満のまま。
+- Python の z80 エミュレータで CANCAN の `sc_detect` / `find_and_enable` / `puts_and_exit` を実行し、RDSLT/WRSLT/BDOS と、内蔵 MSX-MUSIC・"AB" 付き RAM・Y8960・Panasonic スイッチド I/O (ID 08h) をモデル化して3回連続実行した。
+  - 旧版: 2回目以降に MSX-MUSIC (または RAM) のスロットを誤検出し、40h=80h・7FFFh=05h のまま残る (報告を再現)。
+  - 新版: MSX-MUSIC の 7FFFh=FFh/00h/05h の全条件で3回とも正しいスロットを検出し、7FFFh=00h、40h=08h に復元。旧版が残した状態 (7FFFh=05h、40h=80h) から始めても正しく検出し、その状態に戻す。
+- 実機では未確認。
