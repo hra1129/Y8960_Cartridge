@@ -509,7 +509,7 @@ end
 //
 
 wire    [19:0]  cyc40r_phase_sr_out; //get previous phase from the cycle 40, SR last step(21)
-reg     [19:0]  cyc9r_previous_phase;
+reg     [19:0]  cyc9r_previous_phase = 20'd0;
 reg     [16:0]  cyc9r_shifted_pdelta;
 reg     [16:0]  cyc9r_pdelta_detuning_value;
 reg     [3:0]   cyc9r_mul;
@@ -720,7 +720,7 @@ end
 //  register part
 //
 
-reg     [19:0]  cyc18r_current_phase;
+reg     [19:0]  cyc18r_current_phase = 20'd0;
 always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
     cyc18r_current_phase <= mrst_n ? cyc17r_current_phase : 20'd0; //force reset added
 end

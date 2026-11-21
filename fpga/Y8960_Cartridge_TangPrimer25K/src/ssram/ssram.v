@@ -74,40 +74,40 @@ module ssram (
 	localparam [13:0]	c_powerup_wait_count = 14'd10000;	// 116us at 85.9MHz SCLK timing tick
 
 	//	clk domain
-	reg				ff_req_toggle_clk;
-	reg		[18:0]	ff_req_address_clk;
-	reg				ff_req_write_clk;
-	reg				ff_req_burst_clk;
-	reg		[7:0]	ff_req_wdata_clk;
-	reg				ff_ack_s1;
-	reg				ff_ack_s2;
-	reg				ff_ack_s3;
-	reg				ff_init_s1;
-	reg				ff_init_s2;
+	reg				ff_req_toggle_clk = 1'b0;
+	reg		[18:0]	ff_req_address_clk = 19'd0;
+	reg				ff_req_write_clk = 1'b0;
+	reg				ff_req_burst_clk = 1'b0;
+	reg		[7:0]	ff_req_wdata_clk = 8'd0;
+	reg				ff_ack_s1 = 1'b0;
+	reg				ff_ack_s2 = 1'b0;
+	reg				ff_ack_s3 = 1'b0;
+	reg				ff_init_s1 = 1'b0;
+	reg				ff_init_s2 = 1'b0;
 	wire			w_req;
 	wire			w_ready;
 
 	//	clk_serial domain
-	reg				ff_req_toggle_200_d0;
-	reg				ff_req_toggle_200_d1;
-	reg				ff_valid_d0;
-	reg				ff_valid_d1;
+	reg				ff_req_toggle_200_d0 = 1'b0;
+	reg				ff_req_toggle_200_d1 = 1'b0;
+	reg				ff_valid_d0 = 1'b0;
+	reg				ff_valid_d1 = 1'b0;
 	wire			w_valid;
-	reg		[18:0]	ff_address;
-	reg		[7:0]	ff_wdata;
-	reg		[7:0]	ff_rdata;
-	reg				ff_write;
-	reg				ff_burst;
-	reg				ff_read;
-	reg		[5:0]	ff_state;
-	reg				ff_init_done;
-	reg				ff_ack_toggle;
-	reg				ff_ce_n;
-	reg				ff_sclk_en;
-	reg		[3:0]	ff_so;
-	reg				ff_sclk_div;
-	reg				ff_sclk;
-	reg		[13:0]	ff_powerup_wait;
+	reg		[18:0]	ff_address = 19'd0;
+	reg		[7:0]	ff_wdata = 8'd0;
+	reg		[7:0]	ff_rdata = 8'd0;
+	reg				ff_write = 1'b0;
+	reg				ff_burst = 1'b0;
+	reg				ff_read = 1'b0;
+	reg		[5:0]	ff_state = c_state_init_w0;
+	reg				ff_init_done = 1'b0;
+	reg				ff_ack_toggle = 1'b0;
+	reg				ff_ce_n = 1'b1;
+	reg				ff_sclk_en = 1'b1;
+	reg		[3:0]	ff_so = 4'b1zz0;
+	reg				ff_sclk_div = 1'b0;
+	reg				ff_sclk = 1'b0;
+	reg		[13:0]	ff_powerup_wait = 14'd0;
 
 	assign w_req	= bus_cs && bus_valid;
 

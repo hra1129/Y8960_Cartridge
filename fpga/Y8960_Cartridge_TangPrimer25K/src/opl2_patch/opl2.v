@@ -33,21 +33,21 @@ module opl2 (
 	wire	[15:0]	w_opl2_sound_out_l;
 	wire	[15:0]	w_opl2_sound_out_r;
 	wire			w_opl2_sound_en;
-	reg		[15:0]	ff_opl2_sound_out_l;
-	reg		[15:0]	ff_opl2_sound_out_r;
+	reg		[15:0]	ff_opl2_sound_out_l		= 16'd0;
+	reg		[15:0]	ff_opl2_sound_out_r		= 16'd0;
 	wire	[7:0]	w_opl_rdata;
 	wire			w_opl_irq_n;
 	wire			w_adpcm_irq;
 	wire	[7:0]	w_bus_rdata;
 	wire			w_bus_rdata_en;
-	reg				ff_ready;
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
+	reg				ff_ready				= 1'd1;
+	reg		[7:0]	ff_rdata				= 8'd0;
+	reg				ff_rdata_en				= 1'd0;
 	wire	[15:0]	w_adpcm_sound_out_l;
 	wire	[15:0]	w_adpcm_sound_out_r;
-	reg		[15:0]	ff_adpcm_sound_out_l;
-	reg		[15:0]	ff_adpcm_sound_out_r;
-	reg		[9:0]	ff_clk50_cnt;
+	reg		[15:0]	ff_adpcm_sound_out_l	= 16'd0;
+	reg		[15:0]	ff_adpcm_sound_out_r	= 16'd0;
+	reg		[9:0]	ff_clk50_cnt			= 10'd0;
 	wire			w_cen50;
 	wire	[23:0]	w_adpcm_address;
 	wire signed [16:0]	w_sound_sum_l;
@@ -201,11 +201,11 @@ module opl2 (
 	assign bus_ready			= ff_ready;
 	assign bus_rdata			= ff_rdata_en ? ff_rdata : 8'hFF;
 	assign bus_rdata_en			= ff_rdata_en;
-	//	ADPCM full scale (EG=FFh) is about twice one FM channel (FM operator
-	//	+-4095, ADPCM +-32767 >>> 2) so that the drums are not masked.
-	//	6 FM channels + ADPCM = +-32762 fits in 16 bits.
-	assign w_sound_sum_l			= $signed( ff_opl2_sound_out_l ) + ($signed( ff_adpcm_sound_out_l ) >>> 2);
-	assign w_sound_sum_r			= $signed( ff_opl2_sound_out_r ) + ($signed( ff_adpcm_sound_out_r ) >>> 2);
+	//	ADPCM full scale (EG=FFh) is about one FM channel (FM operator
+	//	+-4095, ADPCM +-32767 >>> 3). This matches the FM/ADPCM balance of
+	//	Y8950 (NMS1205) measured with VOLCMP.
+	assign w_sound_sum_l			= $signed( ff_opl2_sound_out_l ) + ($signed( ff_adpcm_sound_out_l ) >>> 3);
+	assign w_sound_sum_r			= $signed( ff_opl2_sound_out_r ) + ($signed( ff_adpcm_sound_out_r ) >>> 3);
 	assign opl2_sound_out_l		= saturate_16( w_sound_sum_l );
 	assign opl2_sound_out_r		= saturate_16( w_sound_sum_r );
 	assign adpcm_address		= w_adpcm_address[17:0];

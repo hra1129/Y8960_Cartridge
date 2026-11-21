@@ -79,22 +79,22 @@ module ssg_core #(
 	output	[11:0]	sound_r_out,
 	input	[1:0]	mode				//	0: disable, 1: single(core0), 2: single(core1), 3: dual
 );
-	reg		[7:0]	ff_port_a;
-	reg		[7:0]	ff_port_b;
+	reg		[7:0]	ff_port_a = 8'd0;
+	reg		[7:0]	ff_port_b = 8'd0;
 
-	reg		[4:0]	ff_ssg_state;
-	reg		[5:0]	ff_ssg_register_ptr;
+	reg		[4:0]	ff_ssg_state = 5'd0;
+	reg		[5:0]	ff_ssg_register_ptr = 6'd0;
 
-	reg		[11:0]	ff_ssg_ch_a_counter;
-	reg		[11:0]	ff_ssg_ch_b_counter;
-	reg		[11:0]	ff_ssg_ch_c_counter;
-	reg				ff_ssg_ch_a_tone_wave;
-	reg				ff_ssg_ch_b_tone_wave;
-	reg				ff_ssg_ch_c_tone_wave;
+	reg		[11:0]	ff_ssg_ch_a_counter = 12'd0;
+	reg		[11:0]	ff_ssg_ch_b_counter = 12'd0;
+	reg		[11:0]	ff_ssg_ch_c_counter = 12'd0;
+	reg				ff_ssg_ch_a_tone_wave = 1'b0;
+	reg				ff_ssg_ch_b_tone_wave = 1'b0;
+	reg				ff_ssg_ch_c_tone_wave = 1'b0;
 
-	reg				ff_ssg_noise;
-	reg		[4:0]	ff_ssg_noise_counter;
-	reg		[17:0]	ff_ssg_noise_generator;
+	reg				ff_ssg_noise = 1'b0;
+	reg		[4:0]	ff_ssg_noise_counter = 5'd0;
+	reg		[17:0]	ff_ssg_noise_generator = 18'd0;
 
 	wire			w_ssg_tone_disable;
 	wire			w_ssg_noise_disable;
@@ -102,27 +102,27 @@ module ssg_core #(
 	wire	[4:0]	w_ssg_volume;
 	wire	[4:0]	w_ssg_ch_level;
 
-	reg		[15:0]	ff_ssg_envelope_counter;
-	reg		[5:0]	ff_ssg_envelope_ptr;
-	reg		[4:0]	ff_ssg_envelope_volume;
-	reg				ff_ssg_envelope_req;
-	reg				ff_ssg_envelope_ack;
+	reg		[15:0]	ff_ssg_envelope_counter = 16'd0;
+	reg		[5:0]	ff_ssg_envelope_ptr = 6'b111111;
+	reg		[4:0]	ff_ssg_envelope_volume = 5'd0;
+	reg				ff_ssg_envelope_req = 1'b0;
+	reg				ff_ssg_envelope_ack = 1'b0;
 
-	reg		[11:0]	ff_ssg_ch_a_frequency;
-	reg		[11:0]	ff_ssg_ch_b_frequency;
-	reg		[11:0]	ff_ssg_ch_c_frequency;
-	reg		[4:0]	ff_ssg_noise_frequency;
-	reg		[5:0]	ff_ssg_ch_select;
-	reg		[4:0]	ff_ssg_ch_a_volume;
-	reg		[4:0]	ff_ssg_ch_b_volume;
-	reg		[4:0]	ff_ssg_ch_c_volume;
-	reg		[7:0]	ff_ssg_ch_a_pan;
-	reg		[7:0]	ff_ssg_ch_b_pan;
-	reg		[7:0]	ff_ssg_ch_c_pan;
-	reg		[7:0]	ff_ssg_ch_a_gain;
-	reg		[7:0]	ff_ssg_ch_b_gain;
-	reg		[7:0]	ff_ssg_ch_c_gain;
-	reg		[15:0]	ff_ssg_envelope_frequency;
+	reg		[11:0]	ff_ssg_ch_a_frequency = 12'hFFF;
+	reg		[11:0]	ff_ssg_ch_b_frequency = 12'hFFF;
+	reg		[11:0]	ff_ssg_ch_c_frequency = 12'hFFF;
+	reg		[4:0]	ff_ssg_noise_frequency = 5'd0;
+	reg		[5:0]	ff_ssg_ch_select = 6'd0;
+	reg		[4:0]	ff_ssg_ch_a_volume = 5'd0;
+	reg		[4:0]	ff_ssg_ch_b_volume = 5'd0;
+	reg		[4:0]	ff_ssg_ch_c_volume = 5'd0;
+	reg		[7:0]	ff_ssg_ch_a_pan = 8'd128;
+	reg		[7:0]	ff_ssg_ch_b_pan = 8'd128;
+	reg		[7:0]	ff_ssg_ch_c_pan = 8'd128;
+	reg		[7:0]	ff_ssg_ch_a_gain = 8'd128;
+	reg		[7:0]	ff_ssg_ch_b_gain = 8'd128;
+	reg		[7:0]	ff_ssg_ch_c_gain = 8'd128;
+	reg		[15:0]	ff_ssg_envelope_frequency = 16'hFFFF;
 	wire	[9:0]	w_out_level;
 	wire	[7:0]	w_ssg_gain;
 	wire	[7:0]	w_ssg_gain_clip;
@@ -135,20 +135,20 @@ module ssg_core #(
 	wire	[18:0]	w_pan_product_r;
 	wire	[10:0]	w_out_level_l;
 	wire	[10:0]	w_out_level_r;
-	reg				ff_hold;
-	reg				ff_alternate;
-	reg				ff_attack;
-	reg				ff_continue;
+	reg				ff_hold = 1'b1;
+	reg				ff_alternate = 1'b1;
+	reg				ff_attack = 1'b1;
+	reg				ff_continue = 1'b1;
 
-	reg		[11:0]	ff_ssg_mixer_l;
-	reg		[11:0]	ff_ssg_mixer_r;
-	reg		[11:0]	ff_sound_l_out;
-	reg		[11:0]	ff_sound_r_out;
+	reg		[11:0]	ff_ssg_mixer_l = 12'd0;
+	reg		[11:0]	ff_ssg_mixer_r = 12'd0;
+	reg		[11:0]	ff_sound_l_out = 12'd0;
+	reg		[11:0]	ff_sound_r_out = 12'd0;
 	wire			w_wr;
 	wire			w_rd;
-	reg				ff_ready;
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
+	reg				ff_ready = 1'b1;
+	reg		[7:0]	ff_rdata = 8'hFF;
+	reg				ff_rdata_en = 1'b0;
 
 	assign w_wr		= bus_ioreq & bus_valid & bus_write;
 	assign w_rd		= bus_ioreq & bus_valid & ~bus_write;

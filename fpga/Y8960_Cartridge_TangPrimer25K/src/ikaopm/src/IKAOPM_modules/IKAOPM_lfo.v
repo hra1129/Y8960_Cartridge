@@ -255,7 +255,7 @@ always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
 end
 
 //phase accumulator
-reg     [15:0]  phase_acc; //phase accumulator shift register
+reg     [15:0]  phase_acc = 16'h0; //phase accumulator shift register
 wire            phase_acc_lsb = phase_acc[0];
 
 //full adder
@@ -399,7 +399,7 @@ always @(*) begin
 end
 
 //base value shift register
-reg     [6:0]   base_value_sr;
+reg     [6:0]   base_value_sr = 7'h00;
 always @(posedge i_EMUCLK or negedge mrst_n) begin
     if(!mrst_n) base_value_sr <= 7'h00;
     else begin
@@ -519,7 +519,7 @@ wire            lfa_reg_ld = &{cycle_15_31, multiplier_bitsel_7, a_np_sel};
 wire            lfp_reg_ld = &{cycle_15_31, multiplier_bitsel_7, ~a_np_sel};
 
 //LFA LFP register
-reg     [7:0]   lfa_reg, lfp_reg;
+reg     [7:0]   lfa_reg = 8'd0, lfp_reg = 8'd0;
 assign  o_LFA = lfa_reg;
 assign  o_LFP = lfp_reg;
 

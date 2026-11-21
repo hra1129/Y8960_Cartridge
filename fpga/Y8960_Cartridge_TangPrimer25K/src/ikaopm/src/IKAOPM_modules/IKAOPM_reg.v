@@ -30,28 +30,28 @@ module IKAOPM_reg #(parameter USE_BRAM_FOR_D32REG = 0, parameter FULLY_SYNCHRONO
     input   wire            i_TIMERB_FLAG,
 
     //register output
-    output  reg     [7:0]   o_TEST,     //0x01      TEST register
+    output  reg     [7:0]   o_TEST = 8'h0,     //0x01      TEST register
 
     output  reg             o_CT1,
     output  reg             o_CT2,
 
-    output  reg             o_NE,       //0x0F[7]   Noise Enable
-    output  reg     [4:0]   o_NFRQ,     //0x0F[4:0] Noise Frequency
+    output  reg             o_NE = 1'b0,       //0x0F[7]   Noise Enable
+    output  reg     [4:0]   o_NFRQ = 5'h00,     //0x0F[4:0] Noise Frequency
 
-    output  reg     [7:0]   o_CLKA1,        //0x10      Timer A D[9:2]
-    output  reg     [1:0]   o_CLKA2,        //0x11      Timer A D[1:0]
-    output  reg     [7:0]   o_CLKB,         //0x12      Timer B
+    output  reg     [7:0]   o_CLKA1 = 8'h0,        //0x10      Timer A D[9:2]
+    output  reg     [1:0]   o_CLKA2 = 2'h0,        //0x11      Timer A D[1:0]
+    output  reg     [7:0]   o_CLKB = 8'h0,         //0x12      Timer B
     output  wire            o_TIMERA_FRST,  //0x14      Timer Control
     output  wire            o_TIMERB_FRST,  //          |
-    output  reg             o_TIMERA_RUN,   //          |
-    output  reg             o_TIMERB_RUN,   //          |
-    output  reg             o_TIMERA_IRQ_EN,//          |
-    output  reg             o_TIMERB_IRQ_EN,//          |
+    output  reg             o_TIMERA_RUN = 1'b0,   //          |
+    output  reg             o_TIMERB_RUN = 1'b0,   //          |
+    output  reg             o_TIMERA_IRQ_EN = 1'b0,//          |
+    output  reg             o_TIMERB_IRQ_EN = 1'b0,//          |
 
-    output  reg     [7:0]   o_LFRQ,     //0x18      LFO frequency
-    output  reg     [6:0]   o_PMD,      //0x19[6:0] D[7] == 1
-    output  reg     [6:0]   o_AMD,      //0x19[6:0] D[7] == 0
-    output  reg     [1:0]   o_W,        //0x1B[1:0] Waveform type
+    output  reg     [7:0]   o_LFRQ = 8'h00,     //0x18      LFO frequency
+    output  reg     [6:0]   o_PMD = 7'h00,      //0x19[6:0] D[7] == 1
+    output  reg     [6:0]   o_AMD = 7'h00,      //0x19[6:0] D[7] == 0
+    output  reg     [1:0]   o_W = 2'd0,        //0x1B[1:0] Waveform type
     output  wire            o_LFRQ_UPDATE,
 
     //PG
@@ -126,8 +126,8 @@ wire    [7:0]   dbus_inlatch_temp;
 wire            dreg_rq_inlatch, areg_rq_inlatch;
 
 //Synchronizer DFF
-reg             dreg_rq_synced0, dreg_rq_synced1, dreg_rq_synced2;
-reg             areg_rq_synced0, areg_rq_synced1, areg_rq_synced2;
+reg             dreg_rq_synced0 = 1'b0, dreg_rq_synced1 = 1'b0, dreg_rq_synced2 = 1'b0;
+reg             areg_rq_synced0 = 1'b0, areg_rq_synced1 = 1'b0, areg_rq_synced2 = 1'b0;
 wire            data_ld = dreg_rq_synced2;
 wire            addr_ld = areg_rq_synced2;
 always @(posedge i_EMUCLK) begin
@@ -169,7 +169,7 @@ end
 //Stable data bus value; without this, a data value will overwrite a address value on a fast write cycle(6502@8MHz).
 //The actual YM2151 is slow, so when the CPU writes a new value, it takes a significant amount of time for the old value
 //to change(<20 ns). But an FPGA is fast. So the value has already changed before the address register samples the value.
-reg     [7:0]   dbus_inlatch; 
+reg     [7:0]   dbus_inlatch = 8'h00; 
 always @(posedge i_EMUCLK) begin
     if(!phi1ncen_n) begin
         if(!i_MRST_n) begin
@@ -330,7 +330,7 @@ reg_submdl_loreg_decoder #(.TARGET_ADDR(8'h08)) u_reg08 (
 wire            hireg_addrreg_en = (addr_ld & (dbus_inlatch[7:5] != 3'b000)); //not 000X_XXXX
 
 //hireg "address" temporary register with async reset
-reg     [7:0]   hireg_addr;
+reg     [7:0]   hireg_addr = 8'hFF;
 always @(posedge i_EMUCLK or negedge mrst_n) begin
     if(!mrst_n) begin
         hireg_addr <= 8'hFF;
@@ -359,7 +359,7 @@ end
 wire            hireg_datareg_en = data_ld & hireg_addr_valid;
 
 //hireg "data" temporary register with async reset
-reg     [7:0]   hireg_data;
+reg     [7:0]   hireg_data = 8'hFF;
 always @(posedge i_EMUCLK or negedge mrst_n) begin
     if(!mrst_n) begin
         hireg_data <= 8'hFF;
@@ -436,7 +436,7 @@ end
 //
 
 //CT reg output
-reg     [1:0]   ct_reg; //define CT reg
+reg     [1:0]   ct_reg = 2'b00; //define CT reg
 
 always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
     o_CT1 <= o_TEST[3] ? i_REG_LFO_CLK : ct_reg[0];  //LSI test purpose
@@ -444,8 +444,8 @@ always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
 end
 
 //reg for KON
-reg             csm_reg;
-reg     [6:0]   kon_temp_reg;
+reg             csm_reg = 1'b0;
+reg     [6:0]   kon_temp_reg = 7'b0000_000;
 
 //timer flag reset
 assign  o_TIMERA_FRST = (reg14_en & dbus_inlatch[4]) | ~mrst_n;
@@ -511,7 +511,7 @@ end
 //  DYNAMIC REGISTERS FOR KON
 //
 
-reg             ch_equal, force_kon;
+reg             ch_equal, force_kon = 1'b0;
 always @(posedge i_EMUCLK) begin
     if(!phi1ncen_n) begin
         ch_equal <= hireg_addrcntr == {2'b00, kon_temp_reg[2:0]}; //channel number

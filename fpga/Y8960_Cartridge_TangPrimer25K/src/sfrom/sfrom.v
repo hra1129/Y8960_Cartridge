@@ -73,43 +73,43 @@ module sfrom (
 	// ----------------------------------------------------------------
 	//	Registers
 	// ----------------------------------------------------------------
-	reg [4:0]	ff_state;
-	reg [4:0]	ff_next_state;			// State to return after CS_HIGH
-	reg [4:0]	ff_return_state;		// State to return after busy wait
-	reg [7:0]	ff_shift_out;			// SPI output shift register
-	reg [7:0]	ff_shift_in;			// SPI input shift register
-	reg [2:0]	ff_bit_cnt;				// Bit counter (0-7)
-	reg			ff_spi_clk_en;			// SPI clock enable
-	reg			ff_spi_cs_n;			// SPI chip select (active low)
-	reg			ff_spi_mosi;			// SPI MOSI output
-	reg [7:0]	ff_spi_cmd_reg;			// Stored SPI command
-	reg [22:0]	ff_addr_reg;			// Stored address
-	reg [7:0]	ff_wdata_reg;			// Stored write data
-	reg [7:0]	ff_rdata_reg;			// Read data output (clk_258m domain)
-	reg			ff_rdata_en_reg;		// Read data valid (clk_258m domain)
-	reg			ff_ready_reg;			// Ready for new command (clk_258m domain)
-	reg [3:0]	ff_cs_wait_cnt;			// CS high wait counter
-	reg			ff_io_quad_out;			// Quad mode output enable
-	reg [3:0]	ff_io_out;				// IO output data for Quad mode
-	reg [2:0]	ff_dummy_cnt;			// Dummy cycle counter
-	reg			ff_quad_read_mode;		// Quad I/O Read in progress (IO[2:3] should be Hi-Z)
+	reg [4:0]	ff_state = ST_IDLE;
+	reg [4:0]	ff_next_state = ST_IDLE;			// State to return after CS_HIGH
+	reg [4:0]	ff_return_state = ST_IDLE;		// State to return after busy wait
+	reg [7:0]	ff_shift_out = 8'd0;			// SPI output shift register
+	reg [7:0]	ff_shift_in = 8'd0;			// SPI input shift register
+	reg [2:0]	ff_bit_cnt = 3'd0;				// Bit counter (0-7)
+	reg			ff_spi_clk_en = 1'b0;			// SPI clock enable
+	reg			ff_spi_cs_n = 1'b1;			// SPI chip select (active low)
+	reg			ff_spi_mosi = 1'b0;			// SPI MOSI output
+	reg [7:0]	ff_spi_cmd_reg = 8'd0;			// Stored SPI command
+	reg [22:0]	ff_addr_reg = 23'd0;			// Stored address
+	reg [7:0]	ff_wdata_reg = 8'd0;			// Stored write data
+	reg [7:0]	ff_rdata_reg = 8'd0;			// Read data output (clk_258m domain)
+	reg			ff_rdata_en_reg = 1'b0;		// Read data valid (clk_258m domain)
+	reg			ff_ready_reg = 1'b0;			// Ready for new command (clk_258m domain)
+	reg [3:0]	ff_cs_wait_cnt = 4'd0;			// CS high wait counter
+	reg			ff_io_quad_out = 1'b0;			// Quad mode output enable
+	reg [3:0]	ff_io_out = 4'd0;				// IO output data for Quad mode
+	reg [2:0]	ff_dummy_cnt = 3'd0;			// Dummy cycle counter
+	reg			ff_quad_read_mode = 1'b0;		// Quad I/O Read in progress (IO[2:3] should be Hi-Z)
 
 	// ----------------------------------------------------------------
 	//	Burst read registers
 	// ----------------------------------------------------------------
-	reg				ff_burst_mode;			// Burst read active (clk_258m domain)
-	reg	[16:0]		ff_burst_count;			// Remaining bytes to read
-	reg	[7:0]		ff_burst_rdata;			// Burst read data (clk_258m domain)
-	reg				ff_burst_rdata_en;		// Burst read data valid (clk_258m domain)
+	reg				ff_burst_mode = 1'b0;			// Burst read active (clk_258m domain)
+	reg	[16:0]		ff_burst_count = 17'd0;			// Remaining bytes to read
+	reg	[7:0]		ff_burst_rdata = 8'd0;			// Burst read data (clk_258m domain)
+	reg				ff_burst_rdata_en = 1'b0;		// Burst read data valid (clk_258m domain)
 
 	// ----------------------------------------------------------------
 	//	SPI clock generation (clk_258m speed)
 	// ----------------------------------------------------------------
 	// SPI clock toggles every clk_258m cycle when enabled
 	// Effective SPI clock frequency: clk_258m / 2 竕・128.86MHz
-	reg			ff_spi_clk;				// SPI clock register
-	reg			ff_spi_clk_d;			// Delayed SPI clock for edge detection
-	reg			ff_spi_clk_en_sync;		// Synchronized clock enable (1 cycle delayed)
+	reg			ff_spi_clk = 1'b0;				// SPI clock register
+	reg			ff_spi_clk_d = 1'b0;			// Delayed SPI clock for edge detection
+	reg			ff_spi_clk_en_sync = 1'b0;		// Synchronized clock enable (1 cycle delayed)
 	wire		w_spi_rising_edge;		// SPI clock rising edge
 	wire		w_spi_falling_edge;		// SPI clock falling edge
 
@@ -168,14 +168,14 @@ module sfrom (
 	//	CDC: clk_258m domain to clk domain (for outputs)
 	//	Using toggle synchronization for pulse transfer
 	// ----------------------------------------------------------------
-	reg [7:0]	ff_rdata_clk;			// Read data in clk domain
-	reg			ff_rdata_en_clk;		// Read data valid in clk domain
-	reg			ff_ready_clk;			// Ready in clk domain
+	reg [7:0]	ff_rdata_clk = 8'd0;			// Read data in clk domain
+	reg			ff_rdata_en_clk = 1'b0;		// Read data valid in clk domain
+	reg			ff_ready_clk = 1'b0;			// Ready in clk domain
 
 	// Toggle signal in clk_129m domain
-	reg			ff_rdata_toggle;		// Toggles when rdata_en pulses
-	reg [2:0]	ff_rdata_toggle_sync;	// Synchronizer for toggle
-	reg [1:0]	ff_ready_sync;			// Synchronizer for ready
+	reg			ff_rdata_toggle = 1'b0;		// Toggles when rdata_en pulses
+	reg [2:0]	ff_rdata_toggle_sync = 3'b000;	// Synchronizer for toggle
+	reg [1:0]	ff_ready_sync = 2'b00;			// Synchronizer for ready
 
 	// Generate toggle in clk_258m domain
 	always @(posedge clk_258m or negedge reset_n) begin
@@ -217,7 +217,7 @@ module sfrom (
 	// ----------------------------------------------------------------
 	//	CDC: burst_start (clk -> clk_258m)
 	// ----------------------------------------------------------------
-	reg [2:0]	ff_burst_start_sync;
+	reg [2:0]	ff_burst_start_sync = 3'b000;
 	wire		w_burst_start_pulse;
 
 	always @(posedge clk_258m or negedge reset_n) begin
@@ -234,7 +234,7 @@ module sfrom (
 	// ----------------------------------------------------------------
 	//	CDC: burst_active (clk_258m -> clk)
 	// ----------------------------------------------------------------
-	reg [1:0]	ff_burst_active_sync;
+	reg [1:0]	ff_burst_active_sync = 2'b00;
 
 	always @(posedge clk or negedge reset_n) begin
 		if(!reset_n) begin
@@ -256,10 +256,10 @@ module sfrom (
 	// ----------------------------------------------------------------
 	//	CDC: clk domain to clk_258m domain (for inputs)
 	// ----------------------------------------------------------------
-	reg [2:0]	ff_valid_sync;
-	reg [22:0]	ff_addr_latch;
-	reg [1:0]	ff_cmd_latch;
-	reg [7:0]	ff_wdata_latch;
+	reg [2:0]	ff_valid_sync = 3'b000;
+	reg [22:0]	ff_addr_latch = 23'd0;
+	reg [1:0]	ff_cmd_latch = 2'd0;
+	reg [7:0]	ff_wdata_latch = 8'd0;
 	wire		w_valid_pulse;
 
 	always @(posedge clk_258m or negedge reset_n) begin

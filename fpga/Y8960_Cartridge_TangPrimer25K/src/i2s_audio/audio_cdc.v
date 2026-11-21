@@ -11,24 +11,24 @@ module audio_cdc (
 	input	[23:0]	src_r,
 	input			dst_request,
 	output			dst_reset_n,
-	output reg [23:0]	dst_l,
-	output reg [23:0]	dst_r
+	output reg [23:0]	dst_l = 24'd0,
+	output reg [23:0]	dst_r = 24'd0
 );
-	reg		[1:0]	ff_reset_sync /* synthesis syn_preserve=1 */;
-	reg				ff_request;
-	reg				ff_request_meta /* synthesis syn_preserve=1 */;
-	reg				ff_request_sync /* synthesis syn_preserve=1 */;
-	reg				ff_request_served;
+	reg		[1:0]	ff_reset_sync = 2'b00 /* synthesis syn_preserve=1 */;
+	reg				ff_request = 1'b0;
+	reg				ff_request_meta = 1'b0 /* synthesis syn_preserve=1 */;
+	reg				ff_request_sync = 1'b0 /* synthesis syn_preserve=1 */;
+	reg				ff_request_served = 1'b0;
 
-	reg		[47:0]	ff_rail_zero;
-	reg		[47:0]	ff_rail_one;
-	reg		[47:0]	ff_zero_meta /* synthesis syn_preserve=1 */;
-	reg		[47:0]	ff_zero_sync /* synthesis syn_preserve=1 */;
-	reg		[47:0]	ff_one_meta /* synthesis syn_preserve=1 */;
-	reg		[47:0]	ff_one_sync /* synthesis syn_preserve=1 */;
-	reg		[47:0]	ff_one_previous;
-	reg				ff_sample_parity;
-	reg				ff_request_complete;
+	reg		[47:0]	ff_rail_zero = 48'd0;
+	reg		[47:0]	ff_rail_one = 48'd0;
+	reg		[47:0]	ff_zero_meta = 48'd0 /* synthesis syn_preserve=1 */;
+	reg		[47:0]	ff_zero_sync = 48'd0 /* synthesis syn_preserve=1 */;
+	reg		[47:0]	ff_one_meta = 48'd0 /* synthesis syn_preserve=1 */;
+	reg		[47:0]	ff_one_sync = 48'd0 /* synthesis syn_preserve=1 */;
+	reg		[47:0]	ff_one_previous = 48'd0;
+	reg				ff_sample_parity = 1'b0;
+	reg				ff_request_complete = 1'b0;
 	wire	[47:0]	w_src_sample;
 	wire	[47:0]	w_arrived;
 

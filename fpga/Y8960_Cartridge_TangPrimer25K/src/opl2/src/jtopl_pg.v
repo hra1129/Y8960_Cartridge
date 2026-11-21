@@ -49,7 +49,7 @@ reg  [16:0] phinc_II;
 wire [18:0] phase_drop, phase_in;
 wire [ 9:0] phase_II;
 wire        noise;
-reg  [ 9:0] hh, tc;
+reg  [ 9:0] hh = 10'd0, tc = 10'd0;
 reg         rm_xor;
 wire        hh_en, sd_en, tc_en;
 

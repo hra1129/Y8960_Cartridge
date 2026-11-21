@@ -1075,6 +1075,7 @@ module tb ();
 		@( posedge clk );
 
 		p_slot_reset_n		= 1'b1;
+		@( posedge reset_n );	//	internal reset is extended by msx_slot
 		@( posedge clk );
 		@( posedge clk );
 

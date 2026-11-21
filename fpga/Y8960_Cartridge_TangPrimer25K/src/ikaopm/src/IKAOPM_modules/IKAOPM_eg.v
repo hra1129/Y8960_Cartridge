@@ -104,9 +104,9 @@ primitive_counter #(.WIDTH(2)) u_samplecntr (
     FPGA resources.
 */
 
-reg             mrst_z;
-reg     [1:0]   timecntr_adder;
-reg     [14:0]  timecntr_sr; //this sr can hold 15-bit integer
+reg             mrst_z = 1'b1;
+reg     [1:0]   timecntr_adder = 2'd0;
+reg     [14:0]  timecntr_sr = 15'd0; //this sr can hold 15-bit integer
 
 reg             onebit_det, mrst_dlyd;
 reg     [3:0]   conseczerobitcntr;
@@ -237,7 +237,7 @@ wire            cyc10c_prevatten_max;
 
 //total 32 stages to store states of all operators
 reg     [1:0]   cyc6r_cyc9r_envstate_previous[0:3]; //4 stages
-reg     [1:0]   cyc10r_envstate_current; //1 stage
+reg     [1:0]   cyc10r_envstate_current = RELEASE; //1 stage
 wire    [1:0]   cyc37r_envstate_previous; //27 stages
 
 wire    [1:0]   cyc9r_envstate_previous = cyc6r_cyc9r_envstate_previous[3];
@@ -577,8 +577,8 @@ always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
 end
 
 //misc flags for envelope generator feedback
-reg             cyc10r_atten_inc; //attenuation level decrement mode(for decay and release)
-reg             cyc10r_atten_dec; //attenuation level increment mode(for attack)
+reg             cyc10r_atten_inc = 1'b0; //attenuation level decrement mode(for decay and release)
+reg             cyc10r_atten_dec = 1'b0; //attenuation level increment mode(for attack)
 reg             cyc10r_fix_prevatten_max; //force previous attenuation level max(quiet)
 reg             cyc10r_enable_prevatten; //previous attenuation level enable(disable = 0)
 always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
@@ -639,7 +639,7 @@ end
 //  cycle 11: latch weighted delta
 //
 
-reg     [9:0]   cyc11r_attenlevel_previous_gated; //loud: 10'd0, quiet: 10'd1023
+reg     [9:0]   cyc11r_attenlevel_previous_gated = 10'd1023; //loud: 10'd0, quiet: 10'd1023
 reg     [9:0]   cyc11r_attenlevel_weighted_delta;
 always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
     if(cyc10r_fix_prevatten_max | ~mrst_n) cyc11r_attenlevel_previous_gated <= 10'd1023;

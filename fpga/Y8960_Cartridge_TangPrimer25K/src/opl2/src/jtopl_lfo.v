@@ -35,11 +35,11 @@ module jtopl_lfo(
 
 parameter [6:0] LIM=7'd60;
 
-reg  [12:0] cnt;
-reg         am_inc, am_incen, am_dir, am_step;
+reg  [12:0] cnt = 13'd0;
+reg         am_inc, am_incen = 1, am_dir = 0, am_step = 0;
 reg  [ 1:0] am_bit;
-reg         am_carry;
-reg  [ 8:0] am_cnt;
+reg         am_carry = 0;
+reg  [ 8:0] am_cnt = 9'd0;
 
 wire [12:0] next    = cnt+1'b1;
 

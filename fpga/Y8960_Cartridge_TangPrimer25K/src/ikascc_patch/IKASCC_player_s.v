@@ -23,7 +23,7 @@ module IKASCC_player_s #(
 
     output  reg             o_TEST,
 
-    output  reg signed      [10:0]  o_SOUND,
+    output  reg signed      [10:0]  o_SOUND = 11'h000,
     output  wire            [39:0]  o_SOUND_CH
 );
 
@@ -48,7 +48,7 @@ reg     [7:0]   db_z;
 reg     [7:0]   ablo_z;
 reg             sccreg_en_z;
 wire            test_wr = i_WRRQ & sccreg_en_z & (ablo_z[7:5] == 3'b111);
-reg     [7:0]   test;
+reg     [7:0]   test = 8'h00;
 always @(posedge emuclk) begin
     if(!rst_n) test <= 8'h00;
     else begin if(!mclkpcen_n) begin
@@ -252,8 +252,8 @@ IKASCC_player_control_s #(
 ////
 
 //time-division timing generator
-reg     [2:0]   ch45_cntr;
-reg     [1:0]   ch45_sr;
+reg     [2:0]   ch45_cntr = 3'd0;
+reg     [1:0]   ch45_sr = 2'b00;
 wire            ch4_wavelatch_tick_pcen = ch45_cntr == 3'd0 && ch45_sr == 2'b00;
 wire            ch5_wavelatch_tick_pcen = ch45_cntr == 3'd0 && ch45_sr == 2'b11;
 always @(posedge emuclk) begin
@@ -578,7 +578,7 @@ assign  intcntr_set = i_TEST[5] & (freq_changed | freq_changed_z);
 ////
 
 wire            mute_wr = i_WRRQ & i_SCCREG_EN_Z & (i_ABLO_Z[7:5] == ADDR_MUTE[7:5]) & (i_ABLO_Z[3:0] ==  ADDR_MUTE[3:0]);
-reg             mute;
+reg             mute = 1'b0;
 always @(posedge emuclk) begin
     if(!i_RST_n) mute <= 1'b0;
     else begin if(!mclkpcen_n) begin
@@ -604,7 +604,7 @@ always @(posedge emuclk) if(!mclkpcen_n) begin
 end
 
 //current volume register
-reg     [3:0]  curr_vol;
+reg     [3:0]  curr_vol = 4'd0;
 always @(posedge emuclk) begin
     if(!i_RST_n) curr_vol <=  4'd0;
     else begin if(!mclkpcen_n) begin

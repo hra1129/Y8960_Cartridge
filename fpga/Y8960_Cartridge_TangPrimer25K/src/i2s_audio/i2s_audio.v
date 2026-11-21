@@ -68,12 +68,12 @@ module i2s_audio(
 	//	BCLK = clk / 4, LRCLK = BCLK / 64 (32bit x 2ch)
 	//	At 24.16193MHz: BCLK = 6.04048MHz, LRCLK = 94.38kHz.
 	//	PCM5102A: I2S format, MSB first
-	reg		[1:0]	ff_bclk_count;
+	reg		[1:0]	ff_bclk_count = 2'd0;
 	wire			w_bclk_fall;
 	wire			w_frame_start;
-	reg		[5:0]	ff_bit_count;
-	reg		[31:0]	ff_shift_reg;
-	reg		[23:0]	ff_frame_r;
+	reg		[5:0]	ff_bit_count = 6'd0;
+	reg		[31:0]	ff_shift_reg = 32'd0;
+	reg		[23:0]	ff_frame_r = 24'd0;
 	wire	[23:0]	w_sound_l;
 	wire	[23:0]	w_sound_r;
 

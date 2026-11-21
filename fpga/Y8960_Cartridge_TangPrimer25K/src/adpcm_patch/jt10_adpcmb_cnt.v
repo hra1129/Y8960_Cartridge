@@ -49,20 +49,20 @@ module jt10_adpcmb_cnt(
     input       [15:0]  astart,
     input       [15:0]  aend,
     input               arepeat,
-    output  reg [23:0]  addr,
-    output  reg         nibble_sel,
+    output  reg [23:0]  addr = 'd0,
+    output  reg         nibble_sel = 'b0,
     // Flag
-    output  reg         chon,
-    output  reg         flag,
+    output  reg         chon = 'b0,
+    output  reg         flag = 1'b0,
     input               clr_flag,
-    output  reg         clr_dec,
+    output  reg         clr_dec = 'b1,
 
-    output  reg         adv,
+    output  reg         adv = 'b0,
     output      [15:0]  phase
 );
 
 // Counter
-reg [15:0] cnt;
+reg [15:0] cnt = 'd0;
 
 assign phase = cnt;
 
@@ -85,8 +85,8 @@ always @(posedge clk or negedge rst_n)
         end
     end
 
-reg set_flag, last_set;
-reg restart;
+reg set_flag = 'd0, last_set = 'b0;
+reg restart = 'b0;
 
 always @(posedge clk or negedge rst_n)
     if(!rst_n) begin

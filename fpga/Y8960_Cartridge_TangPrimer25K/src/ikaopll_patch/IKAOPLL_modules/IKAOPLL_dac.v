@@ -127,7 +127,12 @@ assign  o_IMP_FLUC_SIGNED_RO = perc_dac_en ? dac_out : dac_zlv;
 reg         [2:0]   cyc0_dly;
 reg                 dac_acc_en;
 reg         [7:0]   pan_dly[0:2];
-reg         [7:0]   pan_z;
+initial begin
+    pan_dly[0] = 8'd128;
+    pan_dly[1] = 8'd128;
+    pan_dly[2] = 8'd128;
+end
+reg         [7:0]   pan_z = 8'd128;
 reg signed  [16:0]  dac_acc_l;
 reg signed  [16:0]  dac_acc_r;
 wire signed [8:0]   dac_acc_sample = $signed(snddata_signmag[8] ? {1'b1, ~snddata_signmag[7:0]} : {1'b0, snddata_signmag[7:0]});

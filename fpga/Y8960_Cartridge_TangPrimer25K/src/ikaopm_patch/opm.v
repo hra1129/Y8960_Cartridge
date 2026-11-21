@@ -44,18 +44,18 @@ module opm (
 	wire			w_busy;
 	wire			w_core_enable;
 	wire	[7:0]	w_status;
-	reg				ff_bus_seen;
-	reg		[4:0]	ff_queue_count;
-	reg		[3:0]	ff_write_pointer;
-	reg		[3:0]	ff_read_pointer;
+	reg				ff_bus_seen = 1'b0;
+	reg		[4:0]	ff_queue_count = 5'd0;
+	reg		[3:0]	ff_write_pointer = 4'd0;
+	reg		[3:0]	ff_read_pointer = 4'd0;
 	reg		[8:0]	ff_queue [0:15];
-	reg		[2:0]	ff_pulse;
-	reg		[6:0]	ff_holdoff;
-	reg				ff_cs_n;
-	reg				ff_a0;
-	reg		[7:0]	ff_wdata;
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
+	reg		[2:0]	ff_pulse = 3'd0;
+	reg		[6:0]	ff_holdoff = c_data_holdoff;
+	reg				ff_cs_n = 1'b1;
+	reg				ff_a0 = 1'b0;
+	reg		[7:0]	ff_wdata = 8'd0;
+	reg		[7:0]	ff_rdata = 8'hFF;
+	reg				ff_rdata_en = 1'b0;
 
 	//	7Eh(A0=0)/7Fh(A0=1), 7FFBh(A0=0)/7FFCh(A0=1)
 	assign w_a0			= bus_io ? bus_address : ~bus_address;

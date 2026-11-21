@@ -33,7 +33,7 @@ wire            phi1ncen_n = i_phi1_NCEN_n;
 //////  Prescaler
 ////
 
-reg     [5:0]   prescaler;
+reg     [5:0]   prescaler = 6'd0;
 wire            prescaler_co = (prescaler == 6'd63) & i_CYCLE_21;
 always @(posedge emuclk) if(!phi1ncen_n) begin
     if(i_TEST[1] || ~i_RST_n) prescaler <= 6'd0;
@@ -48,7 +48,7 @@ end
 //////  Phase modulation value generator(vibrato)
 ////
 
-reg     [3:0]   pm_prescaler;
+reg     [3:0]   pm_prescaler = 4'd0;
 wire            pm_prescaler_co = (pm_prescaler == 4'd15) & prescaler_co;
 always @(posedge emuclk) if(!phi1ncen_n) begin
     if(i_TEST[1] || ~i_RST_n) pm_prescaler <= 4'd0;
@@ -57,7 +57,7 @@ always @(posedge emuclk) if(!phi1ncen_n) begin
     end
 end
 
-reg     [2:0]   pm_cntr;
+reg     [2:0]   pm_cntr = 3'd0;
 always @(posedge emuclk) if(!phi1ncen_n) begin
     if(i_TEST[1] || ~i_RST_n) pm_cntr <= 3'd0;
     else begin
@@ -87,7 +87,7 @@ wire            amval_addend_en1 = ~(i_CYCLE_D4 | cycle_d3_zzz);
 wire            amval_addend_src0; //tff output
 wire            amval_addend_src1 = i_CYCLE_00;
 
-reg             amval_addend_co_z; //previous C output
+reg             amval_addend_co_z = 1'b0; //previous C output
 
 wire            amval_addend_cin = amval_addend_co_z & amval_addend_en1;
 wire            amval_addend_a; //feedback
@@ -100,7 +100,7 @@ always @(posedge emuclk) if(!phi1ncen_n) amval_addend_co_z <= sum[1] & i_RST_n;
 wire            amval_sr_000_000_0XX;
 wire            amval_sr_1XX_1X1_1XX;
 
-reg             amval_tff;
+reg             amval_tff = 1'b0;
 assign  amval_addend_src0 = amval_tff;
 always @(posedge emuclk) if(!phi1ncen_n) begin
     if(i_TEST[1] || ~i_RST_n) amval_tff <= 1'b0;

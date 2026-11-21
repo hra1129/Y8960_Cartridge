@@ -36,25 +36,33 @@ module jtopl_reg_ch(
 
     input       [1:0] group,
     input       [2:0] sub,
-    output reg        keyon,
-    output reg  [2:0] block,
-    output reg  [9:0] fnum,
-    output reg  [2:0] fb,
-    output reg        con,
-    output reg        rhy_oen,    // high for rhythm operators if rhy_en is set
+    output reg        keyon = 0,
+    output reg  [2:0] block = 0,
+    output reg  [9:0] fnum = 0,
+    output reg  [2:0] fb = 0,
+    output reg        con = 0,
+    output reg        rhy_oen = 0,    // high for rhythm operators if rhy_en is set
     output            rhyon_csr
 );
 
 // Rhythm key-on CSR
 localparam BD=4, SD=3, TOM=2, TC=1, HH=0;
 
-reg  [5:0] rhy_csr;
+reg  [5:0] rhy_csr = 6'd0;
 
-reg  [8:0] reg_keyon, reg_con;
+reg  [8:0] reg_keyon = 0, reg_con = 0;
 reg  [2:0] reg_block[8:0];
 reg  [2:0] reg_fb   [8:0];
 reg  [9:0] reg_fnum [8:0];
 reg  [3:0] cur, i;
+integer    init_i;
+
+initial begin
+    for( init_i=0; init_i<9; init_i=init_i+1 ) begin
+        reg_block[init_i] = 0;
+        reg_fnum [init_i] = 0;
+    end
+end
 
 assign rhyon_csr = rhy_csr[5];
 

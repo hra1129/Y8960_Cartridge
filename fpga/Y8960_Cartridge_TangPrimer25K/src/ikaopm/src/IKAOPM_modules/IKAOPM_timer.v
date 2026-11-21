@@ -26,8 +26,8 @@ module IKAOPM_timer (
 
     //timer output
     output  wire            o_TIMERA_OVFL,
-    output  reg             o_TIMERA_FLAG,
-    output  reg             o_TIMERB_FLAG,
+    output  reg             o_TIMERA_FLAG = 1'b0,
+    output  reg             o_TIMERB_FLAG = 1'b0,
     output  reg             o_IRQ_n
 );
 

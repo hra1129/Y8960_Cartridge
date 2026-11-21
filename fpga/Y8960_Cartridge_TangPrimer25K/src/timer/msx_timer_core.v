@@ -73,14 +73,14 @@ module msx_timer_core (
 	localparam		c_count_register		= 2'd1;
 	localparam		c_control_register		= 2'd2;
 
-	reg		[31:0]	ff_counter;
-	reg		[2:0]	ff_reso;
-	reg		[7:0]	ff_count;
-	reg				ff_repeat;
-	reg				ff_intr_enable;
-	reg				ff_count_enable;
-	reg				ff_count_end;
-    reg             ff_valid;
+	reg		[31:0]	ff_counter = 32'd0;
+	reg		[2:0]	ff_reso = 3'd0;
+	reg		[7:0]	ff_count = 8'd0;
+	reg				ff_repeat = 1'b0;
+	reg				ff_intr_enable = 1'b0;
+	reg				ff_count_enable = 1'b0;
+	reg				ff_count_end = 1'b0;
+    reg             ff_valid = 1'b0;
 	wire	[13:0]	w_count_high;
 	wire			w_count_overflow;
 	wire	[8:0]	w_count;

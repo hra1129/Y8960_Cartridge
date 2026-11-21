@@ -27,10 +27,10 @@ module jtopl_eg_cnt(
 	input             clk,
 	input             cen,
 	input             zero,
-	output reg [14:0] eg_cnt
+	output reg [14:0] eg_cnt = 15'd0
 );
 
-reg eg_half;
+reg eg_half = 1'b0;
 
 always @(posedge clk, posedge rst) begin : envelope_counter
 	if( rst ) begin

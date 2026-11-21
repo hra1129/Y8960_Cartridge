@@ -27,8 +27,8 @@ module IKAOPM_acc (
     output  reg             o_SO,
     
     output  reg             o_EMU_R_SAMPLE, o_EMU_L_SAMPLE,
-    output  reg signed      [15:0]  o_EMU_R_EX, o_EMU_L_EX,
-    output  reg signed      [15:0]  o_EMU_R, o_EMU_L
+    output  reg signed      [15:0]  o_EMU_R_EX = 16'sd0, o_EMU_L_EX = 16'sd0,
+    output  reg signed      [15:0]  o_EMU_R = 16'sd0, o_EMU_L = 16'sd0
 );
 
 
@@ -76,7 +76,7 @@ end
 //////  R/L channel accmulators
 ////
 
-reg     [17:0]  r_accumulator, l_accumulator;
+reg     [17:0]  r_accumulator = 18'd0, l_accumulator = 18'd0;
 always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
     if(!mrst_n) begin
         r_accumulator <= 18'd0; //original chip doesn't have this reset
@@ -132,7 +132,7 @@ end
 ////
 
 localparam  SAMPLE_STROBE_LENGTH = 1; //adjust this value to stretch the strobe width
-reg     [SAMPLE_STROBE_LENGTH+1:0]   r_sample_det, l_sample_det;
+reg     [SAMPLE_STROBE_LENGTH+1:0]   r_sample_det = {(SAMPLE_STROBE_LENGTH+2){1'b0}}, l_sample_det = {(SAMPLE_STROBE_LENGTH+2){1'b0}};
 always @(posedge i_EMUCLK) begin
     if(!i_MRST_n) begin
         r_sample_det[0] <= 1'b0;
@@ -152,8 +152,8 @@ always @(posedge i_EMUCLK) begin
 end
 
 
-reg signed  [15:0]  r_parallel, l_parallel, r_parallel_extended, l_parallel_extended; //parallel output intermediate storage
-reg         [2:0]   r_parallel_saturation_ctrl, l_parallel_saturation_ctrl; //parallel output saturation control
+reg signed  [15:0]  r_parallel = 16'sd0, l_parallel = 16'sd0, r_parallel_extended = 16'sd0, l_parallel_extended = 16'sd0; //parallel output intermediate storage
+reg         [2:0]   r_parallel_saturation_ctrl = 3'b000, l_parallel_saturation_ctrl = 3'b000; //parallel output saturation control
 always @(posedge i_EMUCLK) if(!phi1ncen_n) begin
     if(!i_MRST_n) begin
         r_parallel_saturation_ctrl <= 3'b000;

@@ -2023,3 +2023,41 @@ v0.9.15 リリース後に確認した Nuked-OPL3 との差 (BD モジュレー�
   - 旧版: 2回目以降に MSX-MUSIC (または RAM) のスロットを誤検出し、40h=80h・7FFFh=05h のまま残る (報告を再現)。
   - 新版: MSX-MUSIC の 7FFFh=FFh/00h/05h の全条件で3回とも正しいスロットを検出し、7FFFh=00h、40h=08h に復元。旧版が残した状態 (7FFFh=05h、40h=80h) から始めても正しく検出し、その状態に戻す。
 - 実機では未確認。
+- 補足: ADPLAY などでファイル読み込み中にディスクエラーが起きて「Abort」した場合だけは 7FFFh が戻らない (MSX-DOS1 互換のため `_DEFAB` を使っていない)。
+
+## 2026/11/18 朝の作業終了
+
+- 状況: 上記のスロット検出と終了時の復元を全8サンプルに入れ、COM を再ビルドした。エミュレータ上の検証は PASS。実機確認とコミットはまだ。
+- 帰宅後にやること:
+  1. MSX-MUSIC 内蔵機で CANCAN.COM を2回以上続けて実行し、毎回 Y8960 を検出して全音源が鳴ることを確認する。
+  2. ESC で途中停止した後にもう一度実行しても、正しく検出されることを確認する。
+  3. BRAND3 / OPLLRHY / MMIOTEST / SCCDIAG / ADTEST / ADPLAY / ADCPU も、少なくとも1回ずつ動作と連続実行を確認する。
+  4. 問題がなければコミットする (対象: 8本の .asm と .COM、両フォルダーの README.md、history.md)。
+  5. VOLCMP にも同じ検出処理がある。ソースを入手できれば同様に修正する。
+
+## 2026/11/22 Y8950 互換性の指摘3点 (ステータス bit0、PCM 音量、リセット)
+
+1. ステータス bit0 (PCM_BSY)
+   - Y8950 は R#07 bit7 (START) に書いた値がそのまま出る。再生終了 (EOS) でも 0 に戻らない。Y8950 の存在確認に使うソフトがある。
+   - `adpcm_patch/adpcm.v`: R#07 に書いた bit7 を保持する `ff_status_pcm` を追加し、ステータス bit0 に出す。内部の再生状態 `reg_start` は従来どおり EOS で 0 になる。
+2. PCM 音量
+   - VOLCMP の波形比較 (NMS1205 と Y8960) で、FM は同程度、ADPCM は Y8960 が約2倍だった。
+   - `opl2_patch/opl2.v`: FM に足す ADPCM を `>>> 2` から `>>> 3` に変更した (1/2)。
+3. リセット
+   - FPGA 起動から約 1.7us 以上 /RESET=L が続かないとリセットされなかった。IKAOPLL/IKAOPM/jtopl はスロットのシフトレジスタを一巡させる必要があり、42.95MHz で数十クロック分のリセットが必要になる。
+   - `msx_slot/msx_slot.v`: 内部リセットを追加した。FPGA 起動時 (初期値) と /RESET=L の間はリセットし、/RESET=H になってから 255 クロック (約6us) 延長する。clk だけで動き、3.579545MHz の enable とは関係ない。
+   - 自前 RTL で reset_n によってリセットされる FF に、リセット値と同じ初期値を付けた (トップ、msx_slot、adpcm、adpcm_lpf、opl2、opll、opm、scc、scc_bank、ssg_core、msx_timer(_core)、system_controller、sram_arbiter、ssram、ip_spi_rom、sfrom、mixier、audio_cdc、i2s_audio、y8960_address_decode)。
+   - `ssram.v` の `ff_so` はリセット値が `4'b1zz0` なので、初期値も同じにした。
+   - サードパーティのコア (プロジェクトで使っている jtopl / jt10 / IKAOPM / IKAOPLL / IKASCC の src と patch) にも同様に初期値を付けた。
+     - 対象: `if(rst)`・`if(!i_RST_n)`・`if(!mrst_n)` などで直接リセットされる FF。`x <= i_RST_n ? ... : 定数` や `x <= ... & i_RST_n` のようなマックス形式でリセットされる FF。
+     - 小さな配列 (IKAOPLL_reg の mul_reg など、pan_sr、IKAOPLL_dac の pan_dly、jtopl_reg_ch の reg_block / reg_fnum) は `initial` で初期化した (primitive_sr_bram と同じ書き方)。
+     - リセット中に 0 を流し込んで初期化されるシフトレジスタのうち、ベクタのもの (IKAOPM_noise の noise_lfsr、IKAOPM_eg の timecntr_sr、IKAOPLL_eg の envcntr_sr、IKAOPM_acc の *_sample_det) と、リセットの遅延 FF (mrst_z / rst_z = 1) にも、リセット後に落ち着く値を入れた。
+     - IKAOPLL_timinggen の `ic_n_internal` は初期値が `1` (リセット解除状態) だったので `0` にした。起動直後から IKAOPLL の内部リセットがかかる。
+     - 対象外: primitive_sr などの長いシフトレジスタ配列。これらは途中でリセットされず、リセット中に一巡させて初期化する作りなので、上記の内部リセット (255 クロック、enable を強制的に入れる) で初期化される。リセットを使っていない FF (jtopl_div の cnt など) も対象外。
+
+検証 (ModelSim):
+- PASS: adpcm_patch test001-003、opl2_patch test001-004、msx_slot test001-002、src/test001、src/test002、ssg、timer、mixer、ikascc、ikaopm、ikaopll、y8960_address_decode、sfrom。
+- サードパーティのコアに初期値を付けた後、opl2_patch / adpcm_patch / ikascc_patch / ikaopll_patch / ikaopm_patch / msx_slot / src/test001 / src/test002 を再実行し、すべて Errors: 0。
+- テストの変更: adpcm_patch/test002 の再生終了後の PCM_BSY 期待値を 1 に、opl2_patch/test001 のミックス期待値を `>>> 3` に、msx_slot のテストではリセット解除後に `@( posedge reset_n )` を待つようにした。
+- system_controller / ssram / i2s_audio のテストは、以前から tb 側に RTL にないポートがあり、ロードできない (今回の変更とは関係ない)。
+- 合成と実機確認は未実施。

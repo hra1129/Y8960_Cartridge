@@ -350,7 +350,7 @@ module tb ();
 		end
 		monitor_play = 1'b0;
 		check( "EOS at end of playback", st & 8'h10, 8'h10 );
-		check( "PCM_BSY cleared at end", st & 8'h01, 8'h00 );
+		check( "PCM_BSY (R#07 bit7) kept at end", st & 8'h01, 8'h01 );
 		check( "irq at end of playback", adpcm_irq, 1'b1 );
 		check( "playback min address", play_addr_min, 32'h100 );
 		check( "playback max address", play_addr_max, 32'h17F );
@@ -371,7 +371,7 @@ module tb ();
 
 		write_reg( 8'h04, 8'h80 );
 		read_status( st );
-		check( "R#04 bit7 after playback (idle: BUF_RDY)", st, 8'h8E );
+		check( "R#04 bit7 after playback (idle: BUF_RDY)", st, 8'h8F );
 		//	adpcm_lpf output settles to 0 after 25 samples
 		repeat( 26 * 256 ) @( posedge clk );
 		check( "output is 0 after playback L", adpcm_sound_out_l, 16'd0 );

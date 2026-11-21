@@ -56,15 +56,15 @@ module scc_bank (
 	wire			w_read_issue;
 	wire	[17:0]	w_address;
 
-	reg				ff_access_d;
-	reg		[1:0]	ff_q_count;
-	reg		[17:0]	ff_q_address0;
-	reg		[7:0]	ff_q_wdata0;
-	reg		[17:0]	ff_q_address1;
-	reg		[7:0]	ff_q_wdata1;
-	reg				ff_rd_pending;
-	reg				ff_rd_issued;
-	reg		[17:0]	ff_rd_address;
+	reg				ff_access_d = 1'b0;
+	reg		[1:0]	ff_q_count = 2'd0;
+	reg		[17:0]	ff_q_address0 = 18'd0;
+	reg		[7:0]	ff_q_wdata0 = 8'd0;
+	reg		[17:0]	ff_q_address1 = 18'd0;
+	reg		[7:0]	ff_q_wdata1 = 8'd0;
+	reg				ff_rd_pending = 1'b0;
+	reg				ff_rd_issued = 1'b0;
+	reg		[17:0]	ff_rd_address = 18'd0;
 
 	// ---------------------------------------------------------
 	//	Compatible mode

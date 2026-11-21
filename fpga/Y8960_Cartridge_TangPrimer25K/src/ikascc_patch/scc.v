@@ -34,9 +34,9 @@ module scc (
 	wire	[7:0]	w_core_wdata;
 	wire			w_core_cs;
 	wire			w_db_oe;
-	reg				ff_rd_seen;
-	reg				ff_wr_pending;
-	reg				ff_wr_gap;
+	reg				ff_rd_seen = 1'b0;
+	reg				ff_wr_pending = 1'b0;
+	reg				ff_wr_gap = 1'b0;
 	reg		[15:0]	ff_wr_address;
 	reg		[7:0]	ff_wr_wdata;
 	wire			w_wr_n;
@@ -48,28 +48,28 @@ module scc (
 	wire			w_pan_window;
 	wire			w_pan_write;
 
-	reg		[7:0]	ff_pan_a;
-	reg		[7:0]	ff_pan_b;
-	reg		[7:0]	ff_pan_c;
-	reg		[7:0]	ff_pan_d;
-	reg		[7:0]	ff_pan_e;
+	reg		[7:0]	ff_pan_a = 8'd128;
+	reg		[7:0]	ff_pan_b = 8'd128;
+	reg		[7:0]	ff_pan_c = 8'd128;
+	reg		[7:0]	ff_pan_d = 8'd128;
+	reg		[7:0]	ff_pan_e = 8'd128;
 
-	reg		[3:0]	ff_step;
+	reg		[3:0]	ff_step = 4'd0;
 	reg		[7:0]	w_pan;
 	reg signed	[7:0]	w_ch_sound;
-	reg signed	[7:0]	ff_sample;
-	reg				ff_side_r;
-	reg				ff_first;
-	reg				ff_last;
+	reg signed	[7:0]	ff_sample = 8'sd0;
+	reg				ff_side_r = 1'b0;
+	reg				ff_first = 1'b0;
+	reg				ff_last = 1'b0;
 	wire	[8:0]	w_gain_l;
 	wire	[8:0]	w_gain_r;
 	wire	[8:0]	w_gain;
 	wire signed	[17:0]	w_product;
-	reg signed	[19:0]	ff_acc_l;
-	reg signed	[19:0]	ff_acc_r;
+	reg signed	[19:0]	ff_acc_l = 20'sd0;
+	reg signed	[19:0]	ff_acc_r = 20'sd0;
 	wire signed	[19:0]	w_sum;
-	reg		[10:0]	ff_sound_l;
-	reg		[10:0]	ff_sound_r;
+	reg		[10:0]	ff_sound_l = 11'd0;
+	reg		[10:0]	ff_sound_r = 11'd0;
 
 	// --------------------------------------------------------------------
 	//	Address decode

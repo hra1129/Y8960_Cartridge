@@ -32,7 +32,7 @@ module sram_arbiter (
 	input	[7:0]	ssram_rdata,
 	input			ssram_rdata_en
 );
-	reg				ff_adpcm_owner;
+	reg				ff_adpcm_owner = 1'b0;
 	wire			w_cpu_select;
 
 	// ---------------------------------------------------------

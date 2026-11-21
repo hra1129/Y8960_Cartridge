@@ -40,9 +40,9 @@ module jt10_adpcmb(
 
 localparam stepw = 15, xw=16;
 
-reg signed [xw-1:0] x1;
+reg signed [xw-1:0] x1 = 'd0;
 reg signed [xw+1:0] next_x5;
-reg [stepw-1:0] step1;
+reg [stepw-1:0] step1 = 'd127;
 reg [stepw+1:0] next_step3;
 assign pcm = x1[xw-1:xw-16];
 
@@ -50,9 +50,9 @@ wire [xw-1:0] limpos = {1'b0, {xw-1{1'b1}}};
 wire [xw-1:0] limneg = {1'b1, {xw-1{1'b0}}};
 
 reg  [18:0] d2l;
-reg  [xw-1:0] d3;
-reg  signed [xw+1:0] d4;
-reg  [3:0]  d2;
+reg  [xw-1:0] d3 = 'd0;
+reg  signed [xw+1:0] d4 = 'd0;
+reg  [3:0]  d2 = 'd0;
 reg  [7:0]  step_val;
 reg  [22:0] step2l;
 
@@ -76,7 +76,7 @@ reg [3:0] data2;
 reg sign_data2, sign_data3, sign_data4, sign_data5;
 
 reg [3:0] adv2;
-reg need_clr;
+reg need_clr = 0;
 
 wire [3:0] data_use = clr || ~chon ? 4'd0 : data;
 

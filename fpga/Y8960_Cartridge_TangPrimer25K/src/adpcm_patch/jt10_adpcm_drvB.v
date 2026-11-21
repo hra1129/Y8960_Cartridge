@@ -51,7 +51,7 @@ module jt10_adpcm_drvB(
     // memory
     output   [23:0] addr,
     input    [ 7:0] data,
-    output reg roe_n,
+    output reg roe_n = 1'b1,
     output          nibble_sel, // nibble of the data requested by roe_n (0: upper)
     output          chon,       // channel is playing
 
@@ -62,7 +62,7 @@ module jt10_adpcm_drvB(
 wire adv;           // advance to next reading
 wire clr_dec;
 wire [15:0] phase;
-reg [3:0] din;
+reg [3:0] din = 0;
 
 always @(posedge clk or negedge rst_n) begin
     if( !rst_n ) begin

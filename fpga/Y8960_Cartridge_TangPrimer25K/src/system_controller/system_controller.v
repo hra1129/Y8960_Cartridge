@@ -140,31 +140,31 @@ module system_controller#(
 	localparam	[3:0]	c_boot_rom_cmd_end	= 4'd7;		//	first command after copy (deselect)
 	localparam	[3:0]	c_boot_rom_cmd_last	= 4'd8;
 
-	reg				ff_enable;
-	reg				ff_devsel;
-	reg				ff_func_rom;
-	reg		[23:0]	ff_address;
-	reg		[7:0]	ff_data;
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
-	reg		[2:0]	ff_rom_state;
-	reg		[3:0]	ff_rom_step;
-	reg		[2:0]	ff_rom_command;
-	reg				ff_rom_bus_address;
-	reg				ff_rom_bus_valid;
-	reg				ff_rom_bus_write;
-	reg		[2:0]	ff_init_state;
-	reg		[3:0]	ff_init_rom_cmd_index;
-	reg		[16:0]	ff_init_offset;
-	reg				ff_init_stream_stop;
-	reg				ff_init_done;
-	reg				ff_init_rom_bus_address;
-	reg				ff_init_rom_bus_valid;
-	reg				ff_init_rom_bus_write;
-	reg		[7:0]	ff_init_rom_bus_wdata;
+	reg				ff_enable = 1'b0;
+	reg				ff_devsel = 1'b0;
+	reg				ff_func_rom = 1'b0;
+	reg		[23:0]	ff_address = 24'd0;
+	reg		[7:0]	ff_data = 8'd0;
+	reg		[7:0]	ff_rdata = 8'hFF;
+	reg				ff_rdata_en = 1'b0;
+	reg		[2:0]	ff_rom_state = c_rs_idle;
+	reg		[3:0]	ff_rom_step = 4'd0;
+	reg		[2:0]	ff_rom_command = 3'd0;
+	reg				ff_rom_bus_address = 1'b0;
+	reg				ff_rom_bus_valid = 1'b0;
+	reg				ff_rom_bus_write = 1'b0;
+	reg		[2:0]	ff_init_state = c_init_wait_sram;
+	reg		[3:0]	ff_init_rom_cmd_index = 4'd0;
+	reg		[16:0]	ff_init_offset = 17'd0;
+	reg				ff_init_stream_stop = 1'b0;
+	reg				ff_init_done = 1'b0;
+	reg				ff_init_rom_bus_address = 1'b0;
+	reg				ff_init_rom_bus_valid = 1'b0;
+	reg				ff_init_rom_bus_write = 1'b0;
+	reg		[7:0]	ff_init_rom_bus_wdata = 8'd0;
 	wire			w_init_copy;
 	wire			w_init_sram_accept;
-	reg		[7:0]	ff_rom_bus_wdata;
+	reg		[7:0]	ff_rom_bus_wdata = 8'd0;
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin

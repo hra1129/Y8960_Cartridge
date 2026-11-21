@@ -85,8 +85,8 @@ always @(posedge emuclk) if(!mclkpcen_n) begin
 	ablo_z <= i_ABLO;
 end
 
-reg		[5:0]	bankreg0, bankreg1, bankreg2, bankreg3;
-reg				rammode;
+reg		[5:0]	bankreg0 = 6'h00, bankreg1 = 6'h01, bankreg2 = 6'h02, bankreg3 = 6'h03;
+reg				rammode = 1'b0;
 always @(posedge emuclk) begin
 	if(!rst_n) begin
 		rammode  <= 1'b0;

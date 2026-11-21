@@ -42,7 +42,7 @@ wire            phi1_init = ic_n_negedge;
 generate
 if(FULLY_SYNCHRONOUS == 0) begin : FULLY_SYNCHRONOUS_0_reset_syncchain
     //2 stage SR for synchronization
-    reg     [2:0]   ic_n_internal = 3'b111;
+    reg     [2:0]   ic_n_internal = 3'b000;
     always @(posedge i_EMUCLK) if(!i_phiM_PCEN_n) begin 
         ic_n_internal[0] <= i_IC_n; 
         ic_n_internal[2:1] <= ic_n_internal[1:0]; //shift
@@ -60,7 +60,7 @@ else begin : FULLY_SYNCHRONOUS_1_reset_syncchain
     //add two stage SR
 
     //4 stage SR for synchronization
-    reg     [4:0]   ic_n_internal = 5'b11111;
+    reg     [4:0]   ic_n_internal = 5'b00000;
     always @(posedge i_EMUCLK) if(!i_phiM_PCEN_n) begin 
         ic_n_internal[0] <= i_IC_n; 
         ic_n_internal[4:1] <= ic_n_internal[3:0]; //shift

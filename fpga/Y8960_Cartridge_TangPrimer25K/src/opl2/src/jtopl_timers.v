@@ -81,12 +81,12 @@ module jtopl_timer #(parameter MW=2) (
     input      [7:0] start_value,
     input      load,
     input      clr_flag,
-    output reg flag,
+    output reg flag = 1'b0,
     output reg overflow
 );
 
-reg    [7:0] cnt, next, init;
-reg [MW-1:0] free_cnt, free_next;
+reg    [7:0] cnt = 8'd0, next, init;
+reg [MW-1:0] free_cnt = 0, free_next;
 reg          load_l, free_ov;
 
 always@(posedge clk)

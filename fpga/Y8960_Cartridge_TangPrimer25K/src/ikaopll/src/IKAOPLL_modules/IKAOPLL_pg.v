@@ -339,7 +339,7 @@ assign  o_OP_PHASE = rhythm_phase | (cyc18r_phase_sr_out[18:9] & {10{pgmem_out_e
 //////  LFSR
 ////
 
-reg     [22:0]  noise_lfsr;
+reg     [22:0]  noise_lfsr = 23'd0;
 wire            noise_lfsr_zero = noise_lfsr == 23'd0;
 assign  noise_out = noise_lfsr[22];
 

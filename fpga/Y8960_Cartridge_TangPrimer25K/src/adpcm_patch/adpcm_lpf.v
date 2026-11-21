@@ -37,13 +37,13 @@ module adpcm_lpf (
 	localparam		[2:0]	c_state_out			= 3'd4;
 
 	reg		[15:0]			ff_tap [0:24];
-	reg		[2:0]			ff_state;
-	reg		[3:0]			ff_index;
-	reg		[3:0]			ff_bit;
-	reg signed	[16:0]		ff_pair;
-	reg signed	[30:0]		ff_prod;
-	reg signed	[32:0]		ff_acc;
-	reg		[15:0]			ff_out;
+	reg		[2:0]			ff_state = c_state_idle;
+	reg		[3:0]			ff_index = 4'd0;
+	reg		[3:0]			ff_bit = 4'd0;
+	reg signed	[16:0]		ff_pair = 17'sd0;
+	reg signed	[30:0]		ff_prod = 31'sd0;
+	reg signed	[32:0]		ff_acc = 33'sd0;
+	reg		[15:0]			ff_out = 16'd0;
 
 	wire	[12:0]			w_coef;
 	wire					w_coef_neg;

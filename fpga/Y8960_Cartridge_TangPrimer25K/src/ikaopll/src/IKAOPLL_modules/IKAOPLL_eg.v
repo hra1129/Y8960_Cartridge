@@ -50,7 +50,7 @@ wire            phi1ncen_n = i_phi1_NCEN_n;
 //////  EG prescaler
 ////
 
-reg     [1:0]   eg_prescaler;
+reg     [1:0]   eg_prescaler = 2'd0;
 reg             eg_prescaler_d0_z;
 wire            serial_val_latch = i_CYCLE_00 & eg_prescaler_d0_z;
 always @(posedge emuclk) begin
@@ -68,8 +68,8 @@ end
 //////  Envelope counter
 ////
 
-reg     [17:0]  envcntr_sr;
-reg             envcntr_adder_co_z;
+reg     [17:0]  envcntr_sr = 18'd0;
+reg             envcntr_adder_co_z = 1'b0;
 wire    [1:0]   envcntr_adder = ((envcntr_adder_co_z | i_CYCLE_00) & eg_prescaler == 2'd3) + envcntr_sr[0];
 always @(posedge emuclk) if(!phi1ncen_n) begin
     envcntr_adder_co_z <= envcntr_adder[1] & i_RST_n; //save carry
@@ -90,7 +90,7 @@ always @(posedge emuclk) if(!phi1pcen_n) if(serial_val_latch) debug_envcntr <= e
 //////  Consecutive zero bit counter
 ////
 
-reg             rst_z;
+reg             rst_z = 1'b1;
 reg             det_one;
 reg     [16:0]  zb_sr;
 always @(posedge emuclk) if(!phi1ncen_n) begin
@@ -282,7 +282,7 @@ wire    [6:0]   cyc2c_curr_attnlv = cyc2c_curr_attnlv_force_max ? 7'd127 :
 wire    [6:0]   cyc2c_next_attnlv = cyc2c_curr_attnlv + cyc2c_attndelta; //discard carry
 
 //register part
-reg     [6:0]   cyc2r_attnlv;
+reg     [6:0]   cyc2r_attnlv = 7'd127;
 always @(posedge emuclk) if(!phi1ncen_n) cyc2r_attnlv <= i_RST_n ? cyc2c_next_attnlv : 7'd127;
 
 

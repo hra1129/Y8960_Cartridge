@@ -220,8 +220,8 @@ module y8960_address_decode(
 	// --------------------------------------------------------------------
 	//	7FFFh read: { TIMER, 0000, OPM, SSG, OPL2 }
 	// --------------------------------------------------------------------
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
+	reg		[7:0]	ff_rdata = 8'hFF;
+	reg				ff_rdata_en = 1'b0;
 
 	always @( posedge clk ) begin
 		if( !reset_n ) begin

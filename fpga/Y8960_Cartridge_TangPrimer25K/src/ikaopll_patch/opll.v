@@ -26,17 +26,17 @@ module opllex (
 	wire			w_enqueue;
 	wire			w_dequeue;
 	wire			w_request_ack;
-	reg				ff_bus_seen;
-	reg		[3:0]	ff_queue_count;
-	reg		[2:0]	ff_write_pointer;
-	reg		[2:0]	ff_read_pointer;
+	reg				ff_bus_seen = 1'b0;
+	reg		[3:0]	ff_queue_count = 4'd0;
+	reg		[2:0]	ff_write_pointer = 3'd0;
+	reg		[2:0]	ff_read_pointer = 3'd0;
 	reg		[9:0]	ff_queue [0:7];
-	reg				ff_processing;
-	reg				ff_ack_seen;
-	reg				ff_commit_seen;
-	reg				ff_process_address;
-	reg				ff_process_write;
-	reg		[7:0]	ff_process_wdata;
+	reg				ff_processing = 1'b0;
+	reg				ff_ack_seen = 1'b0;
+	reg				ff_commit_seen = 1'b0;
+	reg				ff_process_address = 1'b0;
+	reg				ff_process_write = 1'b0;
+	reg		[7:0]	ff_process_wdata = 8'd0;
 
 	// --------------------------------------------------------------------
 	//	Bus request queue

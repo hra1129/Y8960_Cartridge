@@ -31,16 +31,16 @@ module jtopl_mmr(
     output      [ 1:0]  group,
     output              op,
     output      [17:0]  slot,
-    output  reg         rhy_en,
+    output  reg         rhy_en = 0,
     // Timers
-    output  reg [ 7:0]  value_A,
-    output  reg [ 7:0]  value_B,
-    output  reg         load_A,
-    output  reg         load_B,
-    output  reg         flagen_A,
-    output  reg         flagen_B,
-    output  reg         clr_flag_A,
-    output  reg         clr_flag_B,
+    output  reg [ 7:0]  value_A = 8'd0,
+    output  reg [ 7:0]  value_B = 8'd0,
+    output  reg         load_A = 1'b0,
+    output  reg         load_B = 1'b0,
+    output  reg         flagen_A = 1,
+    output  reg         flagen_B = 1,
+    output  reg         clr_flag_A = 1'b0,
+    output  reg         clr_flag_B = 1'b0,
     input               flag_A,
     input               overflow_A,
     // Phase Generator
@@ -61,8 +61,8 @@ module jtopl_mmr(
     output      [ 5:0]  tl_IV,
     output              amen_IV,
     // global values
-    output reg          am_dep,
-    output reg          vib_dep,
+    output reg          am_dep = 0,
+    output reg          vib_dep = 0,
     output      [ 1:0]  ksl_IV,
     // Operator configuration
     output      [ 2:0]  fb_I,
@@ -86,21 +86,21 @@ localparam [7:0] REG_TESTYM  = 8'h01,
                  REG_CSM     = 8'h08,
                  REG_RYTHM   = 8'hBD;
 
-reg  [ 7:0] selreg;       // selected register
-reg  [ 7:0] din_copy;
+reg  [ 7:0] selreg = 8'h0;       // selected register
+reg  [ 7:0] din_copy = 8'd0;
 reg         csm, effect;
-reg  [ 3:0] sel_ch;
-reg  [ 1:0] sel_group;     // group to update
-reg  [ 2:0] sel_sub;       // subslot to update
-reg         up_fnumlo, up_fnumhi, up_fbcon,
-            up_mult, up_ksl_tl, up_ar_dr, up_sl_rr,
-            up_wav;
-reg         wave_mode,     // 1 if waveform selection is enabled (OPL2)
-            csm_en,
-            note_sel;      // keyboard split, not implemented
-reg  [ 4:0] rhy_kon;
-reg  [ 7:0] pan_0, pan_1, pan_2, pan_3, pan_4,
-            pan_5, pan_6, pan_7, pan_8;
+reg  [ 3:0] sel_ch = 0;
+reg  [ 1:0] sel_group = 2'd0;     // group to update
+reg  [ 2:0] sel_sub = 3'd0;       // subslot to update
+reg         up_fnumlo = 0, up_fnumhi = 0, up_fbcon = 0,
+            up_mult = 0, up_ksl_tl = 0, up_ar_dr = 0, up_sl_rr = 0,
+            up_wav = 0;
+reg         wave_mode = 0,     // 1 if waveform selection is enabled (OPL2)
+            csm_en = 0,
+            note_sel = 0;      // keyboard split, not implemented
+reg  [ 4:0] rhy_kon = 5'd0;
+reg  [ 7:0] pan_0 = 8'd128, pan_1 = 8'd128, pan_2 = 8'd128, pan_3 = 8'd128, pan_4 = 8'd128,
+            pan_5 = 8'd128, pan_6 = 8'd128, pan_7 = 8'd128, pan_8 = 8'd128;
 
 always @(*) begin
     if      (slot[0]  || slot[3])  pan_I = pan_0;

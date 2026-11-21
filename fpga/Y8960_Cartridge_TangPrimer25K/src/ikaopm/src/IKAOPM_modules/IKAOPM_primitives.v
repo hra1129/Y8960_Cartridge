@@ -37,7 +37,7 @@ module primitive_syncsrlatch (
 
     input   wire            i_S,
     input   wire            i_R,
-    output  reg             o_Q
+    output  reg             o_Q = 1'b0
 );
 
 always @(posedge i_EMUCLK) begin
@@ -61,7 +61,7 @@ module primitive_syncdlatch #(parameter WIDTH = 8 ) (
 
     input   wire                    i_EN,
     input   wire    [WIDTH-1:0]     i_D,
-    output  reg     [WIDTH-1:0]     o_Q
+    output  reg     [WIDTH-1:0]     o_Q = {WIDTH{1'b0}}
 );
 
 always @(posedge i_EMUCLK) begin

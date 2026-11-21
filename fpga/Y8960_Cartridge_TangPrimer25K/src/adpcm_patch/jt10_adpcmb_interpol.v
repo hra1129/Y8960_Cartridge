@@ -47,12 +47,12 @@ module jt10_adpcmb_interpol(
     output signed [15:0] pcmout
 );
 
-reg signed [15:0] x_prev;   // x[n-1]
-reg signed [16:0] diff;     // x[n] - x[n-1]
-reg signed [17:0] acc;
-reg        [15:0] ratio;
-reg         [4:0] seq;
-reg signed [15:0] pcminter;
+reg signed [15:0] x_prev = 16'sd0;   // x[n-1]
+reg signed [16:0] diff = 17'sd0;     // x[n] - x[n-1]
+reg signed [17:0] acc = 18'sd0;
+reg        [15:0] ratio = 16'd0;
+reg         [4:0] seq = 5'd0;
+reg signed [15:0] pcminter = 16'sd0;
 
 wire signed [17:0] acc_add = acc + ( ratio[0] ? { diff[16], diff } : 18'sd0 );
 

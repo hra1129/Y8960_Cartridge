@@ -40,47 +40,48 @@ module adpcm (
 	localparam		[1:0]	c_owner_cpu_write	= 2'd2;
 
 	//	Registers
-	reg		[7:0]	ff_reg_select;
-	reg				reg_mask_eos;				//	04h [4]
-	reg				reg_mask_buf_rdy;			//	04h [3]
-	reg				reg_start;					//	07h [7]
-	reg				reg_record;					//	07h [6]
-	reg				reg_memory_data;			//	07h [5]
-	reg				reg_repeat;					//	07h [4]
-	reg				reg_sp_off;					//	07h [3]
-	reg				reg_64k;					//	08h [1]
-	reg				reg_rom;					//	08h [0]
-	reg		[15:0]	reg_start_address;			//	09h, 0Ah (4 bytes unit)
-	reg		[15:0]	reg_stop_address;			//	0Bh, 0Ch (4 bytes unit)
-	reg		[7:0]	reg_adpcm_data;				//	0Fh (last written value)
-	reg		[15:0]	reg_delta_n;				//	10h, 11h
-	reg		[7:0]	reg_envelope_control;		//	12h
-	reg		[7:0]	reg_pan;					//	FFh
+	reg		[7:0]	ff_reg_select				= 8'd0;
+	reg				reg_mask_eos				= 1'b1;				//	04h [4]
+	reg				reg_mask_buf_rdy			= 1'b1;			//	04h [3]
+	reg				reg_start					= 1'b0;					//	07h [7]
+	reg				reg_record					= 1'b0;					//	07h [6]
+	reg				reg_memory_data				= 1'b0;			//	07h [5]
+	reg				reg_repeat					= 1'b0;					//	07h [4]
+	reg				reg_sp_off					= 1'b0;					//	07h [3]
+	reg				reg_64k						= 1'b0;					//	08h [1]
+	reg				reg_rom						= 1'b0;					//	08h [0]
+	reg		[15:0]	reg_start_address			= 16'd0;			//	09h, 0Ah (4 bytes unit)
+	reg		[15:0]	reg_stop_address			= 16'd0;			//	0Bh, 0Ch (4 bytes unit)
+	reg		[7:0]	reg_adpcm_data				= 8'd0;				//	0Fh (last written value)
+	reg		[15:0]	reg_delta_n					= 16'd0;				//	10h, 11h
+	reg		[7:0]	reg_envelope_control		= 8'd255;		//	12h
+	reg		[7:0]	reg_pan						= 8'd128;					//	FFh
 
 	//	Status flags and CPU memory access
-	reg				ff_eos;
-	reg				ff_buf_rdy;
-	reg				ff_start_pulse;
-	reg		[18:0]	ff_mem_ptr;					//	byte address
-	reg		[1:0]	ff_read_delay;
-	reg				ff_prefetch_valid;
-	reg		[7:0]	ff_prefetch_data;
-	reg				ff_cpu_write_pending;
-	reg		[17:0]	ff_cpu_write_address;
-	reg		[7:0]	ff_cpu_write_data;
-	reg		[7:0]	ff_rdata;
-	reg				ff_rdata_en;
+	reg				ff_status_pcm				= 1'b0;		//	07h [7] as written (status bit0)
+	reg				ff_eos						= 1'b0;
+	reg				ff_buf_rdy					= 1'b1;
+	reg				ff_start_pulse				= 1'b0;
+	reg		[18:0]	ff_mem_ptr					= 19'd0;					//	byte address
+	reg		[1:0]	ff_read_delay				= 2'd0;
+	reg				ff_prefetch_valid			= 1'b0;
+	reg		[7:0]	ff_prefetch_data			= 8'd0;
+	reg				ff_cpu_write_pending		= 1'b0;
+	reg		[17:0]	ff_cpu_write_address		= 18'd0;
+	reg		[7:0]	ff_cpu_write_data			= 8'd0;
+	reg		[7:0]	ff_rdata					= 8'hFF;
+	reg				ff_rdata_en					= 1'b0;
 
 	//	ADPCM memory interface
-	reg				ff_mem_valid;
-	reg				ff_mem_write;
-	reg				ff_mem_wait_data;
-	reg		[1:0]	ff_mem_owner;
-	reg		[17:0]	ff_mem_address;
-	reg		[7:0]	ff_mem_wdata;
-	reg				ff_core_pending;
-	reg		[17:0]	ff_core_address;
-	reg		[7:0]	ff_core_data;
+	reg				ff_mem_valid				= 1'b0;
+	reg				ff_mem_write				= 1'b0;
+	reg				ff_mem_wait_data			= 1'b0;
+	reg		[1:0]	ff_mem_owner				= c_owner_core;
+	reg		[17:0]	ff_mem_address				= 18'd0;
+	reg		[7:0]	ff_mem_wdata				= 8'd0;
+	reg				ff_core_pending				= 1'b0;
+	reg		[17:0]	ff_core_address				= 18'd0;
+	reg		[7:0]	ff_core_data				= 8'd0;
 
 	wire			w_access;
 	wire			w_select_write;
@@ -113,7 +114,7 @@ module adpcm (
 	wire			w_core_eos;
 	wire			w_adpcm_oe_n;
 	wire			w_core_read;
-	reg				ff_adpcm_oe_n;
+	reg				ff_adpcm_oe_n				= 1'b1;
 	wire			w_core_nibble_sel;
 	wire			w_core_chon;
 	wire			w_cpu_data_follow;
@@ -127,9 +128,9 @@ module adpcm (
 	wire	[8:0]	w_pan_gain_r;
 	wire	[8:0]	w_pan_gain;
 	wire signed [25:0]	w_pan_product;
-	reg				ff_pan_phase;				//	0: Lch, 1: Rch
-	reg		[15:0]	ff_pan_out_l;
-	reg		[15:0]	ff_pan_out_r;
+	reg				ff_pan_phase				= 1'b0;				//	0: Lch, 1: Rch
+	reg		[15:0]	ff_pan_out_l				= 16'd0;
+	reg		[15:0]	ff_pan_out_r				= 16'd0;
 
 	function [17:0] mask_address;
 		input	[18:0]	address;
@@ -165,11 +166,13 @@ module adpcm (
 	assign w_write_ptr			= (ff_read_delay != 2'd0) ? w_start_ptr : ff_mem_ptr;
 
 	//	Status register: IRQ, T1, T2, EOS, BUF_RDY, 1, 1, PCM_BSY
+	//	Y8950: PCM_BSY shows R#07 bit7 (START) as written. It is not cleared
+	//	at the end of playback (software uses it to detect Y8950).
 	assign w_eos_visible		= ff_eos     & ~reg_mask_eos;
 	assign w_buf_rdy_visible	= ff_buf_rdy & ~reg_mask_buf_rdy;
 	assign adpcm_irq			= w_eos_visible | w_buf_rdy_visible;
 	assign w_status				= { opl2_status[7] | adpcm_irq, opl2_status[6:5],
-									w_eos_visible, w_buf_rdy_visible, 2'b11, reg_start };
+									w_eos_visible, w_buf_rdy_visible, 2'b11, ff_status_pcm };
 
 	// ---------------------------------------------------------
 	//	JT ADPCM (TypeB) body
@@ -291,6 +294,7 @@ module adpcm (
 			reg_delta_n				<= 16'd0;
 			reg_envelope_control	<= 8'd255;
 			reg_pan					<= 8'd128;
+			ff_status_pcm			<= 1'b0;
 			ff_eos					<= 1'b0;
 			ff_buf_rdy				<= 1'b1;
 			ff_start_pulse			<= 1'b0;
@@ -375,6 +379,7 @@ module adpcm (
 				end
 				8'h07: begin
 					ff_prefetch_valid	<= 1'b0;
+					ff_status_pcm		<= bus_wdata[7];
 					if( bus_wdata[0] ) begin
 						//	RESET
 						reg_start		<= 1'b0;

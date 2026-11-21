@@ -31,7 +31,7 @@ module jtopl_noise(
     output noise
 );
 
-reg [22:0] poly;
+reg [22:0] poly = 1;
 reg        nbit;
 
 assign     noise = poly[22] ^ poly[9] ^ poly[8] ^ poly[0];

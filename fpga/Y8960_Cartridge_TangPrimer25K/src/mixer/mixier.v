@@ -74,16 +74,16 @@ module mixier (
 	input			[7:0]		scc_volume,
 	input			[7:0]		opm_volume,
 	input			[7:0]		master_volume,
-	output reg signed [23:0]	audio_l_out,
-	output reg signed [23:0]	audio_r_out,
-	output reg					audio_valid
+	output reg signed [23:0]	audio_l_out = 24'sd0,
+	output reg signed [23:0]	audio_r_out = 24'sd0,
+	output reg					audio_valid = 1'b0
 );
 	//	One multiplier is shared by 12 steps:
 	//	  0-4 : SSG/OPLL/OPL2/SCC/OPM Lch x volume, 5 : Lch mix x master volume
 	//	  6-10: SSG/OPLL/OPL2/SCC/OPM Rch x volume, 11: Rch mix x master volume
-	reg			[3:0]	ff_state;
-	reg signed	[27:0]	ff_acc;
-	reg signed	[23:0]	ff_mix;
+	reg			[3:0]	ff_state = 4'd0;
+	reg signed	[27:0]	ff_acc = 28'sd0;
+	reg signed	[23:0]	ff_mix = 24'sd0;
 	reg signed	[23:0]	w_sample;
 	reg			[7:0]	w_volume;
 	wire		[7:0]	w_gain;
@@ -109,8 +109,8 @@ module mixier (
 	//	offset is removed by a 1st order high-pass filter with shifts only.
 	//	  dc <= dc + (x - dc) / 2^16 at 3.58MHz (clk/12): fc = about 8.7Hz
 	//	ff_ssg_dc_* is unsigned Q13.16.
-	reg			[28:0]	ff_ssg_dc_l;
-	reg			[28:0]	ff_ssg_dc_r;
+	reg			[28:0]	ff_ssg_dc_l = 29'd0;
+	reg			[28:0]	ff_ssg_dc_r = 29'd0;
 	wire		[12:0]	w_ssg_in;
 	wire		[28:0]	w_ssg_dc;
 	wire signed	[29:0]	w_ssg_diff;

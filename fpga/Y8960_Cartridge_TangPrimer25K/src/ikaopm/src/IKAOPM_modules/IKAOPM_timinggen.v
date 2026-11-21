@@ -19,8 +19,8 @@ module IKAOPM_timinggen #(parameter FULLY_SYNCHRONOUS = 1, parameter FAST_RESET 
     output  wire            o_phi1_NCEN_n, //negative edge clock enable for emulation
 
     //SH1 and 2
-    output  reg             o_SH1,
-    output  reg             o_SH2,
+    output  reg             o_SH1 = 1'b0,
+    output  reg             o_SH2 = 1'b0,
 
     //timings
     output  reg             o_CYCLE_01,

@@ -153,7 +153,7 @@ reg     [7:0]   d1reg_addr;
 always @(posedge emuclk) if(!phi1ncen_n) if(addrreg_wrrq) d1reg_addr <= dbus_inlatch;
 
 //D1REG pair, 0=modulator 1=carrier
-reg     [1:0]   am_reg, pm_reg, etyp_reg, ksr_reg;
+reg     [1:0]   am_reg = 2'b00, pm_reg = 2'b00, etyp_reg = 2'b00, ksr_reg = 2'b00;
 reg     [3:0]   mul_reg[0:1];
 reg     [1:0]   ksl_reg[0:1];
 reg     [3:0]   ar_reg[0:1];
@@ -161,12 +161,21 @@ reg     [3:0]   dr_reg[0:1];
 reg     [3:0]   sl_reg[0:1];
 reg     [3:0]   rr_reg[0:1];
 
+initial begin
+    mul_reg[0] = 4'd0; mul_reg[1] = 4'd0;
+    ksl_reg[0] = 2'd0; ksl_reg[1] = 2'd0;
+    ar_reg[0] = 4'd0; ar_reg[1] = 4'd0;
+    dr_reg[0] = 4'd0; dr_reg[1] = 4'd0;
+    sl_reg[0] = 4'd0; sl_reg[1] = 4'd0;
+    rr_reg[0] = 4'd0; rr_reg[1] = 4'd0;
+end
+
 //D1REG single
-reg     [5:0]   tl_reg;
-reg             dc_reg, dm_reg;
-reg     [2:0]   fb_reg;
-reg     [3:0]   test_reg;
-reg     [5:0]   rhythm_reg;
+reg     [5:0]   tl_reg = 6'd0;
+reg             dc_reg = 1'b0, dm_reg = 1'b0;
+reg     [2:0]   fb_reg = 1'b0;
+reg     [3:0]   test_reg = 4'b0000;
+reg     [5:0]   rhythm_reg = 6'b000000;
 
 assign  o_TEST = test_reg;
 assign  o_RHYTHM_EN = rhythm_reg[5];
@@ -219,7 +228,7 @@ reg     [6:0]   d9reg_addr;
 always @(posedge emuclk) if(!phi1ncen_n) if(addrreg_wrrq && dbus_inlatch[7] == 1'b0) d9reg_addr <= dbus_inlatch[6:0];
 
 //D9REG enable
-reg             d9reg_en;
+reg             d9reg_en = 1'b0;
 always @(posedge emuclk) begin
     if(!i_RST_n) d9reg_en <= 1'b0;
     else begin if(!phi1ncen_n) begin
@@ -228,7 +237,7 @@ always @(posedge emuclk) begin
 end
 
 //latch D9REG data
-reg     [7:0]   d9reg_data;
+reg     [7:0]   d9reg_data = 8'h00;
 always @(posedge emuclk) begin
     if(!i_RST_n) d9reg_data <= 8'h00;
     else begin if(!phi1ncen_n) begin
@@ -505,7 +514,7 @@ IKAOPLL_srlatch u_busrq_srlatch (
     .i_S((i_IN & i_RST_n) & ~o_OUT), .i_R(o_OUT | ~i_RST_n), .o_Q(busrq_latched)
 );
 
-reg     [2:0]   inreg;
+reg     [2:0]   inreg = 3'b000;
 assign          o_OUT = inreg[2];
 always @(posedge i_EMUCLK) begin
     if(!i_RST_n) inreg <= 3'b000;
@@ -519,7 +528,7 @@ end
 end
 else begin : FULLY_SYNCHRONOUS_1_busrq
 
-reg     [2:0]   inreg;
+reg     [2:0]   inreg = 3'b000;
 assign          o_OUT = inreg[2];
 always @(posedge i_EMUCLK) begin
     if(!i_RST_n) inreg <= 3'b000;
@@ -555,6 +564,13 @@ module IKAOPLL_panreg (
 
 reg     [7:0]   pan_sr[0:8];
 integer         stage;
+integer         init_stage;
+
+initial begin
+    for(init_stage = 0; init_stage < 9; init_stage = init_stage + 1) begin
+        pan_sr[init_stage] = 8'd128;
+    end
+end
 
 always @(posedge i_EMUCLK) begin
     if(!i_RST_n) begin

@@ -78,50 +78,50 @@ module ip_spi_rom(
 	localparam	[3:0]	CMD_NOP						= 4'd15;
 
 	
-	reg				ff_bus_ready;
+	reg				ff_bus_ready = 1'b1;
 	reg		[7:0]	ff_bus_rdata;
-	reg				ff_bus_rdata_en;
+	reg				ff_bus_rdata_en = 1'b0;
 
-	reg		[3:0]	ff_command_mode;
+	reg		[3:0]	ff_command_mode = CMD_SET_ADDRESS;
 	reg		[23:0]	ff_rom_address;
 	reg		[1:0]	ff_byte_count;
-	reg		[7:0]	ff_burst_wdata;
-	reg		[7:0]	ff_burst_count;
-	reg				ff_do_command;
-	reg				ff_finish_command;
+	reg		[7:0]	ff_burst_wdata = 8'd0;
+	reg		[7:0]	ff_burst_count = 8'd0;
+	reg				ff_do_command = 1'b0;
+	reg				ff_finish_command = 1'b0;
 
-	reg		[2:0]	ff_serial_mode;
-	reg		[7:0]	ff_serial_wdata;
-	reg				ff_serial_write;
-	reg				ff_serial_valid;
+	reg		[2:0]	ff_serial_mode = MODE_STD_WRITE;
+	reg		[7:0]	ff_serial_wdata = 8'd0;
+	reg				ff_serial_write = 1'b0;
+	reg				ff_serial_valid = 1'b0;
 	wire			w_serial_ready;
 	wire	[7:0]	w_serial_rdata;
 	wire			w_serial_rdata_en;
 	wire			w_serial_idle;
-	reg			ff_srom_cs_n;
-	reg				ff_cs_n;
+	reg			ff_srom_cs_n = 1'b1;
+	reg				ff_cs_n = 1'b1;
 
 	localparam [2:0]	CS_WAIT_10NS	= 1;
 	localparam [2:0]	CS_WAIT_50NS	= 5;
-	reg		[2:0]		ff_wait_count;
-	reg					ff_wait_count_active;
+	reg		[2:0]		ff_wait_count = 0;
+	reg					ff_wait_count_active = 1'b0;
 
 	// ---------------------------------------------------------
 	//	Inlined SPI controller state
 	// ---------------------------------------------------------
-	reg		[2:0]	ff_fifo_mode;
-	reg		[7:0]	ff_fifo_wdata;
-	reg				ff_fifo_write;
-	reg				ff_fifo_valid;
-	reg		[2:0]	ff_xfer_mode;
-	reg		[7:0]	ff_xfer_wdata;
-	reg				ff_xfer_write;
-	reg				ff_xfer_valid;
-	reg				ff_xfer_ready;
-	reg		[7:0]	ff_xfer_rdata;
-	reg				ff_xfer_rdata_en;
-	reg				ff_xfer_processing;
-	reg				ff_xfer_spi_accepted;
+	reg		[2:0]	ff_fifo_mode = 3'd0;
+	reg		[7:0]	ff_fifo_wdata = 8'd0;
+	reg				ff_fifo_write = 1'b0;
+	reg				ff_fifo_valid = 1'b0;
+	reg		[2:0]	ff_xfer_mode = 3'd0;
+	reg		[7:0]	ff_xfer_wdata = 8'd0;
+	reg				ff_xfer_write = 1'b0;
+	reg				ff_xfer_valid = 1'b0;
+	reg				ff_xfer_ready = 1'b1;
+	reg		[7:0]	ff_xfer_rdata = 8'd0;
+	reg				ff_xfer_rdata_en = 1'b0;
+	reg				ff_xfer_processing = 1'b0;
+	reg				ff_xfer_spi_accepted = 1'b0;
 
 	localparam	[4:0]	ST_SPI_IDLE				= 5'd0;
 	localparam	[4:0]	ST_SPI_STD_WRITE		= 5'd1;
@@ -133,31 +133,31 @@ module ip_spi_rom(
 	localparam	[4:0]	ST_SPI_STREAM_PUSH		= 5'd7;
 
 	//	Stream read: clk domain
-	reg				ff_stream_stop;
-	reg				ff_stream_toggle_s1;
-	reg				ff_stream_toggle_s2;
-	reg				ff_stream_ack;
-	reg		[7:0]	ff_stream_rdata;
-	reg				ff_stream_valid;
+	reg				ff_stream_stop = 1'b0;
+	reg				ff_stream_toggle_s1 = 1'b0;
+	reg				ff_stream_toggle_s2 = 1'b0;
+	reg				ff_stream_ack = 1'b0;
+	reg		[7:0]	ff_stream_rdata = 8'd0;
+	reg				ff_stream_valid = 1'b0;
 	//	Stream read: clk_serial domain
-	reg				ff_spi_stream_toggle;
-	reg		[7:0]	ff_spi_stream_data;
-	reg				ff_spi_stream_ack0;
-	reg				ff_spi_stream_ack1;
-	reg				ff_spi_stream_stop0;
-	reg				ff_spi_stream_stop1;
+	reg				ff_spi_stream_toggle = 1'b0;
+	reg		[7:0]	ff_spi_stream_data = 8'd0;
+	reg				ff_spi_stream_ack0 = 1'b0;
+	reg				ff_spi_stream_ack1 = 1'b0;
+	reg				ff_spi_stream_stop0 = 1'b0;
+	reg				ff_spi_stream_stop1 = 1'b0;
 
-	reg				ff_spi_serial_valid0;
-	reg				ff_spi_serial_valid1;
-	reg				ff_spi_processing;
-	reg				ff_spi_ce;
-	reg		[4:0]	ff_spi_state;
-	reg		[2:0]	ff_spi_substate;
-	reg				ff_spi_clk;
-	reg		[7:0]	ff_spi_data;
-	reg		[3:0]	ff_spi_hiz;
-	reg		[3:0]	ff_spi_sio;
-	reg		[7:0]	ff_spi_rdata;
+	reg				ff_spi_serial_valid0 = 1'b0;
+	reg				ff_spi_serial_valid1 = 1'b0;
+	reg				ff_spi_processing = 1'b0;
+	reg				ff_spi_ce = 1'b0;
+	reg		[4:0]	ff_spi_state = ST_SPI_IDLE;
+	reg		[2:0]	ff_spi_substate = 3'd0;
+	reg				ff_spi_clk = 1'b0;
+	reg		[7:0]	ff_spi_data = 8'd0;
+	reg		[3:0]	ff_spi_hiz = 4'b1111;
+	reg		[3:0]	ff_spi_sio = 4'b0000;
+	reg		[7:0]	ff_spi_rdata = 8'd0;
 	wire	[3:0]	w_srom_sio;
 
 	// ---------------------------------------------------------
@@ -431,7 +431,7 @@ module ip_spi_rom(
 	localparam	[4:0]	ST_BLOCK_ERASE_ADDR_M	= 5'd17;
 	localparam	[4:0]	ST_BLOCK_ERASE_ADDR_L	= 5'd18;
 
-	reg		[4:0]		ff_command_state;
+	reg		[4:0]		ff_command_state = ST_IDLE;
 	reg		[4:0]		ff_next_command_state;
 
 	always @( posedge clk ) begin

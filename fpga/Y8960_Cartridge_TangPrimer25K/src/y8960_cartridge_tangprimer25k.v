@@ -168,8 +168,8 @@ module y8960cartridge_tangprimer25k (
 	wire	[15:0]	w_opm_sound_l_out;
 	wire	[15:0]	w_opm_sound_r_out;
 
-	reg		[3:0]	ff_divider;
-	reg				ff_enable;
+	reg		[3:0]	ff_divider	= 4'd0;
+	reg				ff_enable	= 1'b0;
 	wire			w_int_n;
 	wire			w_timer_intr_n;
 	wire			w_opl2_intr_n;

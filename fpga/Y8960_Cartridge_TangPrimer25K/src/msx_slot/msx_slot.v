@@ -90,6 +90,8 @@ module msx_slot(
 	output	[7:0]	master_volume
 );
 	reg				ff_slot_reset_n			= 1'b0;
+	reg		[7:0]	ff_reset_count			= 8'd0;
+	reg				ff_reset_n				= 1'b0;
 	reg				ff_slot_io_wr			= 1'b0;
 	reg				ff_slot_io_rd			= 1'b0;
 	reg				ff_slot_io_wr_delay		= 1'b0;
@@ -141,7 +143,31 @@ module msx_slot(
 		ff_slot_mem_rd_delay	<= ff_slot_mem_rd;
 	end
 
-	assign reset_n		= ff_slot_reset_n;
+	// --------------------------------------------------------------------
+	//	Internal reset
+	//	Asserted from FPGA configuration (initial value) and while /RESET = 0,
+	//	and held for c_reset_hold more clocks (about 6us at 42.95MHz) after
+	//	/RESET = 1. A short /RESET pulse is enough to reset the sound cores
+	//	whose shift registers need one sample period (72 phiM) of reset.
+	//	It runs on clk only, independent of the 3.579545MHz enable.
+	// --------------------------------------------------------------------
+	localparam		[7:0]	c_reset_hold	= 8'd255;
+
+	always @( posedge clk ) begin
+		if( !ff_slot_reset_n ) begin
+			ff_reset_count	<= 8'd0;
+			ff_reset_n		<= 1'b0;
+		end
+		else if( ff_reset_count != c_reset_hold ) begin
+			ff_reset_count	<= ff_reset_count + 8'd1;
+			ff_reset_n		<= 1'b0;
+		end
+		else begin
+			ff_reset_n		<= 1'b1;
+		end
+	end
+
+	assign reset_n		= ff_reset_n;
 
 	// --------------------------------------------------------------------
 	//	書込みであれば、p_slot_data をラッチする
@@ -156,7 +182,7 @@ module msx_slot(
 	//	Transaction active signal
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !ff_slot_reset_n || !slot_enable ) begin
+		if( !ff_reset_n || !slot_enable ) begin
 			ff_active		<= 1'b0;
 		end
 		else if( ff_active ) begin
@@ -201,7 +227,7 @@ module msx_slot(
 						  (ff_slot_mem_rd & ~ff_slot_mem_rd_delay);
 
 	always @( posedge clk ) begin
-		if( !ff_slot_reset_n || !slot_enable ) begin
+		if( !ff_reset_n || !slot_enable ) begin
 			ff_valid	<= 1'b0;
 			ff_write	<= 1'b1;
 			ff_io		<= 1'b0;
@@ -222,7 +248,7 @@ module msx_slot(
 	//	Read data
 	// --------------------------------------------------------------------
 	always @( posedge clk ) begin
-		if( !ff_slot_reset_n || !slot_enable ) begin
+		if( !ff_reset_n || !slot_enable ) begin
 			ff_rdata	<= 8'h00;
 			ff_rdata_en	<= 1'b0;
 		end
@@ -252,7 +278,7 @@ module msx_slot(
 	assign p_slot_data_dir	= slot_enable & ff_rdata_en;
 
 	always @( posedge clk ) begin
-		if( !ff_slot_reset_n ) begin
+		if( !ff_reset_n ) begin
 			ff_ssg_volume	<= 8'd128;
 			ff_opll_volume	<= 8'd128;
 			ff_opl2_volume	<= 8'd128;
