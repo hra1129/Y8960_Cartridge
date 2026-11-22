@@ -2060,4 +2060,17 @@ v0.9.15 リリース後に確認した Nuked-OPL3 との差 (BD モジュレー�
 - サードパーティのコアに初期値を付けた後、opl2_patch / adpcm_patch / ikascc_patch / ikaopll_patch / ikaopm_patch / msx_slot / src/test001 / src/test002 を再実行し、すべて Errors: 0。
 - テストの変更: adpcm_patch/test002 の再生終了後の PCM_BSY 期待値を 1 に、opl2_patch/test001 のミックス期待値を `>>> 3` に、msx_slot のテストではリセット解除後に `@( posedge reset_n )` を待つようにした。
 - system_controller / ssram / i2s_audio のテストは、以前から tb 側に RTL にないポートがあり、ロードできない (今回の変更とは関係ない)。
-- 合成と実機確認は未実施。
+- 合成後、実機で音が正しく鳴ることを確認した。
+
+## 2026/11/22 作業終了 (v0.9.17)
+
+- 上記3点 (ステータス bit0 = START、ADPCM 音量 1/2、短い /RESET でもかかる内部リセットと FF の初期値) を入れ、合成して実機で音が正しく鳴ることを確認した。v0.9.17 としてリリースした。
+  https://github.com/hra1129/Y8960_Cartridge/releases/tag/v0.9.17
+- ここで Y8960 の作業はいったん区切り、MSXturboR の作業に移る。
+- 個別の確認結果は未記録 (Y8950 検出ソフトでの検出、VOLCMP の波形比較、FPGA 起動直後の短い /RESET)。
+- 未確認・残件:
+  - R#07 bit0 (RESET) を書いたときの PCM_BSY (`ff_status_pcm`) の挙動が Y8950 と同じか。
+  - 合成時に、配列の `initial` 初期化や `ssram.v` の `ff_so` の初期値 (`4'b1zz0`) で警告が出ていないか。
+  - 2026/11/18 のサンプル修正 (スロット検出と終了時の復元) の実機確認、VOLCMP のソースの入手と同じ修正。
+  - system_controller / ssram / i2s_audio の tb のポートを RTL に合わせる。
+  - jtopl と Nuked の差のうち未修正のもの (2026/11/15 の「既知の残差」)。
